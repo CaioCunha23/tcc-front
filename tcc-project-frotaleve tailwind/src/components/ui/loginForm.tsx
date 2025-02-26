@@ -1,0 +1,53 @@
+import { useState, FormEvent } from 'react';
+import { CiLock } from "react-icons/ci";
+import { FaRegCircleUser } from "react-icons/fa6";
+import { useNavigate } from 'react-router';
+
+export default function LoginForm() {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+
+    const handleSubmit = (evento: FormEvent<HTMLFormElement>) => {
+        evento.preventDefault();
+        navigate('/home');
+    };
+
+    return (
+        <div className='flex flex-col items-start gap-[1rem] bg-white text-black w-[24em] p-[1em_2em_1em_2em]' >
+
+            <label className='text-[2em]'>Login</label>
+
+            <form className='flex flex-col gap-2 w-[100%]' onSubmit={handleSubmit}>
+                <div className='flex flex-col gap-[1.5em] w-[100%]'>
+                    <div className='flex gap-2 items-center'>
+                        <FaRegCircleUser />
+                        <input
+                            type='text'
+                            placeholder='Username'
+                            onChange={(e) => setUsername(e.target.value)}
+                            value={username}
+                            className='bg-transparent border-transparent text-black'
+                        />
+                    </div>
+
+                    <div className='flex gap-2 items-center'>
+                        <CiLock />
+                        <input
+                            type='password'
+                            placeholder='Password'
+                            onChange={(e) => setPassword(e.target.value)}
+                            value={password}
+                            className='bg-transparent border-transparent text-black'
+                        />
+                    </div>
+
+                    <button className='w-[5em] h-[3em] rounded-md text-white bg-[#00031f] cursor-pointer transition-all duration-300 ease-in-out hover:bg-[#1a1d50] hover:shadow-lg hover:scale-105'
+                        type='submit'>Log in</button>
+                </div>
+            </form>
+
+            <label className='text-[1em]'>Need Help with your username or password?</label>
+        </div>
+    );
+};
