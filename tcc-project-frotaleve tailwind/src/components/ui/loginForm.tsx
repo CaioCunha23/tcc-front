@@ -4,7 +4,7 @@ import { FaRegCircleUser } from "react-icons/fa6";
 import { useNavigate } from 'react-router';
 
 export default function LoginForm() {
-    const [username, setUsername] = useState('');
+    const [eMail, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
@@ -24,9 +24,9 @@ export default function LoginForm() {
                         <FaRegCircleUser />
                         <input
                             type='text'
-                            placeholder='Username'
-                            onChange={(e) => setUsername(e.target.value)}
-                            value={username}
+                            placeholder='E-mail'
+                            onChange={(e) => setEmail(e.target.value)}
+                            value={eMail}
                             className='bg-transparent border-transparent text-black'
                         />
                     </div>

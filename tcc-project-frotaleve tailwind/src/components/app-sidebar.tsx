@@ -25,136 +25,50 @@ const data = {
   versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navMain: [
     {
-      title: "Getting Started",
+      title: "Funcionários",
       url: "#",
       items: [
         {
-          title: "Installation",
+          title: "Time de funcionários",
           url: "#",
         },
         {
-          title: "Project Structure",
+          title: "Adicionar novo",
+          url: "#",
+        },
+        {
+          title: "Editar dados",
+          url: "#",
+        },
+        {
+          title: "Verificação de multas",
           url: "#",
         },
       ],
     },
     {
-      title: "Building Your Application",
+      title: "Automóveis",
       url: "#",
       items: [
         {
-          title: "Routing",
+          title: "Frota de carros",
           url: "#",
         },
         {
-          title: "Data Fetching",
+          title: "Adicionar novo veículo",
           url: "#",
           isActive: true,
         },
         {
-          title: "Rendering",
+          title: "Solicitações de funcionários",
           url: "#",
         },
         {
-          title: "Caching",
+          title: "Documentos de locação",
           url: "#",
         },
         {
-          title: "Styling",
-          url: "#",
-        },
-        {
-          title: "Optimizing",
-          url: "#",
-        },
-        {
-          title: "Configuring",
-          url: "#",
-        },
-        {
-          title: "Testing",
-          url: "#",
-        },
-        {
-          title: "Authentication",
-          url: "#",
-        },
-        {
-          title: "Deploying",
-          url: "#",
-        },
-        {
-          title: "Upgrading",
-          url: "#",
-        },
-        {
-          title: "Examples",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "API Reference",
-      url: "#",
-      items: [
-        {
-          title: "Components",
-          url: "#",
-        },
-        {
-          title: "File Conventions",
-          url: "#",
-        },
-        {
-          title: "Functions",
-          url: "#",
-        },
-        {
-          title: "next.config.js Options",
-          url: "#",
-        },
-        {
-          title: "CLI",
-          url: "#",
-        },
-        {
-          title: "Edge Runtime",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Architecture",
-      url: "#",
-      items: [
-        {
-          title: "Accessibility",
-          url: "#",
-        },
-        {
-          title: "Fast Refresh",
-          url: "#",
-        },
-        {
-          title: "Next.js Compiler",
-          url: "#",
-        },
-        {
-          title: "Supported Browsers",
-          url: "#",
-        },
-        {
-          title: "Turbopack",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Community",
-      url: "#",
-      items: [
-        {
-          title: "Contribution Guide",
+          title: "Gastos em combustível",
           url: "#",
         },
       ],

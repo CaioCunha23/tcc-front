@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Check, ChevronsUpDown, GalleryVerticalEnd } from "lucide-react"
+import { Check, ChevronsUpDown } from "lucide-react"
 
 import {
   DropdownMenu,
@@ -31,11 +31,11 @@ export function VersionSwitcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <img src="/Maersk.png" alt="Company Logo" className="size-4" />
+              <div className="bg-white border-2 text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                <img src="/maersk_star.png" alt="Company Logo" />
               </div>
               <div className="flex flex-col gap-0.5 leading-none">
-                <span className="font-medium">Documentation</span>
+                <span className="font-medium">Fleet Guard</span>
                 <span className="">v{selectedVersion}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
