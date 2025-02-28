@@ -1,26 +1,12 @@
-import Header from "../components/ui/header";
-import maerskLogo from "../assets/Maersk.png";
-import Footer from "@/components/ui/footer";
-
 export function HomePage() {
-    const socialLinks = [
-        { name: "LinkedIn", url: "https://www.linkedin.com" },
-        { name: "Facebook", url: "https://www.facebook.com" },
-        { name: "Instagram", url: "https://www.instagram.com" },
-        { name: "YouTube", url: "https://www.youtube.com" },
-        { name: "Twitter", url: "https://www.twitter.com" },
-    ];
-
-    const policyLinks = [
-        { name: "Cookie Policy", url: "/cookie-policy" },
-        { name: "Cookie Preferences", url: "/cookie-preferences" },
-    ];
-
     return (
-        <div>
-            <Header image={maerskLogo} />
-
-            <Footer socialLinks={socialLinks} policyLinks={policyLinks} />
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+            <div className="bg-black aspect-video rounded-xl" />
+            <div className="bg-black aspect-video rounded-xl" />
+            <div className="bg-black aspect-video rounded-xl" />
+          </div>
+          <div className="bg-black min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
         </div>
     );
 }
