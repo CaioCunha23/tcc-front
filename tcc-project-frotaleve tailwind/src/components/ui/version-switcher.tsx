@@ -32,7 +32,7 @@ export function VersionSwitcher({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="bg-white border-2 text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <img src="/maersk_star.png" alt="Company Logo" />
+                <img src="/maersk_star.png" alt="Company Logo" className="object-fit"/>
               </div>
               <div className="flex flex-col gap-0.5 leading-none">
                 <span className="font-medium">Fleet Guard</span>

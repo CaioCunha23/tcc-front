@@ -5,7 +5,7 @@ import './styles/index.css'
 import App from './App.tsx'
 import { HomePage } from './pages/HomePage.tsx';
 import { UsuariosPage } from './pages/UsuariosPage.tsx';
-import Layout from './components/Layout.tsx';
+import Layout from './components/ui/Layout.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
