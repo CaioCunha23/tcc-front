@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 
-export function UsuariosPage() {
+export function UsersPage() {
     let { usuarioId } = useParams();
 
     return (

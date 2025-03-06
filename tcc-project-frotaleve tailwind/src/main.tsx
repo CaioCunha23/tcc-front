@@ -4,7 +4,8 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import './styles/index.css'
 import App from './App.tsx'
 import { HomePage } from './pages/HomePage.tsx';
-import { UsuariosPage } from './pages/UsuariosPage.tsx';
+import { UsersPage } from './pages/UsersPage.tsx';
+import { WorkerFormPage } from './pages/WorkerFormPage.tsx';
 import Layout from './components/ui/Layout.tsx';
 
 createRoot(document.getElementById('root')!).render(
@@ -15,8 +16,9 @@ createRoot(document.getElementById('root')!).render(
 
         <Route element={<Layout />}>
           <Route path='/home' element={<HomePage />} />
-          <Route path='/usuarios' element={<UsuariosPage />} />
-          <Route path='/usuarios/:usuarioId' element={<UsuariosPage />} />
+          <Route path='/usuarios' element={<UsersPage />} />
+          <Route path='/usuarios/:usuarioId' element={<UsersPage />} />
+          <Route path='/usuarios/adicionar' element={<WorkerFormPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
