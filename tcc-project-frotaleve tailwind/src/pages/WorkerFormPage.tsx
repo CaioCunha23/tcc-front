@@ -22,20 +22,49 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
+import { Files } from "lucide-react";
+
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
 const formSchema = z.object({
     fullName: z.string().min(2, {
         message: "Fullname must be at least 2 characters.",
     }),
-    cpf: z.string().min(11, {
+    cpf: z.string().length(11, {
         message: "CPF must have 11 characters.",
     }),
     city: z.string({
         required_error: "Please select a city to display.",
     }),
-    email: z.string().min(11, {
-        message: "The e-mail should be a coorporative e-mail.",
+    email: z.string().endsWith("@maersk.com", {
+        message: "The e-mail should be a valid coorporative e-mail.",
     }),
+    area: z.string({
+        required_error: "Please select the area to display.",
+    }),
+    uid: z.string().length(6, {
+        message: "The UID should be 6 characters, being 3 letters and 3 numbers.",
+    }),
+    brand: z.string({
+        required_error: "Please select the brand to display.",
+    }),
+    cnh: z.string().length(9, {
+        message: "CNH must have 9 characters.",
+    }),
+    catCnh: z.string().min(1, {
+        message: "Categoria CNH must have at least 1 character.",
+    }),
+    attachCnh: z.any().refine((files) => files?.length > 0, {
+        message: "File is required.",
+    }).refine((files) => files?.[0]?.size <= MAX_FILE_SIZE,
+        {
+            message: "File size must be less than 2MB.",
+        }
+    ).refine((files) => ["image/jpeg", "image/png", "application/pdf"].includes(files?.[0]?.type),
+        {
+            message: "Only PNG, JPEG, or PDF files are allowed.",
+        }
+    ),
 })
 
 export function WorkerFormPage() {
@@ -45,6 +74,9 @@ export function WorkerFormPage() {
             fullName: "",
             cpf: "",
             email: "",
+            uid: "",
+            cnh: "",
+            catCnh: "",
         },
     })
 
@@ -54,73 +86,199 @@ export function WorkerFormPage() {
         console.log(values)
     }
     return (
-        <Card>
-            <CardContent>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        <FormField
-                            control={form.control}
-                            name="fullName"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input placeholder="Nome Completo" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+        <div className="flex flex-col gap-3 mx-auto mt-10">
+            <label className="font-bold text-4xl">Cadastrar Colaborador</label>
 
-                        <FormField
-                            control={form.control}
-                            name="cpf"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input placeholder="CPF" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+            <Card>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                            <div className="flex justify-evenly gap-2">
+                                <FormField
+                                    control={form.control}
+                                    name="fullName"
+                                    render={({ field }) => (
+                                        <FormItem
+                                            className="w-[60%]"
+                                        >
+                                            <FormControl>
+                                                <Input placeholder="Nome Completo" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                        <FormField
-                            control={form.control}
-                            name="city"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Selecione uma Cidade" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="Santos">Santos</SelectItem>
-                                            <SelectItem value="São Paulo">São Paulo</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                <FormField
+                                    control={form.control}
+                                    name="cpf"
+                                    render={({ field }) => (
+                                        <FormItem
+                                            className="w-[40%]"
+                                        >
+                                            <FormControl>
+                                                <Input placeholder="CPF" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
 
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input placeholder="E-mail" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <Button type="submit">Submit</Button>
-                    </form>
-                </Form>
-            </CardContent>
-        </Card>
+                            <div className="flex justify-evenly gap-2">
+                                <FormField
+                                    control={form.control}
+                                    name="city"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Selecione uma Cidade" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="Santos">Santos</SelectItem>
+                                                    <SelectItem value="São Paulo">São Paulo</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem
+                                            className="w-[70%]"
+                                        >
+                                            <FormControl>
+                                                <Input placeholder="E-mail" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <div className="flex justify-evenly gap-2">
+                                <FormField
+                                    control={form.control}
+                                    name="area"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Selecione sua área de atuação" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="Sales">Sales</SelectItem>
+                                                    <SelectItem value="Depot">Depot</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="uid"
+                                    render={({ field }) => (
+                                        <FormItem
+                                            className="w-[50%]"
+                                        >
+                                            <FormControl>
+                                                <Input placeholder="UID" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="brand"
+                                    render={({ field }) => (
+                                        <FormItem
+                                            className="w-[50%]"
+                                        >
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Selecione a Brand" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="Maersk Brasil">Maersk Brasil</SelectItem>
+                                                    <SelectItem value="Aliança">Aliança</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <div className="flex justify-evenly gap-2">
+                                <FormField
+                                    control={form.control}
+                                    name="cnh"
+                                    render={({ field }) => (
+                                        <FormItem
+                                            className="w-[33%]"
+                                        >
+                                            <FormControl>
+                                                <Input placeholder="CNH" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="catCnh"
+                                    render={({ field }) => (
+                                        <FormItem
+                                            className="w-[33%]"
+                                        >
+                                            <FormControl>
+                                                <Input placeholder="Categoria CNH" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="attachCnh"
+                                    render={({ field }) => (
+                                        <FormItem
+                                            className="w-[33%]"
+                                        >
+                                            <FormControl>
+                                                <Input type="file" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <div className="flex flex-row-reverse gap-2.5">
+                                <Button type="submit">Submit</Button>
+                                <Button className="bg-red-500" type="reset">Clear</Button>
+                            </div>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </div>
     );
 }
