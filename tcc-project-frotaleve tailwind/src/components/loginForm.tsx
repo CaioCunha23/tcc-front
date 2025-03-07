@@ -6,20 +6,28 @@ import { useNavigate } from 'react-router';
 export default function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = (evento: FormEvent<HTMLFormElement>) => {
         evento.preventDefault();
 
         if (!email) {
-            setError('*Email e senha devem ser preenchidos');
-        } else if (!password) {
-            setError('*Email e senha devem ser preenchidos');
+            setEmailError('*Email deve ser preenchido!');
+            return
         } else {
-            setError('');
-            navigate('/home');
+            setEmailError('');
         }
+
+        if (!password) {
+            setPasswordError('*Senha deve ser preenchida!');
+            return
+        } else {
+            setPasswordError('');
+        }
+
+        navigate('/home');
     };
 
     return (
@@ -37,7 +45,7 @@ export default function LoginForm() {
                             className='bg-transparent border-transparent text-black'
                         />
                     </div>
-                    {error && !email && <p className='text-red-500 text-xs'>{error}</p>}
+                    {emailError && <p className='text-red-500 text-xs'>{emailError}</p>}
 
                     <div className='flex gap-2 items-center'>
                         <CiLock />
@@ -49,7 +57,7 @@ export default function LoginForm() {
                             className='bg-transparent border-transparent text-black'
                         />
                     </div>
-                    {error && !password && <p className='text-red-500 text-xs'>{error}</p>}
+                    {passwordError && <p className='text-red-500 text-xs'>{passwordError}</p>}
 
                     <button className='w-[5em] h-[3em] rounded-md text-white bg-[#00031f] cursor-pointer transition-all duration-300 ease-in-out hover:bg-[#1a1d50] hover:shadow-lg hover:scale-105'
                         type='submit'>Log in</button>
