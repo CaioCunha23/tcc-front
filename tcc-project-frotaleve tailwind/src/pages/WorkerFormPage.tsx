@@ -84,6 +84,9 @@ export function WorkerFormPage() {
         // ✅ This will be type-safe and validated.
         console.log(values)
     }
+
+    const { reset } = form;
+
     return (
         <div className="flex flex-col gap-3 mx-auto mt-10">
             <label className="font-bold text-4xl">Cadastrar Colaborador</label>
@@ -92,14 +95,12 @@ export function WorkerFormPage() {
                 <CardContent>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                            <div className="flex justify-evenly gap-2">
+                            <div className="flex flex-wrap justify-between gap-2">
                                 <FormField
                                     control={form.control}
                                     name="fullName"
                                     render={({ field }) => (
-                                        <FormItem
-                                            className="w-[60%]"
-                                        >
+                                        <FormItem className="w-[60%]">
                                             <FormControl>
                                                 <Input className="border-primary" placeholder="Nome Completo" {...field} />
                                             </FormControl>
@@ -112,9 +113,7 @@ export function WorkerFormPage() {
                                     control={form.control}
                                     name="cpf"
                                     render={({ field }) => (
-                                        <FormItem
-                                            className="w-[40%]"
-                                        >
+                                        <FormItem className="w-[38%]">
                                             <FormControl>
                                                 <Input className="border-primary" placeholder="CPF" {...field} />
                                             </FormControl>
@@ -124,17 +123,15 @@ export function WorkerFormPage() {
                                 />
                             </div>
 
-                            <div className="flex justify-evenly">
+                            <div className="flex flex-wrap justify-between gap-2">
                                 <FormField
                                     control={form.control}
                                     name="city"
                                     render={({ field }) => (
-                                        <FormItem
-                                            className="w-[30%]"
-                                        >
+                                        <FormItem className="w-[30%]">
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger className="border-primary">
+                                                    <SelectTrigger className="border-primary w-full">
                                                         <SelectValue placeholder="Selecione uma Cidade" />
                                                     </SelectTrigger>
                                                 </FormControl>
@@ -152,9 +149,7 @@ export function WorkerFormPage() {
                                     control={form.control}
                                     name="email"
                                     render={({ field }) => (
-                                        <FormItem
-                                            className="w-[70%]"
-                                        >
+                                        <FormItem className="w-[68%]">
                                             <FormControl>
                                                 <Input className="border-primary" placeholder="E-mail" {...field} />
                                             </FormControl>
@@ -164,18 +159,16 @@ export function WorkerFormPage() {
                                 />
                             </div>
 
-                            <div className="flex justify-evenly gap-2">
+                            <div className="flex flex-wrap justify-between gap-2">
                                 <FormField
                                     control={form.control}
                                     name="area"
                                     render={({ field }) => (
-                                        <FormItem
-                                            className="w-[36%]"
-                                        >
+                                        <FormItem className="w-[32%]">
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger className="border-primary">
-                                                        <SelectValue placeholder="Selecione sua área de atuação" />
+                                                    <SelectTrigger className="border-primary w-full">
+                                                        <SelectValue placeholder="Selecionar área de atuação" />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
@@ -192,9 +185,7 @@ export function WorkerFormPage() {
                                     control={form.control}
                                     name="uid"
                                     render={({ field }) => (
-                                        <FormItem
-                                            className="w-[33%]"
-                                        >
+                                        <FormItem className="w-[32%]">
                                             <FormControl>
                                                 <Input className="border-primary" placeholder="UID" {...field} />
                                             </FormControl>
@@ -207,12 +198,10 @@ export function WorkerFormPage() {
                                     control={form.control}
                                     name="brand"
                                     render={({ field }) => (
-                                        <FormItem
-                                            className="w-[33%]"
-                                        >
+                                        <FormItem className="w-[32%]">
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger className="w-full border-primary">
+                                                    <SelectTrigger className="border-primary w-full">
                                                         <SelectValue placeholder="Selecione a Brand" />
                                                     </SelectTrigger>
                                                 </FormControl>
@@ -227,14 +216,12 @@ export function WorkerFormPage() {
                                 />
                             </div>
 
-                            <div className="flex justify-evenly gap-2">
+                            <div className="flex flex-wrap justify-between gap-2">
                                 <FormField
                                     control={form.control}
                                     name="cnh"
                                     render={({ field }) => (
-                                        <FormItem
-                                            className="w-[33%]"
-                                        >
+                                        <FormItem className="w-[32%]">
                                             <FormControl>
                                                 <Input className="border-primary" placeholder="CNH" {...field} />
                                             </FormControl>
@@ -247,9 +234,7 @@ export function WorkerFormPage() {
                                     control={form.control}
                                     name="catCnh"
                                     render={({ field }) => (
-                                        <FormItem
-                                            className="w-[33%]"
-                                        >
+                                        <FormItem className="w-[32%]">
                                             <FormControl>
                                                 <Input className="border-primary" placeholder="Categoria CNH" {...field} />
                                             </FormControl>
@@ -262,9 +247,7 @@ export function WorkerFormPage() {
                                     control={form.control}
                                     name="attachCnh"
                                     render={({ field }) => (
-                                        <FormItem
-                                            className="w-[33%]"
-                                        >
+                                        <FormItem className="w-[32%]">
                                             <FormControl>
                                                 <Input className="border-primary" type="file" {...field} />
                                             </FormControl>
@@ -275,8 +258,19 @@ export function WorkerFormPage() {
                             </div>
 
                             <div className="flex flex-row-reverse gap-2.5">
-                                <Button type="submit">Submit</Button>
-                                <Button className="bg-red-500" type="reset">Clear</Button>
+                                <Button
+                                    type="submit"
+                                >
+                                    Submit
+                                </Button>
+
+                                <Button
+                                    type="button"
+                                    variant={"destructive"}
+                                    onClick={() => reset()}
+                                >
+                                    Clear
+                                </Button>
                             </div>
                         </form>
                     </Form>
