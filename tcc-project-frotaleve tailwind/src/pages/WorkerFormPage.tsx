@@ -22,7 +22,6 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { Files } from "lucide-react";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
@@ -89,7 +88,7 @@ export function WorkerFormPage() {
         <div className="flex flex-col gap-3 mx-auto mt-10">
             <label className="font-bold text-4xl">Cadastrar Colaborador</label>
 
-            <Card>
+            <Card className="border-primary">
                 <CardContent>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -102,7 +101,7 @@ export function WorkerFormPage() {
                                             className="w-[60%]"
                                         >
                                             <FormControl>
-                                                <Input placeholder="Nome Completo" {...field} />
+                                                <Input className="border-primary" placeholder="Nome Completo" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -117,7 +116,7 @@ export function WorkerFormPage() {
                                             className="w-[40%]"
                                         >
                                             <FormControl>
-                                                <Input placeholder="CPF" {...field} />
+                                                <Input className="border-primary" placeholder="CPF" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -125,15 +124,17 @@ export function WorkerFormPage() {
                                 />
                             </div>
 
-                            <div className="flex justify-evenly gap-2">
+                            <div className="flex justify-evenly">
                                 <FormField
                                     control={form.control}
                                     name="city"
                                     render={({ field }) => (
-                                        <FormItem>
+                                        <FormItem
+                                            className="w-[30%]"
+                                        >
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger>
+                                                    <SelectTrigger className="border-primary">
                                                         <SelectValue placeholder="Selecione uma Cidade" />
                                                     </SelectTrigger>
                                                 </FormControl>
@@ -155,7 +156,7 @@ export function WorkerFormPage() {
                                             className="w-[70%]"
                                         >
                                             <FormControl>
-                                                <Input placeholder="E-mail" {...field} />
+                                                <Input className="border-primary" placeholder="E-mail" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -168,10 +169,12 @@ export function WorkerFormPage() {
                                     control={form.control}
                                     name="area"
                                     render={({ field }) => (
-                                        <FormItem>
+                                        <FormItem
+                                            className="w-[36%]"
+                                        >
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger>
+                                                    <SelectTrigger className="border-primary">
                                                         <SelectValue placeholder="Selecione sua área de atuação" />
                                                     </SelectTrigger>
                                                 </FormControl>
@@ -190,10 +193,10 @@ export function WorkerFormPage() {
                                     name="uid"
                                     render={({ field }) => (
                                         <FormItem
-                                            className="w-[50%]"
+                                            className="w-[33%]"
                                         >
                                             <FormControl>
-                                                <Input placeholder="UID" {...field} />
+                                                <Input className="border-primary" placeholder="UID" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -205,11 +208,11 @@ export function WorkerFormPage() {
                                     name="brand"
                                     render={({ field }) => (
                                         <FormItem
-                                            className="w-[50%]"
+                                            className="w-[33%]"
                                         >
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger className="w-full">
+                                                    <SelectTrigger className="w-full border-primary">
                                                         <SelectValue placeholder="Selecione a Brand" />
                                                     </SelectTrigger>
                                                 </FormControl>
@@ -233,7 +236,7 @@ export function WorkerFormPage() {
                                             className="w-[33%]"
                                         >
                                             <FormControl>
-                                                <Input placeholder="CNH" {...field} />
+                                                <Input className="border-primary" placeholder="CNH" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -248,7 +251,7 @@ export function WorkerFormPage() {
                                             className="w-[33%]"
                                         >
                                             <FormControl>
-                                                <Input placeholder="Categoria CNH" {...field} />
+                                                <Input className="border-primary" placeholder="Categoria CNH" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -263,7 +266,7 @@ export function WorkerFormPage() {
                                             className="w-[33%]"
                                         >
                                             <FormControl>
-                                                <Input type="file" {...field} />
+                                                <Input className="border-primary" type="file" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
