@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sidebar"
 import { NavUser } from "./ui/nav-user"
 import { NavSecondary } from "./ui/nav-secondary"
+import { Link } from "react-router"
 
 const data = {
   user: {
@@ -33,7 +34,7 @@ const data = {
       items: [
         {
           title: "Time de funcionários",
-          url: "#",
+          url: "/usuarios",
         },
         {
           title: "Adicionar novo",
@@ -98,7 +99,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/home">
+              <Link to="/home">
                 <div className="flex size-8 items-center rounded-lg bg-white text-sidebar-primary-foreground">
                   <img src="/maersk_star.png" alt="Company Logo" />
                 </div>
@@ -106,7 +107,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <span className="truncate font-semibold">Fleet Guard</span>
                   <span className="truncate text-xs">Maersk Brasil</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -135,7 +136,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild isActive={item.isActive}>
-                          <a href={item.url}>{item.title}</a>
+                          <Link to={item.url}>{item.title}</Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}

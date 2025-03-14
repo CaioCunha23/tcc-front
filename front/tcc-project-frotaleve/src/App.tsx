@@ -1,6 +1,6 @@
 import LoginForm from './components/loginForm';
-import Header from './components/header';
-import Footer from './components/footer';
+import Header from './components/ui/header';
+import Footer from './components/ui/footer';
 import maerskLogo from './assets/Maersk.png';
 import './styles/App.css'
 

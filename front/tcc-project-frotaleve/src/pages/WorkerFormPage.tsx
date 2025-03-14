@@ -88,10 +88,10 @@ export function WorkerFormPage() {
     const { reset } = form;
 
     return (
-        <div className="flex flex-col gap-3 mx-auto mt-10">
+        <div className="flex flex-col gap-3 mx-auto mt-5">
             <label className="font-bold text-4xl">Cadastrar Colaborador</label>
 
-            <Card className="border-primary">
+            <Card className="border-primary max-h-[30rem]">
                 <CardContent>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -216,7 +216,7 @@ export function WorkerFormPage() {
                                 />
                             </div>
 
-                            <div className="flex flex-wrap justify-between gap-2">
+                            <div className="flex flex-wrap justify-between gap-1">
                                 <FormField
                                     control={form.control}
                                     name="cnh"
