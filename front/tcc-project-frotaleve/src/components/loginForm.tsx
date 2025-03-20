@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useRef } from 'react';
 import { CiLock } from "react-icons/ci";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { useNavigate } from 'react-router';
@@ -8,6 +8,8 @@ export default function LoginForm() {
     const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const inputLgnRef = useRef<HTMLInputElement | null>(null);
+    const inputPswdRef = useRef<HTMLInputElement | null>(null);
     const navigate = useNavigate();
 
     const handleSubmit = (evento: FormEvent<HTMLFormElement>) => {
@@ -15,6 +17,7 @@ export default function LoginForm() {
 
         if (!email) {
             setEmailError('*Email deve ser preenchido!');
+            inputLgnRef.current?.focus();
             return
         } else {
             setEmailError('');
@@ -22,6 +25,7 @@ export default function LoginForm() {
 
         if (!password) {
             setPasswordError('*Senha deve ser preenchida!');
+            inputPswdRef.current?.focus();
             return
         } else {
             setPasswordError('');
@@ -38,6 +42,7 @@ export default function LoginForm() {
                     <div className='flex gap-2 items-center'>
                         <FaRegCircleUser />
                         <input
+                            ref={inputLgnRef}
                             type='text'
                             placeholder='E-mail'
                             onChange={(e) => setEmail(e.target.value)}
@@ -50,6 +55,7 @@ export default function LoginForm() {
                     <div className='flex gap-2 items-center'>
                         <CiLock />
                         <input
+                            ref={inputPswdRef}
                             type='password'
                             placeholder='Password'
                             onChange={(e) => setPassword(e.target.value)}

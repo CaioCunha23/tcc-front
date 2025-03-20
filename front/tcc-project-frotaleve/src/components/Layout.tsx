@@ -1,7 +1,6 @@
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Outlet } from "react-router"
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "./ui/breadcrumb";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { ModeToggle } from "./ui/mode-toggle";
 import { Separator } from "./ui/separator";

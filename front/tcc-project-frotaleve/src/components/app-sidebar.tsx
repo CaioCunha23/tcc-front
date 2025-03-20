@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sidebar"
 import { NavUser } from "./ui/nav-user"
 import { NavSecondary } from "./ui/nav-secondary"
-import { Link } from "react-router"
+import { Link, useLocation } from "react-router"
 
 const data = {
   user: {
@@ -93,6 +93,8 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const location = useLocation();
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -133,13 +135,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <CollapsibleContent>
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {item.items.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild isActive={item.isActive}>
-                          <Link to={item.url}>{item.title}</Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
+                    {item.items.map((subItem) => {
+                      const isActive = location.pathname === subItem.url; // Verifica se o item está ativo
+                      return (
+                        <SidebarMenuItem key={subItem.title}>
+                          <SidebarMenuButton
+                            asChild
+                            isActive={isActive}
+                            className={isActive ? "text-bold text-blue-500" : ""}
+                          >
+                            <Link to={subItem.url}>{subItem.title}</Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
                   </SidebarMenu>
                 </SidebarGroupContent>
               </CollapsibleContent>
