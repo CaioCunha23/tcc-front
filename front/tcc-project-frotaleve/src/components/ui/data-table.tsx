@@ -37,11 +37,6 @@ import {
 // Colunas definidas manualmente com base no modelo "Colaborador"
 export const columns: ColumnDef<any>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
-    cell: ({ row }) => <div>{row.getValue("id")}</div>,
-  },
-  {
     accessorKey: "nome",
     header: "Nome",
     cell: ({ row }) => <div>{row.getValue("nome")}</div>,
@@ -91,7 +86,7 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "cidadeEstacionamento",
     header: "Cidade Estacionamento",
-    cell: ({ row }) => <div>{row.getValue("cidadeEstacionamento")}</div>,
+    cell: ({ row }) => <div>{row.getValue("cidadeEstacionamento") || "N/A"}</div>,
   },
   {
     accessorKey: "cnh",
@@ -122,6 +117,7 @@ export function DataTable() {
         const response = await fetch("http://localhost:3000/colaboradores") // Rota da sua API
         if (!response.ok) throw new Error("Erro ao buscar dados")
         const data = await response.json()
+        console.log("Dados recebidos:", data);
         setData(data) // Define os dados no estado
       } catch (error) {
         console.error("Erro ao buscar dados:", error)
