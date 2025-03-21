@@ -34,138 +34,79 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-const data: Payment[] = [
+// Colunas definidas manualmente com base no modelo "Colaborador"
+export const columns: ColumnDef<any>[] = [
   {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@example.com",
+    accessorKey: "id",
+    header: "ID",
+    cell: ({ row }) => <div>{row.getValue("id")}</div>,
   },
   {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@example.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@example.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@example.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@example.com",
-  },
-]
-
-export type Payment = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
-}
-
-export const columns: ColumnDef<Payment>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
+    accessorKey: "nome",
+    header: "Nome",
+    cell: ({ row }) => <div>{row.getValue("nome")}</div>,
   },
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
+    cell: ({ row }) => <div>{row.getValue("status")}</div>,
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    header: "Email",
+    cell: ({ row }) => <div>{row.getValue("email")}</div>,
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
-    },
+    accessorKey: "uidMSK",
+    header: "UID MSK",
+    cell: ({ row }) => <div>{row.getValue("uidMSK")}</div>,
   },
   {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
+    accessorKey: "localidade",
+    header: "Localidade",
+    cell: ({ row }) => <div>{row.getValue("localidade")}</div>,
+  },
+  {
+    accessorKey: "brand",
+    header: "Marca",
+    cell: ({ row }) => <div>{row.getValue("brand")}</div>,
+  },
+  {
+    accessorKey: "jobTitle",
+    header: "Cargo",
+    cell: ({ row }) => <div>{row.getValue("jobTitle")}</div>,
+  },
+  {
+    accessorKey: "cpf",
+    header: "CPF",
+    cell: ({ row }) => <div>{row.getValue("cpf")}</div>,
+  },
+  {
+    accessorKey: "usaEstacionamento",
+    header: "Estacionamento",
+    cell: ({ row }) => (
+      <div>{row.getValue("usaEstacionamento") ? "Sim" : "Não"}</div>
+    ),
+  },
+  {
+    accessorKey: "cidadeEstacionamento",
+    header: "Cidade Estacionamento",
+    cell: ({ row }) => <div>{row.getValue("cidadeEstacionamento")}</div>,
+  },
+  {
+    accessorKey: "cnh",
+    header: "CNH",
+    cell: ({ row }) => <div>{row.getValue("cnh")}</div>,
+  },
+  {
+    accessorKey: "tipoCNH",
+    header: "Tipo CNH",
+    cell: ({ row }) => <div>{row.getValue("tipoCNH")}</div>,
   },
 ]
 
 export function DataTable() {
+  const [data, setData] = React.useState<any[]>([]) // Estado para armazenar os dados
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -174,9 +115,25 @@ export function DataTable() {
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
+  // Buscar os dados da API ao carregar o componente
+  React.useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("http://localhost:3000/colaboradores") // Rota da sua API
+        if (!response.ok) throw new Error("Erro ao buscar dados")
+        const data = await response.json()
+        setData(data) // Define os dados no estado
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   const table = useReactTable({
     data,
-    columns,
+    columns, // Colunas definidas manualmente
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
