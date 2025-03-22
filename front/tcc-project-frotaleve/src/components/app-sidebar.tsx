@@ -29,7 +29,7 @@ const data = {
   },
   navMain: [
     {
-      title: "Funcionários",
+      title: "Colaboradores",
       url: "#",
       items: [
         {

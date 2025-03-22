@@ -11,7 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown, } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -19,9 +19,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -34,74 +31,213 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-// Colunas definidas manualmente com base no modelo "Colaborador"
 export const columns: ColumnDef<any>[] = [
   {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "nome",
-    header: "Nome",
-    cell: ({ row }) => <div>{row.getValue("nome")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Nome
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="flex justify-center">{row.getValue("nome")}</div>,
   },
   {
     accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <div>{row.getValue("status")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="flex justify-center">{row.getValue("status")}</div>,
   },
   {
     accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => <div>{row.getValue("email")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Email
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="flex justify-center lowercase">{row.getValue("email")}</div>,
   },
   {
     accessorKey: "uidMSK",
-    header: "UID MSK",
-    cell: ({ row }) => <div>{row.getValue("uidMSK")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          UID MSK
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="flex justify-center">{row.getValue("uidMSK")}</div>,
   },
   {
     accessorKey: "localidade",
-    header: "Localidade",
-    cell: ({ row }) => <div>{row.getValue("localidade")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Localidade
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="flex justify-center">{row.getValue("localidade")}</div>,
   },
   {
     accessorKey: "brand",
-    header: "Marca",
-    cell: ({ row }) => <div>{row.getValue("brand")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Brand
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="flex justify-center">{row.getValue("brand")}</div>,
   },
   {
     accessorKey: "jobTitle",
-    header: "Cargo",
-    cell: ({ row }) => <div>{row.getValue("jobTitle")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Job Title
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="flex justify-center">{row.getValue("jobTitle")}</div>,
   },
   {
     accessorKey: "cpf",
-    header: "CPF",
-    cell: ({ row }) => <div>{row.getValue("cpf")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          CPF
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="flex justify-center">{row.getValue("cpf")}</div>,
   },
   {
     accessorKey: "usaEstacionamento",
-    header: "Estacionamento",
-    cell: ({ row }) => (
-      <div>{row.getValue("usaEstacionamento") ? "Sim" : "Não"}</div>
-    ),
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Estacionamento
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="flex justify-center">{row.getValue("usaEstacionamento") ? "Sim" : "Não"}</div>,
   },
   {
     accessorKey: "cidadeEstacionamento",
-    header: "Cidade Estacionamento",
-    cell: ({ row }) => <div>{row.getValue("cidadeEstacionamento") || "N/A"}</div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Cidade Estacionamento
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="flex justify-center">{row.getValue("cidadeEstacionamento") || "N/A"}</div>,
   },
   {
     accessorKey: "cnh",
-    header: "CNH",
-    cell: ({ row }) => <div>{row.getValue("cnh")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          CNH
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="flex justify-center">{row.getValue("cnh")}</div>,
   },
   {
     accessorKey: "tipoCNH",
-    header: "Tipo CNH",
-    cell: ({ row }) => <div>{row.getValue("tipoCNH")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Tipo CNH
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="flex justify-center">{row.getValue("tipoCNH")}</div>,
   },
 ]
 
 export function DataTable() {
-  const [data, setData] = React.useState<any[]>([]) // Estado para armazenar os dados
+  const [data, setData] = React.useState<any[]>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -110,15 +246,14 @@ export function DataTable() {
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
-  // Buscar os dados da API ao carregar o componente
   React.useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://localhost:3000/colaboradores") // Rota da sua API
+        const response = await fetch("http://localhost:3000/colaboradores")
         if (!response.ok) throw new Error("Erro ao buscar dados")
         const data = await response.json()
         console.log("Dados recebidos:", data);
-        setData(data) // Define os dados no estado
+        setData(data)
       } catch (error) {
         console.error("Erro ao buscar dados:", error)
       }
@@ -129,7 +264,7 @@ export function DataTable() {
 
   const table = useReactTable({
     data,
-    columns, // Colunas definidas manualmente
+    columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -148,9 +283,9 @@ export function DataTable() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-5">
         <Input
-          placeholder="Filter emails..."
+          placeholder="Pesquisar..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
@@ -184,8 +319,8 @@ export function DataTable() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border">
-        <Table>
+      <div className="rounded-md border overflow-x-auto">
+        <Table className="table-auto min-w-[600px]">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

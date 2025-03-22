@@ -6,24 +6,18 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
-    FormLabel,
     FormMessage,
 } from "@/components/ui/form"
 import {
     Select,
     SelectContent,
-    SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-
-const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
 const formSchema = z.object({
     fullName: z.string().min(2, {
@@ -53,17 +47,6 @@ const formSchema = z.object({
     catCnh: z.string().min(1, {
         message: "Categoria CNH must have at least 1 character.",
     }),
-    attachCnh: z.any().refine((files) => files?.length > 0, {
-        message: "File is required.",
-    }).refine((files) => files?.[0]?.size <= MAX_FILE_SIZE,
-        {
-            message: "File size must be less than 2MB.",
-        }
-    ).refine((files) => ["image/jpeg", "image/png", "application/pdf"].includes(files?.[0]?.type),
-        {
-            message: "Only PNG, JPEG, or PDF files are allowed.",
-        }
-    ),
 })
 
 export function WorkerFormPage() {
@@ -88,7 +71,7 @@ export function WorkerFormPage() {
     const { reset } = form;
 
     return (
-        <div className="flex flex-col gap-3 mx-auto mt-5">
+        <div className="flex flex-col gap-3 mx-auto">
             <label className="font-bold text-4xl">Cadastrar Colaborador</label>
 
             <Card className="border-primary max-h-[30rem]">
@@ -149,7 +132,7 @@ export function WorkerFormPage() {
                                     control={form.control}
                                     name="email"
                                     render={({ field }) => (
-                                        <FormItem className="w-[68%]">
+                                        <FormItem className="w-[65%]">
                                             <FormControl>
                                                 <Input className="border-primary" placeholder="E-mail" {...field} />
                                             </FormControl>
@@ -164,7 +147,7 @@ export function WorkerFormPage() {
                                     control={form.control}
                                     name="area"
                                     render={({ field }) => (
-                                        <FormItem className="w-[32%]">
+                                        <FormItem className="w-[68%]">
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
                                                     <SelectTrigger className="border-primary w-full">
@@ -183,22 +166,9 @@ export function WorkerFormPage() {
 
                                 <FormField
                                     control={form.control}
-                                    name="uid"
-                                    render={({ field }) => (
-                                        <FormItem className="w-[32%]">
-                                            <FormControl>
-                                                <Input className="border-primary" placeholder="UID" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
                                     name="brand"
                                     render={({ field }) => (
-                                        <FormItem className="w-[32%]">
+                                        <FormItem className="w-[30%]">
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
                                                     <SelectTrigger className="border-primary w-full">
@@ -219,6 +189,19 @@ export function WorkerFormPage() {
                             <div className="flex flex-wrap justify-between gap-1">
                                 <FormField
                                     control={form.control}
+                                    name="uid"
+                                    render={({ field }) => (
+                                        <FormItem className="w-[32%]">
+                                            <FormControl>
+                                                <Input className="border-primary" placeholder="UID" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
                                     name="cnh"
                                     render={({ field }) => (
                                         <FormItem className="w-[32%]">
@@ -237,19 +220,6 @@ export function WorkerFormPage() {
                                         <FormItem className="w-[32%]">
                                             <FormControl>
                                                 <Input className="border-primary" placeholder="Categoria CNH" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="attachCnh"
-                                    render={({ field }) => (
-                                        <FormItem className="w-[32%]">
-                                            <FormControl>
-                                                <Input className="border-primary" type="file" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
