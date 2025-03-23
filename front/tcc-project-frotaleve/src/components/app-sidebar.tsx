@@ -33,12 +33,12 @@ const data = {
       url: "#",
       items: [
         {
-          title: "Time de funcionários",
-          url: "/usuarios",
+          title: "Time de colaboradores",
+          url: "/colaboradores",
         },
         {
           title: "Adicionar novo",
-          url: "/usuarios/adicionar",
+          url: "/colaboradores/adicionar",
         },
         {
           title: "Editar dados",
@@ -56,15 +56,15 @@ const data = {
       items: [
         {
           title: "Frota de carros",
-          url: "#",
+          url: "/veiculos",
         },
         {
           title: "Adicionar novo veículo",
-          url: "#",
+          url: "/veiculos/adicionar",
           isActive: true,
         },
         {
-          title: "Solicitações de funcionários",
+          title: "Solicitações de colaboradores",
           url: "#",
         },
         {

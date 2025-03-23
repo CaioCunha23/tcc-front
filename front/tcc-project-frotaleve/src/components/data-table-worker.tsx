@@ -1,4 +1,3 @@
-import * as React from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -11,14 +10,16 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, } from "lucide-react"
-
+import { ArrowUpDown, ChevronDown, MoreHorizontal, } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -30,6 +31,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useNavigate } from "react-router"
+import { useState, useEffect } from "react"
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -234,19 +237,53 @@ export const columns: ColumnDef<any>[] = [
     },
     cell: ({ row }) => <div className="flex justify-center">{row.getValue("tipoCNH")}</div>,
   },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const worker = row.original
+
+      const navigate = useNavigate();
+      const handleEditClick = () => {
+        navigate(`/colaboradores/${worker.id}`);
+      };
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Abrir Menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Ações</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(worker.uidMSK)}
+            >
+              Copiar UID MSK
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleEditClick}>Editar Colaborador</DropdownMenuItem>
+            <DropdownMenuItem>Desativar Colaborador</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    },
+  },
 ]
 
-export function DataTable() {
-  const [data, setData] = React.useState<any[]>([])
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+export function DataTableWorker() {
+  const [data, setData] = useState<any[]>([])
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+    useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function fetchData() {
       try {
         const response = await fetch("http://localhost:3000/colaboradores")
@@ -283,7 +320,7 @@ export function DataTable() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-5">
+      <div className="flex items-center py-4">
         <Input
           placeholder="Pesquisar..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
@@ -320,7 +357,7 @@ export function DataTable() {
         </DropdownMenu>
       </div>
       <div className="rounded-md border overflow-x-auto">
-        <Table className="table-auto min-w-[600px]">
+        <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

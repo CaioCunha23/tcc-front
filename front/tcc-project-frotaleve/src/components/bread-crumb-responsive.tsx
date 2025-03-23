@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router" // Importando useLocation de react-router-dom
+import { Link, useLocation } from "react-router"
 
 import {
     Breadcrumb,
@@ -10,8 +10,11 @@ import {
 
 const items = [
     { href: "/home", label: "Home" },
-    { href: "/usuarios", label: "Colaboradores" },
-    { href: "/usuarios/adicionar", label: "Adicionar Colaborador" },
+    { href: "/colaboradores", label: "Colaboradores" },
+    { href: "/colaboradores/adicionar", label: "Adicionar Colaborador" },
+    { href: `/colaboradores/:id`, label: "Editar Colaborador" },
+    { href: "/veiculos", label: "Automóveis" },
+    { href: "/veiculos/adicionar", label: "Adicionar Automóvel" },
 ]
 
 export function BreadcrumbResponsive() {
