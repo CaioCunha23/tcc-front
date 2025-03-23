@@ -242,10 +242,9 @@ export const columns: ColumnDef<any>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const worker = row.original
-
       const navigate = useNavigate();
       const handleEditClick = () => {
-        navigate(`/colaboradores/${worker.id}`);
+        navigate(`/colaborador/${worker.id}`);
       };
 
       return (

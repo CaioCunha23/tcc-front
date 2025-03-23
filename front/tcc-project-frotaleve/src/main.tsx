@@ -8,8 +8,9 @@ import { UsersPage } from './pages/UsersPage.tsx';
 import { WorkerFormPage } from './pages/WorkerFormPage.tsx';
 import Layout from './components/Layout.tsx';
 import { VehiclesPage } from './pages/VehiclesPage.tsx';
-import { VehicleFormPage } from './pages/VehiclesFormPage.tsx';
+import { VehicleFormPage } from './pages/VehicleFormPage.tsx';
 import EditWorkerPage from './pages/EditWorkerPage.tsx';
+import EditVehiclePage from './pages/EditVehiclePage.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -31,12 +32,12 @@ createRoot(document.getElementById('root')!).render(
           />
 
           <Route
-            path='/colaboradores/adicionar'
+            path='/colaborador/adicionar'
             element={<WorkerFormPage />}
           />
 
           <Route
-            path="/colaboradores/:id"
+            path="/colaborador/:id"
             element={<EditWorkerPage />}
           />
 
@@ -46,8 +47,13 @@ createRoot(document.getElementById('root')!).render(
           />
 
           <Route
-            path='/veiculos/adicionar'
+            path='/veiculo/adicionar'
             element={<VehicleFormPage />}
+          />
+
+          <Route
+            path="/veiculo/:id"
+            element={<EditVehiclePage />}
           />
         </Route>
       </Routes>

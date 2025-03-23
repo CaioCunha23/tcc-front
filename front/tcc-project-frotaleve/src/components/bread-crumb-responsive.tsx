@@ -11,10 +11,11 @@ import {
 const items = [
     { href: "/home", label: "Home" },
     { href: "/colaboradores", label: "Colaboradores" },
-    { href: "/colaboradores/adicionar", label: "Adicionar Colaborador" },
-    { href: `/colaboradores/:id`, label: "Editar Colaborador" },
+    { href: "/colaborador/adicionar", label: "Adicionar Colaborador" },
+    { href: `/colaborador/:id`, label: "Editar Colaborador" },
     { href: "/veiculos", label: "Automóveis" },
-    { href: "/veiculos/adicionar", label: "Adicionar Automóvel" },
+    { href: "/veiculo/adicionar", label: "Adicionar Automóvel" },
+    { href: `/veiculo/:id`, label: "Editar Colaborador" },
 ]
 
 export function BreadcrumbResponsive() {

@@ -38,7 +38,7 @@ const data = {
         },
         {
           title: "Adicionar novo",
-          url: "/colaboradores/adicionar",
+          url: "/colaborador/adicionar",
         },
         {
           title: "Editar dados",
@@ -60,7 +60,7 @@ const data = {
         },
         {
           title: "Adicionar novo veículo",
-          url: "/veiculos/adicionar",
+          url: "/veiculo/adicionar",
           isActive: true,
         },
         {

@@ -3,101 +3,95 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
 
-const vehicleSchema = z.object({
-    fornecedor: z.string().min(1, {
-        message: "Fornecedor é obrigatório."
-    }),
-    contrato: z.string().min(1, {
-        message: "Contrato é obrigatório."
-    }),
-    placa: z.string().min(1, {
-        message: "Placa é obrigatória."
+export default function EditVehiclePage() {
+    const { id } = useParams();
+    const [vehicle, setVehicle] = useState(null);
+    const navigate = useNavigate();
 
-    }),
-    renavan: z.string().min(1, {
-        message: "Renavan é obrigatório."
-    }),
-    chassi: z.string().min(1, {
-        message: "Chassi é obrigatório."
+    const formSchema = z.object({
+        fornecedor: z.string().min(1, {
+            message: "Fornecedor é obrigatório."
+        }),
+        contrato: z.string().min(1, {
+            message: "Contrato é obrigatório."
+        }),
+        placa: z.string().min(1, {
+            message: "Placa é obrigatória."
 
-    }),
-    modelo: z.string().min(1, {
-        message: "Modelo é obrigatório."
-    }),
-    cor: z.string().min(1, {
-        message: "Cor é obrigatória."
-    }),
-    status: z.string().min(1, {
-        message: "Status é obrigatório."
-    }),
-    cliente: z.string().min(1, {
-        message: "Cliente é obrigatório."
-    }),
-    uidMSK: z.string().length(6, {
-        message: "UID MSK deve ter 9 caracteres."
-    }),
-    perfil: z.string().min(1, {
-        message: "Perfil é obrigatório."
-    }),
-    jobLevel: z.string().min(1, {
-        message: "Job Level é obrigatório."
-    }),
-    descricaoCargo: z.string().min(1, {
-        message: "Descrição do cargo é obrigatória."
-    }),
-    centroCusto: z.string().min(1, {
-        message: "Centro de custo é obrigatório."
-    }),
-    franquiaKM: z.string({
-        invalid_type_error: "Franquia KM deve ser um número."
-    }),
-    carroReserva: z.boolean(),
-    dataDisponibilizacao: z.string().min(1, {
-        message: "Data de disponibilização é obrigatória."
-    }),
-    mesesContratados: z.string({
-        invalid_type_error: "Meses contratados deve ser um número."
-    }),
-    previsaoDevolucao: z.string().min(1, {
-        message: "Previsão de devolução é obrigatória."
-    }),
-    mesesFaltantes: z.string({
-        invalid_type_error: "Meses faltantes deve ser um número."
-    }),
-    mensalidade: z.string({
-        invalid_type_error: "Mensalidade deve ser um número."
-    }),
-    budget: z.string({
-        invalid_type_error: "Budget deve ser um número."
-    }),
-    multa: z.string({
-        invalid_type_error: "Multa deve ser um número."
-    }),
-    proximaRevisao: z.string().min(1, {
-        message: "Próxima revisão é obrigatória."
-    }),
-});
+        }),
+        renavan: z.string().min(1, {
+            message: "Renavan é obrigatório."
+        }),
+        chassi: z.string().min(1, {
+            message: "Chassi é obrigatório."
 
-export function VehicleFormPage() {
-    const form = useForm<z.infer<typeof vehicleSchema>>({
-        resolver: zodResolver(vehicleSchema),
+        }),
+        modelo: z.string().min(1, {
+            message: "Modelo é obrigatório."
+        }),
+        cor: z.string().min(1, {
+            message: "Cor é obrigatória."
+        }),
+        status: z.string().min(1, {
+            message: "Status é obrigatório."
+        }),
+        cliente: z.string().min(1, {
+            message: "Cliente é obrigatório."
+        }),
+        uidMSK: z.string().length(6, {
+            message: "UID MSK deve ter 9 caracteres."
+        }),
+        perfil: z.string().min(1, {
+            message: "Perfil é obrigatório."
+        }),
+        jobLevel: z.string().min(1, {
+            message: "Job Level é obrigatório."
+        }),
+        descricaoCargo: z.string().min(1, {
+            message: "Descrição do cargo é obrigatória."
+        }),
+        centroCusto: z.string().min(1, {
+            message: "Centro de custo é obrigatório."
+        }),
+        franquiaKM: z.string({
+            invalid_type_error: "Franquia KM deve ser um número."
+        }),
+        carroReserva: z.boolean(),
+        dataDisponibilizacao: z.string().min(1, {
+            message: "Data de disponibilização é obrigatória."
+        }),
+        mesesContratados: z.string({
+            invalid_type_error: "Meses contratados deve ser um número."
+        }),
+        previsaoDevolucao: z.string().min(1, {
+            message: "Previsão de devolução é obrigatória."
+        }),
+        mesesFaltantes: z.string({
+            invalid_type_error: "Meses faltantes deve ser um número."
+        }),
+        mensalidade: z.string({
+            invalid_type_error: "Mensalidade deve ser um número."
+        }),
+        budget: z.string({
+            invalid_type_error: "Budget deve ser um número."
+        }),
+        multa: z.string({
+            invalid_type_error: "Multa deve ser um número."
+        }),
+        proximaRevisao: z.string().min(1, {
+            message: "Próxima revisão é obrigatória."
+        }),
+    });
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
         defaultValues: {
             fornecedor: "",
             contrato: "",
@@ -126,10 +120,30 @@ export function VehicleFormPage() {
         },
     });
 
-    async function onSubmit(values: z.infer<typeof vehicleSchema>) {
+    useEffect(() => {
+        console.log("ID do veículo:", id);
+        async function fetchVehicle() {
+            try {
+                const response = await fetch(`http://localhost:3000/veiculo/${id}`);
+                if (!response.ok) {
+                    throw new Error("Erro ao carregar veículo");
+                }
+                const data = await response.json();
+                console.log("Dados do veículo:", data);
+                setVehicle(data);
+                form.reset(data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        fetchVehicle();
+    }, [id]);
+
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            const response = await fetch("http://localhost:3000/veiculos", {
-                method: "POST",
+            const response = await fetch(`http://localhost:3000/veiculo/${id}`, {
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -138,24 +152,23 @@ export function VehicleFormPage() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || "Erro ao adicionar veículo");
+                throw new Error(errorData.message || "Erro ao editar veículo");
             }
 
-            const data = await response.json();
-            console.log("Veículo adicionado com sucesso:", data);
-            alert("Veículo adicionado com sucesso!");
+            alert("Veículo atualizado com sucesso!");
+            navigate(-1);
+
         } catch (error) {
-            console.error("Erro ao adicionar veículo:", error);
+            console.error("Erro ao atualizar veículo:", error);
             alert(error instanceof Error ? error.message : "Erro desconhecido");
         }
-    }
-
-    const { reset } = form;
+    };
 
     return (
         <main className="flex-1 p-4 md:p-8">
             <div className="mx-auto w-full max-w-full md:max-w-[60%]">
-                <label className="block text-4xl font-bold mb-6 text-center">Cadastrar Veículo</label>
+                <label className="block text-4xl font-bold mb-6 text-center">Editar Veículo</label>
+
                 <Card className="border-primary shadow-md max-h-[45rem] overflow-y-auto">
                     <CardContent>
                         <Form {...form}>
@@ -496,11 +509,11 @@ export function VehicleFormPage() {
 
                                     <Button
                                         type="button"
-                                        variant={"destructive"}
-                                        onClick={() => reset()}
+                                        variant={"link"}
+                                        onClick={() => navigate(-1)}
                                         className="w-full sm:w-auto"
                                     >
-                                        Clear
+                                        Cancelar
                                     </Button>
                                 </div>
                             </form>
@@ -509,5 +522,5 @@ export function VehicleFormPage() {
                 </Card>
             </div>
         </main>
-    );
+    )
 }
