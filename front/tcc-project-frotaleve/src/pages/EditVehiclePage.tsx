@@ -129,9 +129,14 @@ export default function EditVehiclePage() {
                     throw new Error("Erro ao carregar veículo");
                 }
                 const data = await response.json();
-                console.log("Dados do veículo:", data);
-                setVehicle(data);
-                form.reset(data);
+                const vehicleData = data[0];
+
+                vehicleData.dataDisponibilizacao = vehicleData.dataDisponibilizacao?.slice(0, 10);
+                vehicleData.previsaoDevolucao = vehicleData.previsaoDevolucao?.slice(0, 10);
+                vehicleData.proximaRevisao = vehicleData.proximaRevisao?.slice(0, 10);
+
+                setVehicle(vehicleData);
+                form.reset(vehicleData);
             } catch (error) {
                 console.error(error);
             }
@@ -270,7 +275,7 @@ export default function EditVehiclePage() {
                                         name="status"
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger className="border-primary w-full">
                                                             <SelectValue placeholder="Status" />

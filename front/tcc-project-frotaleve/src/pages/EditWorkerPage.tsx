@@ -178,7 +178,7 @@ export default function EditWorkerPage() {
                                         name="localidade"
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger className="border-primary w-full">
                                                             <SelectValue placeholder="Localidade" />
@@ -198,7 +198,7 @@ export default function EditWorkerPage() {
                                         name="brand"
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger className="border-primary w-full">
                                                             <SelectValue placeholder="Brand" />
@@ -252,7 +252,7 @@ export default function EditWorkerPage() {
                                         name="cidadeEstacionamento"
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger className="border-primary w-full">
                                                             <SelectValue placeholder="Cidade Estacionamento" />
