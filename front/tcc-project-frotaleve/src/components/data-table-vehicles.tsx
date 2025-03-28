@@ -160,7 +160,11 @@ export const columns: ColumnDef<any>[] = [
         <ArrowUpDown />
       </Button>
     ),
-    cell: ({ row }) => <div className="flex justify-center">{row.getValue("uidMSK")}</div>,
+    cell: ({ row }) => (
+      <div className="flex justify-center">
+        {row.getValue("uidMSK") ? row.getValue("uidMSK") : "Não possui colaborador"}
+      </div>
+    ),
   },
   {
     accessorKey: "dataDisponibilizacao",

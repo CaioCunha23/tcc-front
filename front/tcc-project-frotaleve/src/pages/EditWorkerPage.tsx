@@ -37,6 +37,9 @@ export default function EditWorkerPage() {
         jobTitle: z.string({
             required_error: "Informe o cargo/área de atuação.",
         }),
+        placa: z.string({
+            required_error: "Informe a placa do carro.",
+        }),
         usaEstacionamento: z.boolean(),
         cidadeEstacionamento: z.string().optional(),
         cnh: z.string().length(9, {
@@ -57,6 +60,7 @@ export default function EditWorkerPage() {
             localidade: "",
             brand: "",
             jobTitle: "",
+            placa: "",
             usaEstacionamento: false,
             cidadeEstacionamento: "",
             cnh: "",

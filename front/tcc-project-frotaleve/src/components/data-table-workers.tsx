@@ -34,6 +34,27 @@ import {
 import { useNavigate } from "react-router"
 import { useState, useEffect } from "react"
 
+export interface Veiculo {
+  placa: string;
+}
+
+export interface Colaborador {
+  id: number;
+  nome: string;
+  status: string;
+  email: string;
+  uidMSK: string;
+  localidade: string;
+  brand: string;
+  jobTitle: string;
+  cpf: string;
+  usaEstacionamento: boolean;
+  cidadeEstacionamento: string;
+  cnh: string;
+  tipoCNH: string;
+  veiculos: Veiculo[];
+}
+
 export const columns: ColumnDef<any>[] = [
   {
     id: "select",
@@ -178,6 +199,25 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => <div className="flex justify-center">{row.getValue("cpf")}</div>,
   },
   {
+    accessorKey: "veiculos", // Supondo que a propriedade seja veiculos no objeto Colaborador
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Placa
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const veiculos: Veiculo[] = row.getValue("veiculos") || [];
+      const placa = veiculos.length > 0 ? veiculos[0].placa : "Sem Veículo Fixo";
+      return <div className="flex justify-center">{placa}</div>;
+    },
+  },
+  {
     accessorKey: "usaEstacionamento",
     header: ({ column }) => {
       return (
@@ -273,7 +313,7 @@ export const columns: ColumnDef<any>[] = [
 ]
 
 export function DataTableWorker() {
-  const [data, setData] = useState<any[]>([])
+  const [data, setData] = useState<Colaborador[]>([])
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
