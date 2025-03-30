@@ -1,3 +1,5 @@
+"use client"
+
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -10,7 +12,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal, } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -31,26 +34,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useNavigate } from "react-router"
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 
 export interface Colaborador {
-  id: number;
-  nome: string;
-  status: string;
-  email: string;
-  uidMSK: string;
-  localidade: string;
-  brand: string;
-  jobTitle: string;
-  cpf: string;
-  usaEstacionamento: boolean;
-  cidadeEstacionamento: string;
-  cnh: string;
-  tipoCNH: string;
+  nome: string,
+  uidMSK: string,
+  brand: string
 }
 
-export const columns: ColumnDef<any>[] = [
+export interface Veiculo {
+  placa: string,
+  modelo: string,
+  renavan: string,
+  chassi: string,
+  status: string
+}
+
+export interface HistoricoVeiculo {
+  id: number,
+  colaboradores: Colaborador,
+  veiculos: Veiculo,
+  dataInicio: string,
+  dataFim: String
+}
+
+export const columns: ColumnDef<HistoricoVeiculo>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -74,7 +82,7 @@ export const columns: ColumnDef<any>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "nome",
+    accessorKey: "colaborador",
     header: ({ column }) => {
       return (
         <Button
@@ -86,70 +94,33 @@ export const columns: ColumnDef<any>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="flex justify-center">{row.getValue("nome")}</div>,
+    cell: ({ row }) => {
+      const colaborador: Colaborador = row.getValue("colaborador");
+      const nome = colaborador?.nome || "Sem nome de colaborador";
+      return <div className="flex">{nome}</div>;
+    },
   },
   {
-    accessorKey: "status",
+    accessorKey: "colaborador",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Status
+          UIDMSK
           <ArrowUpDown />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="flex justify-center">{row.getValue("status")}</div>,
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown />
-        </Button>
-      )
+    cell: ({ row }) => {
+      const colaborador: Colaborador = row.getValue("colaborador");
+      const uidMSK = colaborador?.uidMSK || "UID não encontrado";
+      return <div className="flex">{uidMSK}</div>;
     },
-    cell: ({ row }) => <div className="flex justify-center lowercase">{row.getValue("email")}</div>,
   },
   {
-    accessorKey: "uidMSK",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          UID MSK
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="flex justify-center">{row.getValue("uidMSK")}</div>,
-  },
-  {
-    accessorKey: "localidade",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Localidade
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="flex justify-center">{row.getValue("localidade")}</div>,
-  },
-  {
-    accessorKey: "brand",
+    accessorKey: "colaborador",
     header: ({ column }) => {
       return (
         <Button
@@ -161,107 +132,138 @@ export const columns: ColumnDef<any>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="flex justify-center">{row.getValue("brand")}</div>,
+    cell: ({ row }) => {
+      const colaborador: Colaborador = row.getValue("colaborador");
+      const brand = colaborador?.brand || "Colaborador sem brand";
+      return <div className="flex">{brand}</div>;
+    },
   },
   {
-    accessorKey: "jobTitle",
+    accessorKey: "veiculo",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Job Title
+          Placa
           <ArrowUpDown />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="flex justify-center">{row.getValue("jobTitle")}</div>,
+    cell: ({ row }) => {
+      const veiculo: Veiculo = row.getValue("veiculo");
+      const placa = veiculo?.placa || "Placa não encontrada";
+      return <div className="flex">{placa}</div>;
+    },
   },
   {
-    accessorKey: "cpf",
+    accessorKey: "veiculo",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          CPF
+          Modelo
           <ArrowUpDown />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="flex justify-center">{row.getValue("cpf")}</div>,
+    cell: ({ row }) => {
+      const veiculo: Veiculo = row.getValue("veiculo");
+      const modelo = veiculo?.modelo || "Modelo não encontrado";
+      return <div className="flex">{modelo}</div>;
+    },
   },
   {
-    accessorKey: "usaEstacionamento",
+    accessorKey: "veiculo",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Estacionamento
+          Renavan
           <ArrowUpDown />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="flex justify-center">{row.getValue("usaEstacionamento") ? "Sim" : "Não"}</div>,
+    cell: ({ row }) => {
+      const veiculo: Veiculo = row.getValue("veiculo");
+      const renavan = veiculo?.renavan || "renavan não encontrado";
+      return <div className="flex">{renavan}</div>;
+    },
   },
   {
-    accessorKey: "cidadeEstacionamento",
+    accessorKey: "veiculo",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Cidade Estacionamento
+          Chassi
           <ArrowUpDown />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="flex justify-center">{row.getValue("cidadeEstacionamento") || "N/A"}</div>,
+    cell: ({ row }) => {
+      const veiculo: Veiculo = row.getValue("veiculo");
+      const chassi = veiculo?.chassi || "chassi não encontrado";
+      return <div className="flex">{chassi}</div>;
+    },
   },
   {
-    accessorKey: "cnh",
+    accessorKey: "veiculo",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          CNH
+          Status
           <ArrowUpDown />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="flex justify-center">{row.getValue("cnh")}</div>,
+    cell: ({ row }) => {
+      const veiculo: Veiculo = row.getValue("veiculo");
+      const status = veiculo?.status || "Status não encontrado";
+      return <div className="flex">{status}</div>;
+    },
   },
   {
-    accessorKey: "tipoCNH",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tipo CNH
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="flex justify-center">{row.getValue("tipoCNH")}</div>,
+    accessorKey: "dataInicio",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Data de Início
+        <ArrowUpDown />
+      </Button>
+    ),
+    cell: ({ row }) => <div className="flex">{row.getValue("dataInicio")}</div>,
+  },
+  {
+    accessorKey: "dataFim",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Data de Finalização
+        <ArrowUpDown />
+      </Button>
+    ),
+    cell: ({ row }) => <div className="flex">{row.getValue("dataFim")}</div>,
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const worker = row.original
-      const navigate = useNavigate();
-      const handleEditClick = () => {
-        navigate(`/colaborador/${worker.id}`);
-      };
+      const historico = row.original
 
       return (
         <DropdownMenu>
@@ -274,13 +276,12 @@ export const columns: ColumnDef<any>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(worker.uidMSK)}
+              onClick={() => navigator.clipboard.writeText(String(historico.id))}
             >
-              Copiar UID MSK
+              Copiar ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleEditClick}>Editar Colaborador</DropdownMenuItem>
-            <DropdownMenuItem>Desativar Colaborador</DropdownMenuItem>
+            <DropdownMenuItem>Detalhes do Histórico</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -288,8 +289,8 @@ export const columns: ColumnDef<any>[] = [
   },
 ]
 
-export function DataTableWorker() {
-  const [data, setData] = useState<Colaborador[]>([])
+export function DataTableVehiclesHistory() {
+  const [data, setData] = useState<HistoricoVeiculo[]>([])
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -298,7 +299,7 @@ export function DataTableWorker() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://localhost:3000/colaboradores")
+        const response = await fetch("http://localhost:3000/historicos")
         if (!response.ok) throw new Error("Erro ao buscar dados")
         const data = await response.json()
         console.log("Dados recebidos:", data);
@@ -334,83 +335,65 @@ export function DataTableWorker() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Pesquisar..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filtrar por UID..."
+          value={(table.getColumn("colaboradorUid")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("colaboradorUid")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+              Colunas <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border overflow-x-auto">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
-                  ))}
+                  ))}s
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   Sem resultados.
                 </TableCell>
               </TableRow>
@@ -420,8 +403,8 @@ export function DataTableWorker() {
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} de{" "}
+          {table.getFilteredRowModel().rows.length} linha(s) selecionadas.
         </div>
         <div className="space-x-2">
           <Button

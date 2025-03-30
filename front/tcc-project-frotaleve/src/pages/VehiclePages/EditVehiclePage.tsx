@@ -45,18 +45,6 @@ export default function EditVehiclePage() {
         cliente: z.string().min(1, {
             message: "Cliente é obrigatório."
         }),
-        uidMSK: z.string().length(6, {
-            message: "UID MSK deve ter 9 caracteres."
-        }),
-        perfil: z.string().min(1, {
-            message: "Perfil é obrigatório."
-        }),
-        jobLevel: z.string().min(1, {
-            message: "Job Level é obrigatório."
-        }),
-        descricaoCargo: z.string().min(1, {
-            message: "Descrição do cargo é obrigatória."
-        }),
         centroCusto: z.string().min(1, {
             message: "Centro de custo é obrigatório."
         }),
@@ -102,10 +90,6 @@ export default function EditVehiclePage() {
             cor: "",
             status: "",
             cliente: "",
-            uidMSK: "",
-            perfil: "",
-            jobLevel: "",
-            descricaoCargo: "",
             centroCusto: "",
             franquiaKM: "",
             carroReserva: false,
@@ -129,14 +113,14 @@ export default function EditVehiclePage() {
                     throw new Error("Erro ao carregar veículo");
                 }
                 const data = await response.json();
-                const vehicleData = data[0];
 
-                vehicleData.dataDisponibilizacao = vehicleData.dataDisponibilizacao?.slice(0, 10);
-                vehicleData.previsaoDevolucao = vehicleData.previsaoDevolucao?.slice(0, 10);
-                vehicleData.proximaRevisao = vehicleData.proximaRevisao?.slice(0, 10);
+                data.dataDisponibilizacao = data.dataDisponibilizacao?.slice(0, 10);
+                data.previsaoDevolucao = data.previsaoDevolucao?.slice(0, 10);
+                data.proximaRevisao = data.proximaRevisao?.slice(0, 10);
 
-                setVehicle(vehicleData);
-                form.reset(vehicleData);
+                setVehicle(data);
+                form.reset(data);
+                console.log('veiculo', data)
             } catch (error) {
                 console.error(error);
             }
@@ -306,57 +290,6 @@ export default function EditVehiclePage() {
                                 </div>
 
                                 <div className="flex flex-col md:flex-row gap-4">
-                                    <FormField
-                                        control={form.control}
-                                        name="uidMSK"
-                                        render={({ field }) => (
-                                            <FormItem className="flex-1">
-                                                <FormControl>
-                                                    <Input className="border-primary" placeholder="UID MSK" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="perfil"
-                                        render={({ field }) => (
-                                            <FormItem className="flex-1">
-                                                <FormControl>
-                                                    <Input className="border-primary" placeholder="Perfil" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="jobLevel"
-                                        render={({ field }) => (
-                                            <FormItem className="flex-1">
-                                                <FormControl>
-                                                    <Input className="border-primary" placeholder="Job Level" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-
-                                <div className="flex flex-col md:flex-row gap-4">
-                                    <FormField
-                                        control={form.control}
-                                        name="descricaoCargo"
-                                        render={({ field }) => (
-                                            <FormItem className="flex-1">
-                                                <FormControl>
-                                                    <Input className="border-primary" placeholder="Descrição do Cargo" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
                                     <FormField
                                         control={form.control}
                                         name="centroCusto"

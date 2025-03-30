@@ -46,7 +46,7 @@ const data = {
         },
         {
           title: "Verificação de multas",
-          url: "#",
+          url: "/colaboradores/multas",
         },
       ],
     },
@@ -64,16 +64,8 @@ const data = {
           isActive: true,
         },
         {
-          title: "Solicitações de colaboradores",
-          url: "#",
-        },
-        {
-          title: "Documentos de locação",
-          url: "#",
-        },
-        {
-          title: "Gastos em combustível",
-          url: "#",
+          title: "Histórico de Utilização",
+          url: "/veiculo_colaborador",
         },
       ],
     },

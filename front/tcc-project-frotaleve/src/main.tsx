@@ -4,13 +4,15 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import './styles/index.css'
 import App from './App.tsx'
 import { HomePage } from './pages/HomePage.tsx';
-import { UsersPage } from './pages/UsersPage.tsx';
-import { WorkerFormPage } from './pages/WorkerFormPage.tsx';
+import { UsersPage } from './pages/WorkerPages/WorkersPage.tsx';
+import { WorkerFormPage } from './pages/WorkerPages/WorkerFormPage.tsx';
 import Layout from './components/Layout.tsx';
-import { VehiclesPage } from './pages/VehiclesPage.tsx';
-import { VehicleFormPage } from './pages/VehicleFormPage.tsx';
-import EditWorkerPage from './pages/EditWorkerPage.tsx';
-import EditVehiclePage from './pages/EditVehiclePage.tsx';
+import { VehiclesPage } from './pages/VehiclePages/VehiclesPage.tsx';
+import { VehicleFormPage } from './pages/VehiclePages/VehicleFormPage.tsx';
+import EditWorkerPage from './pages/WorkerPages/EditWorkerPage.tsx';
+import EditVehiclePage from './pages/VehiclePages/EditVehiclePage.tsx';
+import { VehiclesHistoryPage } from './pages/VehiclePages/VehiclesHistoryPage.tsx';
+import { InfractionsPage } from './pages/WorkerPages/InfractionsPage.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -42,8 +44,18 @@ createRoot(document.getElementById('root')!).render(
           />
 
           <Route
+            path="/colaboradores/multas"
+            element={<InfractionsPage />}
+          />
+
+          <Route
             path='/veiculos'
             element={<VehiclesPage />}
+          />
+
+          <Route
+            path="/veiculo_colaborador"
+            element={<VehiclesHistoryPage />}
           />
 
           <Route
