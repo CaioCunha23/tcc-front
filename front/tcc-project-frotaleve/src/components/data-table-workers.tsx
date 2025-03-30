@@ -34,6 +34,10 @@ import {
 import { useNavigate } from "react-router"
 import { useState, useEffect } from "react"
 
+export interface Infracao {
+  valor: number
+}
+
 export interface Colaborador {
   id: number;
   nome: string;
@@ -48,6 +52,7 @@ export interface Colaborador {
   cidadeEstacionamento: string;
   cnh: string;
   tipoCNH: string;
+  infracaos: Infracao
 }
 
 export const columns: ColumnDef<any>[] = [
@@ -55,6 +60,7 @@ export const columns: ColumnDef<any>[] = [
     id: "select",
     header: ({ table }) => (
       <Checkbox
+        className="dark:bg-gray-800 dark:border-gray-600"
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -65,6 +71,7 @@ export const columns: ColumnDef<any>[] = [
     ),
     cell: ({ row }) => (
       <Checkbox
+        className="dark:bg-gray-800 dark:border-gray-600"
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
@@ -80,6 +87,7 @@ export const columns: ColumnDef<any>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           Nome
           <ArrowUpDown />
@@ -95,6 +103,7 @@ export const columns: ColumnDef<any>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           Status
           <ArrowUpDown />
@@ -110,6 +119,7 @@ export const columns: ColumnDef<any>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           Email
           <ArrowUpDown />
@@ -125,6 +135,7 @@ export const columns: ColumnDef<any>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           UID MSK
           <ArrowUpDown />
@@ -140,6 +151,7 @@ export const columns: ColumnDef<any>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           Localidade
           <ArrowUpDown />
@@ -155,6 +167,7 @@ export const columns: ColumnDef<any>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           Brand
           <ArrowUpDown />
@@ -170,6 +183,7 @@ export const columns: ColumnDef<any>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           Job Title
           <ArrowUpDown />
@@ -185,6 +199,7 @@ export const columns: ColumnDef<any>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           CPF
           <ArrowUpDown />
@@ -200,6 +215,7 @@ export const columns: ColumnDef<any>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           Estacionamento
           <ArrowUpDown />
@@ -215,6 +231,7 @@ export const columns: ColumnDef<any>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           Cidade Estacionamento
           <ArrowUpDown />
@@ -230,6 +247,7 @@ export const columns: ColumnDef<any>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           CNH
           <ArrowUpDown />
@@ -245,6 +263,7 @@ export const columns: ColumnDef<any>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           Tipo CNH
           <ArrowUpDown />
@@ -252,6 +271,26 @@ export const columns: ColumnDef<any>[] = [
       )
     },
     cell: ({ row }) => <div className="flex justify-center">{row.getValue("tipoCNH")}</div>,
+  },
+  {
+    id: "infracaoValor",
+    accessorFn: (row) =>
+      row.infracaos && row.infracaos.length > 0 ? row.infracaos[0].valor : null,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+      >
+        Infrações
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="flex justify-center">
+        {row.getValue("infracaoValor") || "Sem infrações"}
+      </div>
+    ),
   },
   {
     id: "actions",
@@ -332,18 +371,18 @@ export function DataTableWorker() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between py-4 px-4 sm:px-6">
         <Input
           placeholder="Pesquisar..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm mb-4 sm:mb-0"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline">
               Columns <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -351,40 +390,38 @@ export function DataTableWorker() {
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border overflow-x-auto">
+
+      <div className="flex max-w-460 rounded border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  )
-                })}
+              <TableRow key={headerGroup.id} className="bg-gray-100 dark:bg-gray-800">
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="px-4 py-2 text-sm font-medium text-center"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -394,23 +431,18 @@ export function DataTableWorker() {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="border-b last:border-0"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                    <TableCell key={cell.id} className="px-4 py-2 text-center text-sm">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   Sem resultados.
                 </TableCell>
               </TableRow>
@@ -418,12 +450,13 @@ export function DataTableWorker() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+
+      <div className="flex flex-col sm:flex-row items-center justify-end space-y-2 sm:space-y-0 sm:space-x-2 py-4 px-4 sm:px-6">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} de{" "}
+          {table.getFilteredRowModel().rows.length} linha(s) selecionadas.
         </div>
-        <div className="space-x-2">
+        <div className="flex space-x-2">
           <Button
             variant="outline"
             size="sm"

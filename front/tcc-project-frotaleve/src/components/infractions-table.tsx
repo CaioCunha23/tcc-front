@@ -7,82 +7,162 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
-import { useEffect, useState } from "react"
+} from "@/components/ui/table";
+import { useEffect, useState } from "react";
 
 export interface Infracao {
-    id: number,
-    tipo: string,
-    placa: string,
-    colaboradorUid: string,
-    veiculoId: number,
-    costCenter: string,
-    dataInfracao: string,
-    tag: string,
-    hora: string,
-    valor: number,
-    prefixo: string,
-    marca: string,
-    categoria: string,
-    rodovia: string,
-    praca: string,
-    nome: string,
-    dataEnvio: string,
-    valorMulta: number,
-    codigoMulta: string,
-    indicacaoLimite: string,
-    statusResposta: string,
-    reconhecimento: string,
-    enviadoParaRH: string,
-
+    id: number;
+    tipo: string;
+    placa: string;
+    colaboradorUid: string;
+    veiculoId: number;
+    costCenter: string;
+    dataInfracao: string;
+    tag: string;
+    hora: string;
+    valor: number;
+    prefixo: string;
+    marca: string;
+    categoria: string;
+    rodovia: string;
+    praca: string;
+    nome: string;
+    dataEnvio: string;
+    valorMulta: number;
+    codigoMulta: string;
+    indicacaoLimite: string;
+    statusResposta: string;
+    reconhecimento: string;
+    enviadoParaRH: string;
 }
 
 export function InfractionsTable() {
-    const [data, setData] = useState<Infracao[]>([])
+    const [data, setData] = useState<Infracao[]>([]);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch("http://localhost:3000/infracoes")
-                if (!response.ok) throw new Error("Erro ao buscar dados")
-                const data = await response.json()
+                const response = await fetch("http://localhost:3000/infracoes");
+                if (!response.ok) throw new Error("Erro ao buscar dados");
+                const data: Infracao[] = await response.json();
                 console.log("Dados recebidos:", data);
-                setData(data)
+                setData(data);
             } catch (error) {
-                console.error("Erro ao buscar dados:", error)
+                console.error("Erro ao buscar dados:", error);
             }
         }
 
-        fetchData()
-    }, [])
+        fetchData();
+    }, []);
 
     return (
-        <Table>
-            <TableCaption>A list of your recent invoices.</TableCaption>
-            <TableHeader>
-                <TableRow>
-                    <TableHead className="w-[100px]">Tipo</TableHead>
-                    <TableHead>UID</TableHead>
-                    <TableHead>Brand</TableHead>
-                    <TableHead className="text-right">Valor</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {data.map((infracao) => (
-                    <TableRow key={infracao.codigoMulta}>
-                        <TableCell className="font-medium">{infracao.tipo}</TableCell>
-                        <TableCell>{infracao.colaboradorUid}</TableCell>
-                        <TableCell>{infracao.marca}</TableCell>
-                        <TableCell className="text-right">{infracao.valor}</TableCell>
+        <div className="overflow-x-auto">
+            <Table className="min-w-full">
+                <TableCaption className="text-sm italic">
+                    Lista de Infrações
+                </TableCaption>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead className="px-4 py-2 text-left text-xs font-semibold uppercase">
+                            UID
+                        </TableHead>
+                        <TableHead className="px-4 py-2 text-left text-xs font-semibold uppercase">
+                            Tipo
+                        </TableHead>
+                        <TableHead className="px-4 py-2 text-left text-xs font-semibold uppercase">
+                            Placa
+                        </TableHead>
+                        <TableHead className="px-4 py-2 text-left text-xs font-semibold uppercase">
+                            Tag
+                        </TableHead>
+                        <TableHead className="px-4 py-2 text-left text-xs font-semibold uppercase">
+                            Brand
+                        </TableHead>
+                        <TableHead className="px-4 py-2 text-left text-xs font-semibold uppercase">
+                            Data Infracao
+                        </TableHead>
+                        <TableHead className="px-4 py-2 text-left text-xs font-semibold uppercase">
+                            Data Envio
+                        </TableHead>
+                        <TableHead className="px-4 py-2 text-left text-xs font-semibold uppercase">
+                            Indicação Limite
+                        </TableHead>
+                        <TableHead className="px-4 py-2 text-left text-xs font-semibold uppercase">
+                            Status Resposta
+                        </TableHead>
+                        <TableHead className="px-4 py-2 text-left text-xs font-semibold uppercase">
+                            Reconhecimento
+                        </TableHead>
+                        <TableHead className="px-4 py-2 text-left text-xs font-semibold uppercase">
+                            Enviado p/ RH
+                        </TableHead>
+                        <TableHead className="px-4 py-2 text-right text-xs font-semibold uppercase">
+                            Valor
+                        </TableHead>
                     </TableRow>
-                ))}
-            </TableBody>
-            <TableFooter>
-                <TableRow>
-                    <TableCell colSpan={3}>Total</TableCell>
-                    <TableCell className="text-right">$2,500.00</TableCell>
-                </TableRow>
-            </TableFooter>
-        </Table>
-    )
-}  
+                </TableHeader>
+                <TableBody>
+                    {data.map((infracao, index) => (
+                        <TableRow
+                            key={infracao.codigoMulta || infracao.id}
+                            className="hover:bg-opacity-75"
+                        >
+                            <TableCell className="px-4 py-2 text-sm">
+                                {infracao.colaboradorUid}
+                            </TableCell>
+                            <TableCell className="px-4 py-2 text-sm">
+                                {infracao.tipo}
+                            </TableCell>
+                            <TableCell className="px-4 py-2 text-sm">
+                                {infracao.placa}
+                            </TableCell>
+                            <TableCell className="px-4 py-2 text-sm">
+                                {infracao.tag}
+                            </TableCell>
+                            <TableCell className="px-4 py-2 text-sm">
+                                {infracao.marca}
+                            </TableCell>
+                            <TableCell className="px-4 py-2 text-sm">
+                                {infracao.dataInfracao}
+                            </TableCell>
+                            <TableCell className="px-4 py-2 text-sm">
+                                {infracao.dataEnvio}
+                            </TableCell>
+                            <TableCell className="px-4 py-2 text-sm">
+                                {infracao.indicacaoLimite}
+                            </TableCell>
+                            <TableCell className="px-4 py-2 text-sm">
+                                {infracao.statusResposta}
+                            </TableCell>
+                            <TableCell className="px-4 py-2 text-sm">
+                                {infracao.reconhecimento}
+                            </TableCell>
+                            <TableCell className="px-4 py-2 text-sm">
+                                {infracao.enviadoParaRH}
+                            </TableCell>
+                            <TableCell className="px-4 py-2 text-sm text-right">
+                                {infracao.valor}
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TableCell
+                            colSpan={10}
+                            className="px-4 py-2 text-right text-sm font-semibold"
+                        >
+                            Total
+                        </TableCell>
+                        <TableCell
+                            colSpan={3}
+                            className="px-4 py-2 text-right text-sm font-semibold"
+                        >
+                            $2,500.00
+                        </TableCell>
+                    </TableRow>
+                </TableFooter>
+            </Table>
+        </div>
+    );
+}

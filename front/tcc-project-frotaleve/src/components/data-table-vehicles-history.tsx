@@ -1,21 +1,19 @@
-"use client"
-
 import {
   ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+  SortingState,
+  ColumnFiltersState,
+  VisibilityState,
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -24,8 +22,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -33,29 +31,29 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { useEffect, useState } from "react"
+} from "@/components/ui/table";
+import { useEffect, useState } from "react";
 
 export interface Colaborador {
-  nome: string,
-  uidMSK: string,
-  brand: string
+  nome: string;
+  brand: string;
 }
 
 export interface Veiculo {
-  placa: string,
-  modelo: string,
-  renavan: string,
-  chassi: string,
-  status: string
+  placa: string;
+  modelo: string;
+  renavan: string;
+  chassi: string;
+  status: string;
 }
 
 export interface HistoricoVeiculo {
-  id: number,
-  colaboradores: Colaborador,
-  veiculos: Veiculo,
-  dataInicio: string,
-  dataFim: String
+  id: number;
+  colaboradorUid: string;
+  colaborador: Colaborador;
+  veiculo: Veiculo;
+  dataInicio: string;
+  dataFim: string;
 }
 
 export const columns: ColumnDef<HistoricoVeiculo>[] = [
@@ -82,156 +80,145 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "colaborador",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nome
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const colaborador: Colaborador = row.getValue("colaborador");
-      const nome = colaborador?.nome || "Sem nome de colaborador";
-      return <div className="flex">{nome}</div>;
-    },
+    id: "colaboradorNome",
+    accessorFn: (row) => row.colaborador?.nome,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Nome
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="flex">
+        {row.getValue("colaboradorNome") || "Sem nome"}
+      </div>
+    ),
   },
   {
-    accessorKey: "colaborador",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          UIDMSK
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const colaborador: Colaborador = row.getValue("colaborador");
-      const uidMSK = colaborador?.uidMSK || "UID não encontrado";
-      return <div className="flex">{uidMSK}</div>;
-    },
+    accessorKey: "colaboradorUid",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        UID MSK
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="flex">{row.getValue("colaboradorUid")}</div>
+    ),
   },
   {
-    accessorKey: "colaborador",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Brand
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const colaborador: Colaborador = row.getValue("colaborador");
-      const brand = colaborador?.brand || "Colaborador sem brand";
-      return <div className="flex">{brand}</div>;
-    },
+    id: "colaboradorBrand",
+    accessorFn: (row) => row.colaborador?.brand,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Brand
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="flex">
+        {row.getValue("colaboradorBrand") || "Sem brand"}
+      </div>
+    ),
   },
   {
-    accessorKey: "veiculo",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Placa
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const veiculo: Veiculo = row.getValue("veiculo");
-      const placa = veiculo?.placa || "Placa não encontrada";
-      return <div className="flex">{placa}</div>;
-    },
+    id: "veiculoPlaca",
+    accessorFn: (row) => row.veiculo?.placa,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Placa
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="flex">
+        {row.getValue("veiculoPlaca") || "Sem placa"}
+      </div>
+    ),
   },
   {
-    accessorKey: "veiculo",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Modelo
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const veiculo: Veiculo = row.getValue("veiculo");
-      const modelo = veiculo?.modelo || "Modelo não encontrado";
-      return <div className="flex">{modelo}</div>;
-    },
+    id: "veiculoModelo",
+    accessorFn: (row) => row.veiculo?.modelo,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Modelo
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="flex">
+        {row.getValue("veiculoModelo") || "Sem modelo"}
+      </div>
+    ),
   },
   {
-    accessorKey: "veiculo",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Renavan
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const veiculo: Veiculo = row.getValue("veiculo");
-      const renavan = veiculo?.renavan || "renavan não encontrado";
-      return <div className="flex">{renavan}</div>;
-    },
+    id: "veiculoRenavan",
+    accessorFn: (row) => row.veiculo?.renavan,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Renavan
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="flex">
+        {row.getValue("veiculoRenavan") || "Sem renavan"}
+      </div>
+    ),
   },
   {
-    accessorKey: "veiculo",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Chassi
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const veiculo: Veiculo = row.getValue("veiculo");
-      const chassi = veiculo?.chassi || "chassi não encontrado";
-      return <div className="flex">{chassi}</div>;
-    },
+    id: "veiculoChassi",
+    accessorFn: (row) => row.veiculo?.chassi,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Chassi
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="flex">
+        {row.getValue("veiculoChassi") || "Sem chassi"}
+      </div>
+    ),
   },
   {
-    accessorKey: "veiculo",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Status
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const veiculo: Veiculo = row.getValue("veiculo");
-      const status = veiculo?.status || "Status não encontrado";
-      return <div className="flex">{status}</div>;
-    },
+    id: "veiculoStatus",
+    accessorFn: (row) => row.veiculo?.status,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Status
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="flex">
+        {row.getValue("veiculoStatus") || "Sem status"}
+      </div>
+    ),
   },
   {
     accessorKey: "dataInicio",
@@ -241,10 +228,12 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Data de Início
-        <ArrowUpDown />
+        <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => <div className="flex">{row.getValue("dataInicio")}</div>,
+    cell: ({ row }) => (
+      <div className="flex">{row.getValue("dataInicio")}</div>
+    ),
   },
   {
     accessorKey: "dataFim",
@@ -254,17 +243,18 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Data de Finalização
-        <ArrowUpDown />
+        <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => <div className="flex">{row.getValue("dataFim")}</div>,
+    cell: ({ row }) => (
+      <div className="flex">{row.getValue("dataFim")}</div>
+    ),
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const historico = row.original
-
+      const historico = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -276,7 +266,9 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(historico.id))}
+              onClick={() =>
+                navigator.clipboard.writeText(String(historico.id))
+              }
             >
               Copiar ID
             </DropdownMenuItem>
@@ -284,33 +276,32 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
             <DropdownMenuItem>Detalhes do Histórico</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];
 
 export function DataTableVehiclesHistory() {
-  const [data, setData] = useState<HistoricoVeiculo[]>([])
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = useState({})
+  const [data, setData] = useState<HistoricoVeiculo[]>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://localhost:3000/historicos")
-        if (!response.ok) throw new Error("Erro ao buscar dados")
-        const data = await response.json()
+        const response = await fetch("http://localhost:3000/historicos");
+        if (!response.ok) throw new Error("Erro ao buscar dados");
+        const data = await response.json();
         console.log("Dados recebidos:", data);
-        setData(data)
+        setData(data);
       } catch (error) {
-        console.error("Erro ao buscar dados:", error)
+        console.error("Erro ao buscar dados:", error);
       }
     }
-
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   const table = useReactTable({
     data,
@@ -329,16 +320,16 @@ export function DataTableVehiclesHistory() {
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filtrar por UID..."
-          value={(table.getColumn("colaboradorUid")?.getFilterValue() as string) ?? ""}
+          placeholder="Filtrar por placa..."
+          value={(table.getColumn("veiculoPlaca")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("colaboradorUid")?.setFilterValue(event.target.value)
+            table.getColumn("veiculoPlaca")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -357,7 +348,9 @@ export function DataTableVehiclesHistory() {
                   key={column.id}
                   className="capitalize"
                   checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                  onCheckedChange={(value) =>
+                    column.toggleVisibility(!!value)
+                  }
                 >
                   {column.id}
                 </DropdownMenuCheckboxItem>
@@ -388,7 +381,7 @@ export function DataTableVehiclesHistory() {
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
-                  ))}s
+                  ))}
                 </TableRow>
               ))
             ) : (
@@ -426,5 +419,5 @@ export function DataTableVehiclesHistory() {
         </div>
       </div>
     </div>
-  )
+  );
 }

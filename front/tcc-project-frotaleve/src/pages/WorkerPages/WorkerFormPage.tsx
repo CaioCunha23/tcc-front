@@ -82,16 +82,17 @@ export function WorkerFormPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Erro ao adicionar veículo");
+        console.log("Enviando para o backend:", values);
+        throw new Error(errorData.message || "Erro ao adicionar colaborador");
       }
 
       const data = await response.json();
-      console.log("Veículo adicionado com sucesso:", data);
+      console.log("Colaborador adicionado com sucesso:", data);
       alert("Colaborador adicionado com sucesso!");
       reset()
 
     } catch (error) {
-      console.error("Erro ao adicionar veículo:", error);
+      console.error("Erro ao adicionar colaborador:", error);
       alert(error instanceof Error ? error.message : "Erro desconhecido");
     }
   }
