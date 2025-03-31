@@ -89,8 +89,7 @@ export function WorkerFormPage() {
       const data = await response.json();
       console.log("Colaborador adicionado com sucesso:", data);
       alert("Colaborador adicionado com sucesso!");
-      reset()
-
+      reset();
     } catch (error) {
       console.error("Erro ao adicionar colaborador:", error);
       alert(error instanceof Error ? error.message : "Erro desconhecido");
@@ -101,14 +100,18 @@ export function WorkerFormPage() {
 
   return (
     <main className="flex-1 p-4 md:p-8">
-      <div className="mx-auto w-full max-w-full md:max-w-[60%]">
-        <label className="block text-4xl font-bold mb-6 text-center">Cadastrar Colaborador</label>
+      <div className="mx-auto w-full max-w-3xl">
+        <h1 className="text-4xl font-bold mb-6 text-center">
+          Cadastrar Colaborador
+        </h1>
 
-        <Card className="border-primary shadow-md max-h-[40rem] overflow-y-auto">
-          <CardContent>
+        <Card className="shadow-lg rounded-lg border overflow-hidden">
+          <CardContent className="p-6">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 <div className="flex flex-col md:flex-row gap-4">
                   <FormField
                     control={form.control}
@@ -116,7 +119,11 @@ export function WorkerFormPage() {
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormControl>
-                          <Input placeholder="Nome Completo" {...field} className="border-primary" />
+                          <Input
+                            placeholder="Nome Completo"
+                            {...field}
+                            className="border-primary"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -128,7 +135,11 @@ export function WorkerFormPage() {
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormControl>
-                          <Input placeholder="CPF" {...field} className="border-primary" />
+                          <Input
+                            placeholder="CPF"
+                            {...field}
+                            className="border-primary"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -143,7 +154,11 @@ export function WorkerFormPage() {
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormControl>
-                          <Input placeholder="E-mail" {...field} className="border-primary" />
+                          <Input
+                            placeholder="E-mail"
+                            {...field}
+                            className="border-primary"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -155,7 +170,11 @@ export function WorkerFormPage() {
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormControl>
-                          <Input placeholder="UID (6 caracteres)" {...field} className="border-primary" />
+                          <Input
+                            placeholder="UID (6 caracteres)"
+                            {...field}
+                            className="border-primary"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -169,7 +188,10 @@ export function WorkerFormPage() {
                     name="localidade"
                     render={({ field }) => (
                       <FormItem className="flex-1">
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger className="border-primary w-full">
                               <SelectValue placeholder="Localidade" />
@@ -189,14 +211,19 @@ export function WorkerFormPage() {
                     name="brand"
                     render={({ field }) => (
                       <FormItem className="flex-1">
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger className="border-primary w-full">
                               <SelectValue placeholder="Brand" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Maersk Brasil">Maersk Brasil</SelectItem>
+                            <SelectItem value="Maersk Brasil">
+                              Maersk Brasil
+                            </SelectItem>
                             <SelectItem value="Aliança">Aliança</SelectItem>
                           </SelectContent>
                         </Select>
@@ -213,7 +240,11 @@ export function WorkerFormPage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="Cargo / Área de atuação" {...field} className="border-primary" />
+                          <Input
+                            placeholder="Cargo / Área de atuação"
+                            {...field}
+                            className="border-primary"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -233,7 +264,7 @@ export function WorkerFormPage() {
                             onCheckedChange={field.onChange}
                           />
                         </FormControl>
-                        <span>Utiliza Estacionamento?</span>
+                        <span className="text-sm">Utiliza Estacionamento?</span>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -243,7 +274,10 @@ export function WorkerFormPage() {
                     name="cidadeEstacionamento"
                     render={({ field }) => (
                       <FormItem className="flex-1">
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger className="border-primary w-full">
                               <SelectValue placeholder="Cidade Estacionamento" />
@@ -251,7 +285,9 @@ export function WorkerFormPage() {
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="Santos">Santos</SelectItem>
-                            <SelectItem value="São Paulo">São Paulo</SelectItem>
+                            <SelectItem value="São Paulo">
+                              São Paulo
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -267,7 +303,11 @@ export function WorkerFormPage() {
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormControl>
-                          <Input placeholder="CNH (9 caracteres)" {...field} className="border-primary" />
+                          <Input
+                            placeholder="CNH (9 caracteres)"
+                            {...field}
+                            className="border-primary"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -279,7 +319,11 @@ export function WorkerFormPage() {
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormControl>
-                          <Input placeholder="Tipo CNH" {...field} className="border-primary" />
+                          <Input
+                            placeholder="Tipo CNH"
+                            {...field}
+                            className="border-primary"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

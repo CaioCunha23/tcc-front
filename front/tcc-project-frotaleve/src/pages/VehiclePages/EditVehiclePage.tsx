@@ -156,9 +156,10 @@ export default function EditVehiclePage() {
     return (
         <main className="flex-1 p-4 md:p-8">
             <div className="mx-auto w-full max-w-full md:max-w-[60%]">
-                <label className="block text-4xl font-bold mb-6 text-center">Editar Veículo</label>
-
-                <Card className="border-primary shadow-md max-h-[45rem] overflow-y-auto">
+                <label className="block text-4xl font-bold mb-6 text-center">
+                    Editar Veículo
+                </label>
+                <Card className="shadow-lg rounded-lg border overflow-y-auto max-h-[45rem]">
                     <CardContent>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

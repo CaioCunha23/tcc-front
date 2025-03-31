@@ -1,10 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { FormField, FormItem, FormControl, FormMessage, Form } from "@/components/ui/form";
+import {
+    FormField,
+    FormItem,
+    FormControl,
+    FormMessage,
+    Form,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
@@ -65,7 +77,6 @@ export default function EditWorkerPage() {
     });
 
     useEffect(() => {
-        console.log("ID do usuário:", id);
         async function fetchWorker() {
             try {
                 const response = await fetch(`http://localhost:3000/colaborador/${id}`);
@@ -73,14 +84,12 @@ export default function EditWorkerPage() {
                     throw new Error("Erro ao carregar colaborador");
                 }
                 const data = await response.json();
-                console.log("Dados do colaborador:", data);
                 setWorker(data);
                 form.reset(data);
             } catch (error) {
                 console.error(error);
             }
         }
-
         fetchWorker();
     }, [id]);
 
@@ -101,7 +110,6 @@ export default function EditWorkerPage() {
 
             alert("Colaborador atualizado com sucesso!");
             navigate(-1);
-
         } catch (error) {
             console.error("Erro ao atualizar colaborador:", error);
             alert(error instanceof Error ? error.message : "Erro desconhecido");
@@ -110,14 +118,14 @@ export default function EditWorkerPage() {
 
     return (
         <main className="flex-1 p-4 md:p-8">
-            <div className="mx-auto w-full max-w-full md:max-w-[60%]">
-                <label className="block text-4xl font-bold mb-6 text-center">Cadastrar Colaborador</label>
-
-                <Card className="border-primary shadow-md max-h-[40rem] overflow-y-auto">
-                    <CardContent>
+            <div className="mx-auto w-full max-w-3xl">
+                <h1 className="block text-4xl font-bold mb-6 text-center">
+                    Editar Colaborador
+                </h1>
+                <Card className="shadow-lg rounded-lg border overflow-hidden">
+                    <CardContent className="p-6">
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-
                                 <div className="flex flex-col md:flex-row gap-4">
                                     <FormField
                                         control={form.control}
@@ -125,7 +133,11 @@ export default function EditWorkerPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input placeholder="Nome Completo" {...field} className="border-primary" />
+                                                    <Input
+                                                        placeholder="Nome Completo"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -137,14 +149,17 @@ export default function EditWorkerPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input placeholder="CPF" {...field} className="border-primary" />
+                                                    <Input
+                                                        placeholder="CPF"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                 </div>
-
                                 <div className="flex flex-col md:flex-row gap-4">
                                     <FormField
                                         control={form.control}
@@ -152,7 +167,11 @@ export default function EditWorkerPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input placeholder="E-mail" {...field} className="border-primary" />
+                                                    <Input
+                                                        placeholder="E-mail"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -164,14 +183,17 @@ export default function EditWorkerPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input placeholder="UID (6 caracteres)" {...field} className="border-primary" />
+                                                    <Input
+                                                        placeholder="UID (6 caracteres)"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                 </div>
-
                                 <div className="flex flex-col md:flex-row gap-4">
                                     <FormField
                                         control={form.control}
@@ -180,7 +202,7 @@ export default function EditWorkerPage() {
                                             <FormItem className="flex-1">
                                                 <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
-                                                        <SelectTrigger className="border-primary w-full">
+                                                        <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
                                                             <SelectValue placeholder="Localidade" />
                                                         </SelectTrigger>
                                                     </FormControl>
@@ -200,12 +222,14 @@ export default function EditWorkerPage() {
                                             <FormItem className="flex-1">
                                                 <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
-                                                        <SelectTrigger className="border-primary w-full">
+                                                        <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
                                                             <SelectValue placeholder="Brand" />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        <SelectItem value="Maersk Brasil">Maersk Brasil</SelectItem>
+                                                        <SelectItem value="Maersk Brasil">
+                                                            Maersk Brasil
+                                                        </SelectItem>
                                                         <SelectItem value="Aliança">Aliança</SelectItem>
                                                     </SelectContent>
                                                 </Select>
@@ -214,7 +238,6 @@ export default function EditWorkerPage() {
                                         )}
                                     />
                                 </div>
-
                                 <div className="w-full">
                                     <FormField
                                         control={form.control}
@@ -222,14 +245,17 @@ export default function EditWorkerPage() {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormControl>
-                                                    <Input placeholder="Cargo / Área de atuação" {...field} className="border-primary" />
+                                                    <Input
+                                                        placeholder="Cargo / Área de atuação"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                 </div>
-
                                 <div className="flex flex-col md:flex-row gap-4 items-center">
                                     <FormField
                                         control={form.control}
@@ -242,7 +268,7 @@ export default function EditWorkerPage() {
                                                         onCheckedChange={field.onChange}
                                                     />
                                                 </FormControl>
-                                                <span>Utiliza Estacionamento?</span>
+                                                <span className="text-sm">Utiliza Estacionamento?</span>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -254,7 +280,7 @@ export default function EditWorkerPage() {
                                             <FormItem className="flex-1">
                                                 <Select onValueChange={field.onChange} value={field.value}>
                                                     <FormControl>
-                                                        <SelectTrigger className="border-primary w-full">
+                                                        <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
                                                             <SelectValue placeholder="Cidade Estacionamento" />
                                                         </SelectTrigger>
                                                     </FormControl>
@@ -268,34 +294,6 @@ export default function EditWorkerPage() {
                                         )}
                                     />
                                 </div>
-
-                                <div className="flex flex-col md:flex-row gap-4">
-                                    <FormField
-                                        control={form.control}
-                                        name="cnh"
-                                        render={({ field }) => (
-                                            <FormItem className="flex-1">
-                                                <FormControl>
-                                                    <Input placeholder="CNH (9 caracteres)" {...field} className="border-primary" />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="tipoCNH"
-                                        render={({ field }) => (
-                                            <FormItem className="flex-1">
-                                                <FormControl>
-                                                    <Input placeholder="Tipo CNH" {...field} className="border-primary" />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-
                                 <div className="flex flex-col sm:flex-row-reverse gap-3">
                                     <Button type="submit" className="w-full sm:w-auto">
                                         Submit
@@ -315,5 +313,5 @@ export default function EditWorkerPage() {
                 </Card>
             </div>
         </main>
-    )
+    );
 }

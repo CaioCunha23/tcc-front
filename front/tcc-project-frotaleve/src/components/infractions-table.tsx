@@ -55,14 +55,19 @@ export function InfractionsTable() {
         fetchData();
     }, []);
 
+    const totalInfractions = data.reduce(
+        (acc, infracao) => acc + parseFloat(infracao.valor.toString()),
+        0
+    );
+
     return (
         <div className="overflow-x-auto">
-            <Table className="min-w-full">
+            <Table className="min-w-full border">
                 <TableCaption className="text-sm italic">
                     Lista de Infrações
                 </TableCaption>
                 <TableHeader>
-                    <TableRow>
+                    <TableRow className="bg-gray-100 dark:bg-gray-800">
                         <TableHead className="px-4 py-2 text-left text-xs font-semibold uppercase">
                             UID
                         </TableHead>
@@ -102,10 +107,10 @@ export function InfractionsTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {data.map((infracao, index) => (
+                    {data.map((infracao) => (
                         <TableRow
                             key={infracao.codigoMulta || infracao.id}
-                            className="hover:bg-opacity-75"
+                            className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                         >
                             <TableCell className="px-4 py-2 text-sm">
                                 {infracao.colaboradorUid}
@@ -141,7 +146,10 @@ export function InfractionsTable() {
                                 {infracao.enviadoParaRH}
                             </TableCell>
                             <TableCell className="px-4 py-2 text-sm text-right">
-                                {infracao.valor}
+                                {infracao.valor.toLocaleString("pt-BR", {
+                                    style: "currency",
+                                    currency: "BRL",
+                                })}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -155,14 +163,17 @@ export function InfractionsTable() {
                             Total
                         </TableCell>
                         <TableCell
-                            colSpan={3}
+                            colSpan={2}
                             className="px-4 py-2 text-right text-sm font-semibold"
                         >
-                            $2,500.00
+                            {totalInfractions.toLocaleString("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                            })}
                         </TableCell>
                     </TableRow>
                 </TableFooter>
             </Table>
         </div>
     );
-}
+}  

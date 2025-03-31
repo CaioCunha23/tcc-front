@@ -274,8 +274,14 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     id: "infracaoValor",
-    accessorFn: (row) =>
-      row.infracaos && row.infracaos.length > 0 ? row.infracaos[0].valor : null,
+    accessorFn: (row) => {
+      if (!row.infracaos || row.infracaos.length === 0) return 0;
+
+      return row.infracaos.reduce((acc: number, infracao: { valor: string }) =>
+        acc + parseFloat(infracao.valor),
+        0
+      );
+    },
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -286,11 +292,15 @@ export const columns: ColumnDef<any>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => (
-      <div className="flex justify-center">
-        {row.getValue("infracaoValor") || "Sem infrações"}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const valorTotal = row.getValue("infracaoValor") as number;
+
+      return (
+        <div className="flex justify-center">
+          {valorTotal > 0 ? `R$ ${valorTotal.toFixed(2)}` : "Sem infrações"}
+        </div>
+      );
+    },
   },
   {
     id: "actions",
@@ -371,12 +381,12 @@ export function DataTableWorker() {
 
   return (
     <div className="w-full">
-      <div className="flex flex-col sm:flex-row items-center justify-between py-4 px-4 sm:px-6">
+      <div className="flex flex-col sm:flex-row items-center justify-between py-4">
         <Input
-          placeholder="Pesquisar..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Pesquisar UID..."
+          value={(table.getColumn("uidMSK")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("uidMSK")?.setFilterValue(event.target.value)
           }
           className="max-w-sm mb-4 sm:mb-0"
         />

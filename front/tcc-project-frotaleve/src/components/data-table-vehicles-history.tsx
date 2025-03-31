@@ -61,6 +61,7 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
     id: "select",
     header: ({ table }) => (
       <Checkbox
+        className="dark:bg-gray-800 dark:border-gray-600"
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -86,13 +87,14 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Nome
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex">
+      <div className="flex justify-center">
         {row.getValue("colaboradorNome") || "Sem nome"}
       </div>
     ),
@@ -103,13 +105,14 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         UID MSK
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex">{row.getValue("colaboradorUid")}</div>
+      <div className="flex justify-center">{row.getValue("colaboradorUid")}</div>
     ),
   },
   {
@@ -119,13 +122,14 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Brand
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex">
+      <div className="flex justify-center">
         {row.getValue("colaboradorBrand") || "Sem brand"}
       </div>
     ),
@@ -137,13 +141,14 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Placa
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex">
+      <div className="flex justify-center">
         {row.getValue("veiculoPlaca") || "Sem placa"}
       </div>
     ),
@@ -155,13 +160,14 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Modelo
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex">
+      <div className="flex justify-center">
         {row.getValue("veiculoModelo") || "Sem modelo"}
       </div>
     ),
@@ -173,13 +179,14 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Renavan
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex">
+      <div className="flex justify-center">
         {row.getValue("veiculoRenavan") || "Sem renavan"}
       </div>
     ),
@@ -191,13 +198,14 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Chassi
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex">
+      <div className="flex justify-center">
         {row.getValue("veiculoChassi") || "Sem chassi"}
       </div>
     ),
@@ -209,13 +217,14 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Status
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex">
+      <div className="flex justify-center">
         {row.getValue("veiculoStatus") || "Sem status"}
       </div>
     ),
@@ -226,13 +235,14 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Data de Início
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex">{row.getValue("dataInicio")}</div>
+      <div className="flex justify-center">{row.getValue("dataInicio")}</div>
     ),
   },
   {
@@ -241,13 +251,14 @@ export const columns: ColumnDef<HistoricoVeiculo>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Data de Finalização
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex">{row.getValue("dataFim")}</div>
+      <div className="flex justify-center">{row.getValue("dataFim")}</div>
     ),
   },
   {
@@ -324,18 +335,21 @@ export function DataTableVehiclesHistory() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between py-4">
         <Input
-          placeholder="Filtrar por placa..."
-          value={(table.getColumn("veiculoPlaca")?.getFilterValue() as string) ?? ""}
+          placeholder="Pesquisar placa..."
+          value={
+            (table.getColumn("veiculoPlaca")?.getFilterValue() as string) ??
+            ""
+          }
           onChange={(event) =>
             table.getColumn("veiculoPlaca")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm mb-4 sm:mb-0"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline">
               Colunas <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -358,16 +372,26 @@ export function DataTableVehiclesHistory() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border">
+
+      <div className="flex max-w-460 rounded border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow
+                key={headerGroup.id}
+                className="bg-gray-100 dark:bg-gray-800"
+              >
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className="px-4 py-2 text-sm font-medium text-center"
+                  >
                     {header.isPlaceholder
                       ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                      : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -376,9 +400,16 @@ export function DataTableVehiclesHistory() {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className="border-b last:border-0"
+                >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className="px-4 py-2 text-center text-sm"
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -386,7 +417,10 @@ export function DataTableVehiclesHistory() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   Sem resultados.
                 </TableCell>
               </TableRow>
@@ -394,12 +428,13 @@ export function DataTableVehiclesHistory() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+
+      <div className="flex flex-col sm:flex-row items-center justify-end space-y-2 sm:space-y-0 sm:space-x-2 py-4 px-4 sm:px-6">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} de{" "}
           {table.getFilteredRowModel().rows.length} linha(s) selecionadas.
         </div>
-        <div className="space-x-2">
+        <div className="flex space-x-2">
           <Button
             variant="outline"
             size="sm"

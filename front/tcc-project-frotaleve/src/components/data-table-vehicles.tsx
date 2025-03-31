@@ -11,7 +11,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -40,6 +39,7 @@ export const columns: ColumnDef<any>[] = [
     id: "select",
     header: ({ table }) => (
       <Checkbox
+        className="dark:bg-gray-800 dark:border-gray-600"
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -50,6 +50,7 @@ export const columns: ColumnDef<any>[] = [
     ),
     cell: ({ row }) => (
       <Checkbox
+        className="dark:bg-gray-800 dark:border-gray-600"
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
@@ -64,6 +65,7 @@ export const columns: ColumnDef<any>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Fornecedor
         <ArrowUpDown />
@@ -77,6 +79,7 @@ export const columns: ColumnDef<any>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Contrato
         <ArrowUpDown />
@@ -90,6 +93,7 @@ export const columns: ColumnDef<any>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Placa
         <ArrowUpDown />
@@ -103,6 +107,7 @@ export const columns: ColumnDef<any>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Modelo
         <ArrowUpDown />
@@ -116,6 +121,7 @@ export const columns: ColumnDef<any>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Cor
         <ArrowUpDown />
@@ -129,6 +135,7 @@ export const columns: ColumnDef<any>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Status
         <ArrowUpDown />
@@ -142,6 +149,7 @@ export const columns: ColumnDef<any>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Cliente
         <ArrowUpDown />
@@ -155,19 +163,16 @@ export const columns: ColumnDef<any>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Disponibilização
         <ArrowUpDown />
       </Button>
     ),
     cell: ({ row }) => {
-      const rawDate = row.getValue("dataDisponibilizacao");
-      const dateValue = rawDate ? new Date(rawDate as string | number | Date).toLocaleDateString() : "N/A";
-      return (
-        <div className="flex justify-center">
-          {dateValue}
-        </div>
-      )
+      const rawDate = row.getValue("dataDisponibilizacao")
+      const dateValue = rawDate ? new Date(rawDate as string | number | Date).toLocaleDateString() : "N/A"
+      return <div className="flex justify-center">{dateValue}</div>
     },
   },
   {
@@ -176,6 +181,7 @@ export const columns: ColumnDef<any>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Previsão Devolução
         <ArrowUpDown />
@@ -183,12 +189,8 @@ export const columns: ColumnDef<any>[] = [
     ),
     cell: ({ row }) => {
       const rawDate = row.getValue("previsaoDevolucao")
-      const dateValue = rawDate ? new Date(rawDate as string | number | Date).toLocaleDateString() : "N/A";
-      return (
-        <div className="flex justify-center">
-          {dateValue}
-        </div>
-      )
+      const dateValue = rawDate ? new Date(rawDate as string | number | Date).toLocaleDateString() : "N/A"
+      return <div className="flex justify-center">{dateValue}</div>
     },
   },
   {
@@ -197,6 +199,7 @@ export const columns: ColumnDef<any>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       >
         Mensalidade
         <ArrowUpDown />
@@ -212,10 +215,10 @@ export const columns: ColumnDef<any>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const vehicle = row.original
-      const navigate = useNavigate();
+      const navigate = useNavigate()
       const handleEditClick = () => {
-        navigate(`/veiculo/${vehicle.id}`);
-      };
+        navigate(`/veiculo/${vehicle.id}`)
+      }
 
       return (
         <DropdownMenu>
@@ -243,11 +246,11 @@ export const columns: ColumnDef<any>[] = [
 ]
 
 export function DataTableVehicles() {
-  const [data, setData] = useState<any[]>([]);
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
+  const [data, setData] = useState<any[]>([])
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
 
   useEffect(() => {
     async function fetchData() {
@@ -255,13 +258,12 @@ export function DataTableVehicles() {
         const response = await fetch("http://localhost:3000/veiculos")
         if (!response.ok) throw new Error("Erro ao buscar dados")
         const data = await response.json()
-        console.log("Dados recebidos:", data);
+        console.log("Dados recebidos:", data)
         setData(data)
       } catch (error) {
         console.error("Erro ao buscar dados:", error)
       }
     }
-
     fetchData()
   }, [])
 
@@ -286,18 +288,18 @@ export function DataTableVehicles() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between py-4">
         <Input
-          placeholder="Filtrar por placa..."
+          placeholder="Pesquisar placa..."
           value={(table.getColumn("placa")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("placa")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm mb-4 sm:mb-0"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline">
               Colunas <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -305,40 +307,38 @@ export function DataTableVehicles() {
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border">
+
+      <div className="flex max-w-460 rounded border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  )
-                })}
+              <TableRow key={headerGroup.id} className="bg-gray-100 dark:bg-gray-800">
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="px-4 py-2 text-sm font-medium text-center"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -348,23 +348,18 @@ export function DataTableVehicles() {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="border-b last:border-0"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                    <TableCell key={cell.id} className="px-4 py-2 text-center text-sm">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -372,12 +367,13 @@ export function DataTableVehicles() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+
+      <div className="flex flex-col sm:flex-row items-center justify-end space-y-2 sm:space-y-0 sm:space-x-2 py-4 px-4 sm:px-6">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-        <div className="space-x-2">
+        <div className="flex space-x-2">
           <Button
             variant="outline"
             size="sm"

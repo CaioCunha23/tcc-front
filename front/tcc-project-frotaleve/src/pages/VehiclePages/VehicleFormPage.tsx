@@ -21,38 +21,16 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 
 const vehicleSchema = z.object({
-    fornecedor: z.string().min(1, {
-        message: "Fornecedor é obrigatório."
-    }),
-    contrato: z.string().min(1, {
-        message: "Contrato é obrigatório."
-    }),
-    placa: z.string().min(1, {
-        message: "Placa é obrigatória."
-
-    }),
-    renavan: z.string().min(1, {
-        message: "Renavan é obrigatório."
-    }),
-    chassi: z.string().min(1, {
-        message: "Chassi é obrigatório."
-
-    }),
-    modelo: z.string().min(1, {
-        message: "Modelo é obrigatório."
-    }),
-    cor: z.string().min(1, {
-        message: "Cor é obrigatória."
-    }),
-    status: z.string().min(1, {
-        message: "Status é obrigatório."
-    }),
-    cliente: z.string().min(1, {
-        message: "Cliente é obrigatório."
-    }),
-    centroCusto: z.string().min(1, {
-        message: "Centro de custo é obrigatório."
-    }),
+    fornecedor: z.string().min(1, { message: "Fornecedor é obrigatório." }),
+    contrato: z.string().min(1, { message: "Contrato é obrigatório." }),
+    placa: z.string().min(1, { message: "Placa é obrigatória." }),
+    renavan: z.string().min(1, { message: "Renavan é obrigatório." }),
+    chassi: z.string().min(1, { message: "Chassi é obrigatório." }),
+    modelo: z.string().min(1, { message: "Modelo é obrigatório." }),
+    cor: z.string().min(1, { message: "Cor é obrigatória." }),
+    status: z.string().min(1, { message: "Status é obrigatório." }),
+    cliente: z.string().min(1, { message: "Cliente é obrigatório." }),
+    centroCusto: z.string().min(1, { message: "Centro de custo é obrigatório." }),
     franquiaKM: z.string({
         invalid_type_error: "Franquia KM deve ser um número."
     }),
@@ -139,11 +117,16 @@ export function VehicleFormPage() {
     return (
         <main className="flex-1 p-4 md:p-8">
             <div className="mx-auto w-full max-w-full md:max-w-[60%]">
-                <label className="block text-4xl font-bold mb-6 text-center">Cadastrar Veículo</label>
-                <Card className="border-primary shadow-md max-h-[45rem] overflow-y-auto">
-                    <CardContent>
+                <h1 className="block text-4xl font-bold mb-6 text-center">
+                    Cadastrar Veículo
+                </h1>
+                <Card className="shadow-lg rounded-lg border overflow-y-auto max-h-[45rem]">
+                    <CardContent className="p-6">
                         <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                            <form
+                                onSubmit={form.handleSubmit(onSubmit)}
+                                className="space-y-6"
+                            >
 
                                 <div className="flex flex-col md:flex-row gap-4">
                                     <FormField
@@ -152,7 +135,11 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input className="border-primary" placeholder="Fornecedor" {...field} />
+                                                    <Input
+                                                        placeholder="Fornecedor"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -164,7 +151,11 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input className="border-primary" placeholder="Contrato" {...field} />
+                                                    <Input
+                                                        placeholder="Contrato"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -176,7 +167,11 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input className="border-primary" placeholder="Placa" {...field} />
+                                                    <Input
+                                                        placeholder="Placa"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -191,7 +186,11 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input className="border-primary" placeholder="Renavan" {...field} />
+                                                    <Input
+                                                        placeholder="Renavan"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -203,7 +202,11 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input className="border-primary" placeholder="Chassi" {...field} />
+                                                    <Input
+                                                        placeholder="Chassi"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -215,7 +218,11 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input className="border-primary" placeholder="Modelo" {...field} />
+                                                    <Input
+                                                        placeholder="Modelo"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -230,7 +237,11 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input className="border-primary" placeholder="Cor" {...field} />
+                                                    <Input
+                                                        placeholder="Cor"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -241,18 +252,27 @@ export function VehicleFormPage() {
                                         name="status"
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger className="border-primary w-full">
+                                                <FormControl>
+                                                    <Select
+                                                        onValueChange={field.onChange}
+                                                        defaultValue={field.value}
+                                                    >
+                                                        <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
                                                             <SelectValue placeholder="Status" />
                                                         </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <SelectItem value="Disponível">Disponível</SelectItem>
-                                                        <SelectItem value="Em uso">Em uso</SelectItem>
-                                                        <SelectItem value="Em manutenção">Em manutenção</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
+                                                        <SelectContent>
+                                                            <SelectItem value="Disponível">
+                                                                Disponível
+                                                            </SelectItem>
+                                                            <SelectItem value="Em uso">
+                                                                Em uso
+                                                            </SelectItem>
+                                                            <SelectItem value="Em manutenção">
+                                                                Em manutenção
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -263,7 +283,11 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input className="border-primary" placeholder="Cliente" {...field} />
+                                                    <Input
+                                                        placeholder="Cliente"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -278,7 +302,11 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input className="border-primary" placeholder="Centro de Custo" {...field} />
+                                                    <Input
+                                                        placeholder="Centro de Custo"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -293,7 +321,12 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input type="number" className="border-primary" placeholder="Franquia KM" {...field} />
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Franquia KM"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -310,7 +343,7 @@ export function VehicleFormPage() {
                                                         onCheckedChange={field.onChange}
                                                     />
                                                 </FormControl>
-                                                <span>Carro Reserva?</span>
+                                                <span className="text-sm">Carro Reserva?</span>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -324,7 +357,12 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input type="date" className="border-primary" placeholder="Data Disponibilização" {...field} />
+                                                    <Input
+                                                        type="date"
+                                                        placeholder="Data Disponibilização"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -336,7 +374,12 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input type="number" className="border-primary" placeholder="Meses Contratados" {...field} />
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Meses Contratados"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -348,7 +391,12 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input type="date" className="border-primary" placeholder="Previsão Devolução" {...field} />
+                                                    <Input
+                                                        type="date"
+                                                        placeholder="Previsão Devolução"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -363,7 +411,12 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input type="number" className="border-primary" placeholder="Meses Faltantes" {...field} />
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Meses Faltantes"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -375,7 +428,12 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input type="number" className="border-primary" placeholder="Mensalidade" {...field} />
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Mensalidade"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -387,7 +445,12 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input type="number" className="border-primary" placeholder="Budget" {...field} />
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Budget"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -402,7 +465,12 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input type="number" className="border-primary" placeholder="Multa" {...field} />
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Multa"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -414,7 +482,12 @@ export function VehicleFormPage() {
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input type="date" className="border-primary" placeholder="Próxima Revisão" {...field} />
+                                                    <Input
+                                                        type="date"
+                                                        placeholder="Próxima Revisão"
+                                                        {...field}
+                                                        className="border-primary rounded-md shadow-sm"
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -426,7 +499,6 @@ export function VehicleFormPage() {
                                     <Button type="submit" className="w-full sm:w-auto">
                                         Submit
                                     </Button>
-
                                     <Button
                                         type="button"
                                         variant={"destructive"}
