@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartInfracoes } from "@/components/chart-infractions";
+import { ChartInfracoes } from "@/components/ChartInfractions";
 
 interface DashboardMetrics {
   totalInfractionsValue: number;

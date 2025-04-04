@@ -1,4 +1,4 @@
-import { DataTableVehicles } from "@/components/data-table-vehicles";
+import { DataTableVehicles } from "@/features/vehicles/components/DataTableVehicles";
 
 export function VehiclesPage() {
     return (

@@ -1,4 +1,4 @@
-import LoginForm from './components/loginForm';
+import LoginForm from './components/LoginForm'
 import Header from './components/ui/header';
 import Footer from './components/ui/footer';
 import maerskLogo from './assets/Maersk.png';

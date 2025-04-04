@@ -4,15 +4,15 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import './styles/index.css'
 import App from './App.tsx'
 import { HomePage } from './pages/Home/HomePage.tsx';
-import { UsersPage } from './pages/WorkerPages/WorkersPage.tsx';
-import { WorkerFormPage } from './pages/WorkerPages/WorkerFormPage.tsx';
+import { UsersPage } from './features/workers/pages/WorkersPage.tsx';
+import { WorkerFormPage } from './features/workers/pages/WorkerFormPage.tsx';
 import Layout from './components/Layout.tsx';
-import { VehiclesPage } from './pages/VehiclePages/VehiclesPage.tsx';
-import { VehicleFormPage } from './pages/VehiclePages/VehicleFormPage.tsx';
-import EditWorkerPage from './pages/WorkerPages/EditWorkerPage.tsx';
-import EditVehiclePage from './pages/VehiclePages/EditVehiclePage.tsx';
-import { VehiclesHistoryPage } from './pages/VehiclePages/VehiclesHistoryPage.tsx';
-import { InfractionsPage } from './pages/WorkerPages/InfractionsPage.tsx';
+import { VehiclesPage } from './features/vehicles/pages/VehiclesPage.tsx';
+import { VehicleFormPage } from './features/vehicles/pages/VehicleFormPage.tsx';
+import EditWorkerPage from './features/workers/pages/EditWorkerPage.tsx';
+import EditVehiclePage from './features/vehicles/pages/EditVehiclePage.tsx';
+import { VehiclesHistoryPage } from './features/vehicles/pages/VehiclesHistoryPage.tsx';
+import { InfractionsPage } from './features/workers/pages/InfractionsPage.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

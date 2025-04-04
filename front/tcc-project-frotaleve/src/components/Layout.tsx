@@ -1,10 +1,10 @@
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/Sidebar"
 import { Outlet } from "react-router"
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { ModeToggle } from "./ui/mode-toggle";
 import { Separator } from "./ui/separator";
-import { BreadcrumbResponsive } from "./bread-crumb-responsive";
+import { BreadcrumbResponsive } from "./BreadCrumbsResponsive";
 
 export default function Layout() {
     return (

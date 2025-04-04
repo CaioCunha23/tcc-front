@@ -1,4 +1,4 @@
-import { DataTableWorker } from "@/components/data-table-workers";
+import { DataTableWorker } from "@/features/workers/components/DataTableWorkers";
 
 export function UsersPage() {
     return (
