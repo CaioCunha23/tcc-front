@@ -37,14 +37,6 @@ const data = {
           url: "/colaboradores",
         },
         {
-          title: "Adicionar novo",
-          url: "/colaborador/adicionar",
-        },
-        {
-          title: "Editar dados",
-          url: "#",
-        },
-        {
           title: "Verificação de multas",
           url: "/colaboradores/multas",
         },
@@ -57,11 +49,6 @@ const data = {
         {
           title: "Frota de carros",
           url: "/veiculos",
-        },
-        {
-          title: "Adicionar novo veículo",
-          url: "/veiculo/adicionar",
-          isActive: true,
         },
         {
           title: "Histórico de Utilização",

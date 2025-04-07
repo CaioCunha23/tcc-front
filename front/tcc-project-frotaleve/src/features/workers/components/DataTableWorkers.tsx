@@ -26,8 +26,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { useState, useEffect } from "react"
 import { useColaboradoresColumns } from "@/hooks/useColaboradoresColumns"
+import { WorkerFormPage } from "../pages/WorkerFormPage"
 
 export interface Infracao {
   valor: string;
@@ -90,18 +100,41 @@ export function DataTableWorker() {
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row items-center justify-between py-4">
-        <Input
-          placeholder="Pesquisar UID..."
-          value={(table.getColumn("uidMSK")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("uidMSK")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm mb-4 sm:mb-0"
-        />
+        <div className="flex gap-2">
+          <Input
+            placeholder="Pesquisar UID..."
+            value={(table.getColumn("uidMSK")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("uidMSK")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm mb-4 sm:mb-0"
+          />
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>Adicionar</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Cadastrar Colaborador</DialogTitle>
+                <DialogDescription>
+                  Preencha os dados do novo colaborador.
+                </DialogDescription>
+              </DialogHeader>
+              <WorkerFormPage />
+              <DialogClose asChild>
+                <Button variant="ghost" className="mt-4">
+                  Fechar
+                </Button>
+              </DialogClose>
+            </DialogContent>
+          </Dialog>
+        </div>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
-              Columns <ChevronDown />
+              Colunas <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

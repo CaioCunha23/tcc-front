@@ -26,22 +26,42 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { useEffect, useState } from "react"
 import { useVehiclesColumns } from "@/hooks/useVehiclesColumns"
+import { VehicleFormPage } from "../pages/VehicleFormPage"
 
 export interface Veiculo {
   id: number;
   fornecedor: string;
   contrato: string;
   placa: string;
+  renavan: string;
+  chassi: string;
   modelo: string;
   cor: string;
   status: string;
   cliente: string;
+  perfil: string;
+  centroCusto: string;
+  franquiaKM: string;
+  carroReserva: boolean;
   dataDisponibilizacao: string;
+  mesesContratados: number;
   previsaoDevolucao: string;
-  cidadeEstacionamento: string;
-  mensalidade: string;
+  mesesFaltantes: number;
+  mensalidade: number;
+  budget: number;
+  multa: number;
+  proximaRevisao: string;
 }
 
 export function DataTableVehicles() {
@@ -90,14 +110,37 @@ export function DataTableVehicles() {
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row items-center justify-between py-4">
-        <Input
-          placeholder="Pesquisar placa..."
-          value={(table.getColumn("placa")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("placa")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm mb-4 sm:mb-0"
-        />
+        <div className="flex gap-2">
+          <Input
+            placeholder="Pesquisar placa..."
+            value={(table.getColumn("placa")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("placa")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm mb-4 sm:mb-0"
+          />
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>Adicionar</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2x1">
+              <DialogHeader>
+                <DialogTitle>Cadastrar Veículo</DialogTitle>
+                <DialogDescription>
+                  Preencha os dados do novo Veículo.
+                </DialogDescription>
+              </DialogHeader>
+              <VehicleFormPage />
+              <DialogClose asChild>
+                <Button variant="ghost" className="mt-4">
+                  Fechar
+                </Button>
+              </DialogClose>
+            </DialogContent>
+          </Dialog>
+        </div>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">

@@ -3,6 +3,9 @@ import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartInfracoes } from "@/components/ChartInfractions";
+import ColaboradorAumentoTable from "@/components/ColaboradorAumentoTable";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import TopOffendersTable from "@/components/TopOffendersTable";
 
 interface DashboardMetrics {
   totalInfractionsValue: number;
@@ -107,6 +110,30 @@ export function HomePage() {
       <div className="mt-8">
         <ChartInfracoes />
       </div>
+
+      <Tabs defaultValue="outline" className="flex w-full flex-col gap-6">
+
+        <TabsList>
+          <TabsTrigger value="outline">Outline</TabsTrigger>
+          <TabsTrigger value="past-performance">Past Performance</TabsTrigger>
+          <TabsTrigger value="key-personnel">Key Personnel</TabsTrigger>
+          <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
+          <TabsTrigger value="colaborador-aumento">Aumento Multas</TabsTrigger>
+          <TabsTrigger value="top-offenders">Top Offenders</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="outline">
+
+        </TabsContent>
+
+        <TabsContent value="colaborador-aumento">
+          <ColaboradorAumentoTable />
+        </TabsContent>
+
+        <TabsContent value="top-offenders">
+          <TopOffendersTable />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

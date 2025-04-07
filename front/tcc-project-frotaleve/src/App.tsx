@@ -1,32 +1,34 @@
-import LoginForm from './components/LoginForm'
-import Header from './components/ui/header';
-import Footer from './components/ui/footer';
-import maerskLogo from './assets/Maersk.png';
-import './styles/App.css'
+import { GalleryVerticalEnd } from "lucide-react"
+import { LoginForm } from "@/components/loginForm"
+import { ModeToggle } from "./components/ui/mode-toggle"
 
-export default function App() {
-  const socialLinks = [
-    { name: 'LinkedIn', url: 'https://www.linkedin.com' },
-    { name: 'Facebook', url: 'https://www.facebook.com' },
-    { name: 'Instagram', url: 'https://www.instagram.com' },
-    { name: 'YouTube', url: 'https://www.youtube.com' },
-    { name: 'Twitter', url: 'https://www.twitter.com' }
-  ];
-
-  const policyLinks = [
-    { name: 'Cookie Policy', url: '/cookie-policy' },
-    { name: 'Cookie Preferences', url: '/cookie-preferences' }
-  ];
-
+export default function LoginPage() {
   return (
-    <div className='h-screen w-screen flex flex-col bg-cover bg-center bg-no-repeat bg-[url(https://media.licdn.com/dms/image/v2/D4D12AQE2pTob4BxMiA/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1711543574420?e=2147483647&v=beta&t=hFXPNVcH1jhskeVKtyg0ctJhwVI3Tiw1OH1CA2OMWHU)]'>
-      <Header image={maerskLogo} />
+    <div className="grid min-h-svh lg:grid-cols-2">
+      <div className="flex flex-col gap-4 p-6 md:p-10">
+        <div className="flex justify-center gap-2 md:justify-start">
+          <a href="#" className="flex items-center gap-2 font-medium">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <GalleryVerticalEnd className="size-4" />
+            </div>
+            Acme Inc.
+          </a>
 
-      <div className='flex items-center h-[100%] justify-end mr-[10em]'>
-        <LoginForm />
+          <ModeToggle />
+        </div>
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-xs">
+            <LoginForm />
+          </div>
+        </div>
       </div>
-
-      <Footer socialLinks={socialLinks} policyLinks={policyLinks} />
+      <div className="relative hidden bg-muted lg:block">
+        <img
+          src="https://media.licdn.com/dms/image/v2/D4D12AQE2pTob4BxMiA/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1711543574420?e=2147483647&v=beta&t=hFXPNVcH1jhskeVKtyg0ctJhwVI3Tiw1OH1CA2OMWHU"
+          alt="Image"
+          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
+      </div>
     </div>
-  );
-};
+  )
+}

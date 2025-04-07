@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,24 +8,41 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog";
 import { useNavigate } from "react-router";
+import VehicleEditForm from "@/features/vehicles/pages/EditVehiclePage";
 
 export interface Veiculo {
-  id: number;
-  fornecedor: string;
-  contrato: string;
-  placa: string;
-  modelo: string;
-  cor: string;
-  status: string;
-  cliente: string;
-  dataDisponibilizacao: string;
-  previsaoDevolucao: string;
-  cidadeEstacionamento: string;
-  mensalidade: string;
+    id: number;
+    fornecedor: string;
+    contrato: string;
+    placa: string;
+    renavan: string;
+    chassi: string;
+    modelo: string;
+    cor: string;
+    status: string;
+    cliente: string;
+    perfil: string;
+    centroCusto: string;
+    franquiaKM: string;
+    carroReserva: boolean;
+    dataDisponibilizacao: string;
+    mesesContratados: number;
+    previsaoDevolucao: string;
+    mesesFaltantes: number;
+    mensalidade: number;
+    budget: number;
+    multa: number;
+    proximaRevisao: string;
 }
 
 export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
@@ -68,7 +85,9 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                     <ArrowUpDown />
                 </Button>
             ),
-            cell: ({ row }) => <div className="flex justify-center">{row.getValue("fornecedor")}</div>,
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("fornecedor")}</div>
+            ),
         },
         {
             accessorKey: "contrato",
@@ -82,7 +101,9 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                     <ArrowUpDown />
                 </Button>
             ),
-            cell: ({ row }) => <div className="flex justify-center">{row.getValue("contrato")}</div>,
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("contrato")}</div>
+            ),
         },
         {
             accessorKey: "placa",
@@ -96,7 +117,41 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                     <ArrowUpDown />
                 </Button>
             ),
-            cell: ({ row }) => <div className="flex justify-center">{row.getValue("placa")}</div>,
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("placa")}</div>
+            ),
+        },
+        {
+            accessorKey: "renavan",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                    Renavan
+                    <ArrowUpDown />
+                </Button>
+            ),
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("renavan")}</div>
+            ),
+        },
+        {
+            accessorKey: "chassi",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                    Chassi
+                    <ArrowUpDown />
+                </Button>
+            ),
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("chassi")}</div>
+            ),
         },
         {
             accessorKey: "modelo",
@@ -110,7 +165,9 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                     <ArrowUpDown />
                 </Button>
             ),
-            cell: ({ row }) => <div className="flex justify-center">{row.getValue("modelo")}</div>,
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("modelo")}</div>
+            ),
         },
         {
             accessorKey: "cor",
@@ -124,7 +181,9 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                     <ArrowUpDown />
                 </Button>
             ),
-            cell: ({ row }) => <div className="flex justify-center">{row.getValue("cor")}</div>,
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("cor")}</div>
+            ),
         },
         {
             accessorKey: "status",
@@ -138,7 +197,9 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                     <ArrowUpDown />
                 </Button>
             ),
-            cell: ({ row }) => <div className="flex justify-center">{row.getValue("status")}</div>,
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("status")}</div>
+            ),
         },
         {
             accessorKey: "cliente",
@@ -152,7 +213,75 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                     <ArrowUpDown />
                 </Button>
             ),
-            cell: ({ row }) => <div className="flex justify-center">{row.getValue("cliente")}</div>,
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("cliente")}</div>
+            ),
+        },
+        {
+            accessorKey: "perfil",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                    Perfil
+                    <ArrowUpDown />
+                </Button>
+            ),
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("perfil")}</div>
+            ),
+        },
+        {
+            accessorKey: "centroCusto",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                    Centro de Custo
+                    <ArrowUpDown />
+                </Button>
+            ),
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("centroCusto")}</div>
+            ),
+        },
+        {
+            accessorKey: "franquiaKM",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                    Franquia KM
+                    <ArrowUpDown />
+                </Button>
+            ),
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("franquiaKM")}</div>
+            ),
+        },
+        {
+            accessorKey: "carroReserva",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                    Carro Reserva
+                    <ArrowUpDown />
+                </Button>
+            ),
+            cell: ({ row }) => (
+                <div className="flex justify-center">
+                    {row.getValue("carroReserva") ? "Sim" : "Não"}
+                </div>
+            ),
         },
         {
             accessorKey: "dataDisponibilizacao",
@@ -167,10 +296,28 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                 </Button>
             ),
             cell: ({ row }) => {
-                const rawDate = row.getValue("dataDisponibilizacao")
-                const dateValue = rawDate ? new Date(rawDate as string | number | Date).toLocaleDateString() : "N/A"
-                return <div className="flex justify-center">{dateValue}</div>
+                const rawDate = row.getValue("dataDisponibilizacao");
+                const dateValue = rawDate
+                    ? new Date(rawDate as string | number | Date).toLocaleDateString()
+                    : "N/A";
+                return <div className="flex justify-center">{dateValue}</div>;
             },
+        },
+        {
+            accessorKey: "mesesContratados",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                    Meses Contratados
+                    <ArrowUpDown />
+                </Button>
+            ),
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("mesesContratados")}</div>
+            ),
         },
         {
             accessorKey: "previsaoDevolucao",
@@ -185,10 +332,28 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                 </Button>
             ),
             cell: ({ row }) => {
-                const rawDate = row.getValue("previsaoDevolucao")
-                const dateValue = rawDate ? new Date(rawDate as string | number | Date).toLocaleDateString() : "N/A"
-                return <div className="flex justify-center">{dateValue}</div>
+                const rawDate = row.getValue("previsaoDevolucao");
+                const dateValue = rawDate
+                    ? new Date(rawDate as string | number | Date).toLocaleDateString()
+                    : "N/A";
+                return <div className="flex justify-center">{dateValue}</div>;
             },
+        },
+        {
+            accessorKey: "mesesFaltantes",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                    Meses Faltantes
+                    <ArrowUpDown />
+                </Button>
+            ),
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("mesesFaltantes")}</div>
+            ),
         },
         {
             accessorKey: "mensalidade",
@@ -203,40 +368,137 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                 </Button>
             ),
             cell: ({ row }) => {
-                const value = row.getValue("mensalidade")
-                return <div className="flex justify-center">{value ? `R$ ${value}` : "N/A"}</div>
+                const mensalidade = row.getValue("mensalidade") as number;
+                return (
+                    <div className="flex justify-center">
+                        {mensalidade > 0 ? `R$ ${(mensalidade / 100).toFixed(2)}` : "Sem mensalidades"}
+                    </div>
+                );
             },
+        },
+        {
+            accessorKey: "budget",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                    Budget
+                    <ArrowUpDown />
+                </Button>
+            ),
+            cell: ({ row }) => {
+                const budget = row.getValue("budget") as number;
+                return (
+                    <div className="flex justify-center">
+                        {budget > 0 ? `R$ ${(budget / 100).toFixed(2)}` : "Sem budget"}
+                    </div>
+                );
+            }
+        },
+        {
+            accessorKey: "multa",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                    Multa
+                    <ArrowUpDown />
+                </Button>
+            ),
+            cell: ({ row }) => {
+                const multa = row.getValue("multa") as number;
+                return (
+                    <div className="flex justify-center">
+                        {multa > 0 ? `R$ ${(multa / 100).toFixed(2)}` : "Sem multa"}
+                    </div>
+                );
+            }
+        },
+        {
+            accessorKey: "proximaRevisao",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                    Próxima Revisão
+                    <ArrowUpDown />
+                </Button>
+            ),
+            cell: ({ row }) => (
+                <div className="flex justify-center">{row.getValue("proximaRevisao")}</div>
+            ),
         },
         {
             id: "actions",
             enableHiding: false,
             cell: ({ row }) => {
-                const vehicle = row.original
-                const navigate = useNavigate()
-                const handleEditClick = () => {
-                    navigate(`/veiculo/${vehicle.id}`)
+                const vehicle = row.original;
+                const [open, setOpen] = useState(false);
+
+                async function handleSave(values: Partial<Veiculo>) {
+                    const updatedWorker: Veiculo = { ...vehicle, ...values };
+                    const res = await fetch(`http://localhost:3000/colaborador/${vehicle.id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(updatedWorker),
+                    });
+                    if (res.ok) {
+                        setOpen(false);
+                    } else {
+                        console.error("Erro ao atualizar");
+                    }
                 }
 
+                const handleEditClick = (event: React.MouseEvent) => {
+                    event.stopPropagation();
+                    setOpen(true);
+                };
+
                 return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Abrir Menu</span>
-                                <MoreHorizontal />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(vehicle.placa)}
-                            >
-                                Copy Placa
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={handleEditClick}>Edit Veículo</DropdownMenuItem>
-                            <DropdownMenuItem>Desativar Veículo</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                    <span className="sr-only">Abrir Menu</span>
+                                    <MoreHorizontal />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                                <DropdownMenuItem
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        navigator.clipboard.writeText(vehicle.placa);
+                                    }}
+                                >
+                                    Copiar Placa
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={handleEditClick}>
+                                    Editar Veículo
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>Desativar Veículo</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        <Dialog open={open} onOpenChange={setOpen}>
+                            <DialogContent className="max-w-2xl">
+                                <DialogHeader>
+                                    <DialogTitle>Editar Veículo</DialogTitle>
+                                    <DialogDescription>
+                                        Altere os dados do Veículo e salve.
+                                    </DialogDescription>
+                                </DialogHeader>
+
+                                <VehicleEditForm defaultValues={vehicle} onSubmit={handleSave} />
+                            </DialogContent>
+                        </Dialog>
+                    </>
                 )
             },
         },

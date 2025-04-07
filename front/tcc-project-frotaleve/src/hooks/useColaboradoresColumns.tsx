@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,24 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { useNavigate } from "react-router";
+import WorkerEditForm from "@/features/workers/pages/EditWorkerPage";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 
 export interface Infracao {
   valor: string;
@@ -256,10 +270,10 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
     },
     {
       id: "infracaoValor",
-      accessorFn: (row) => {
-        if (!row.infracaos || row.infracaos.length === 0) return 0;
-        return row.infracaos.reduce((acc, infracao) => parseInt(acc + infracao.valor), 0);
-      },
+      accessorFn: (row) =>
+        row.infracaos?.length
+          ? row.infracaos.reduce((acc, { valor }) => acc + +valor, 0)
+          : 0,
       header: ({ column }) => (
         <Button
           variant="ghost"
@@ -272,12 +286,69 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
       ),
       cell: ({ row }) => {
         const valorTotal = row.getValue("infracaoValor") as number;
-        console.log('to aqui por favor mostra', valorTotal);
-        console.log('typeof valorTotal', typeof valorTotal);
+        const worker = row.original;
+        const [open, setOpen] = useState(false);
+        const [infractions, setInfractions] = useState([]);
+
+        const fetchInfractions = async (workerUidMSK: string) => {
+          try {
+            const response = await fetch(`http://localhost:3000/infracoes/${workerUidMSK}?last30=true`);
+
+            if (!response.ok) {
+              throw new Error("Erro ao buscar infrações");
+            }
+            const data = await response.json();
+            setInfractions(data);
+          } catch (error) {
+            console.error("Erro ao buscar infrações:", error);
+          }
+        };
+
+        const handleCellClick = async (e: React.MouseEvent) => {
+          e.stopPropagation();
+          await fetchInfractions(worker.uidMSK);
+          setOpen(true);
+        };
+
         return (
-          <div className="flex justify-center">
-            {valorTotal > 0 ? `R$ ${valorTotal.toFixed(2)}` : "Sem infrações"}
-          </div>
+          <>
+            <div
+              className="flex justify-center cursor-pointer"
+              onClick={handleCellClick}
+            >
+              {valorTotal > 0 ? `R$ ${(valorTotal / 100).toFixed(2)}` : "Sem infrações"}
+            </div>
+
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetContent className="w-full max-w-md">
+                <SheetHeader>
+                  <SheetTitle>
+                    Infrações dos Últimos 30 Dias
+                  </SheetTitle>
+                  <SheetDescription>
+                    Listagem das infrações para {worker.nome}.
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="p-4">
+                  {infractions.length > 0 ? (
+                    infractions.map((infraction: any, index: number) => (
+                      <div key={index} className="border-b py-2">
+                        <div>
+                          <strong>Valor:</strong> R$ {(infraction.valor / 100).toFixed(2)}
+                        </div>
+                        <div>
+                          <strong>Data:</strong>{" "}
+                          {new Date(infraction.dataInfracao).toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div>Sem infrações nos últimos 30 dias.</div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </>
         );
       },
     },
@@ -285,32 +356,68 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const worker = row.original
-        const navigate = useNavigate();
-        const handleEditClick = () => {
-          navigate(`/colaborador/${worker.id}`);
+        const worker = row.original;
+        const [open, setOpen] = useState(false);
+
+        async function handleSave(values: Partial<Colaborador>) {
+          const updatedWorker: Colaborador = { ...worker, ...values };
+          const res = await fetch(`http://localhost:3000/colaborador/${worker.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedWorker),
+          });
+          if (res.ok) {
+            setOpen(false);
+          } else {
+            console.error("Erro ao atualizar");
+          }
+        }
+
+        const handleEditClick = (event: React.MouseEvent) => {
+          event.stopPropagation();
+          setOpen(true);
         };
 
+
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Abrir Menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Ações</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(worker.uidMSK)}
-              >
-                Copiar UID MSK
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleEditClick}>Editar Colaborador</DropdownMenuItem>
-              <DropdownMenuItem>Desativar Colaborador</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Abrir Menu</span>
+                  <MoreHorizontal />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    navigator.clipboard.writeText(worker.uidMSK);
+                  }}
+                >
+                  Copiar UID MSK
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleEditClick}>
+                  Editar Colaborador
+                </DropdownMenuItem>
+                <DropdownMenuItem>Desativar Colaborador</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Editar Colaborador</DialogTitle>
+                  <DialogDescription>
+                    Altere os dados do colaborador e salve.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <WorkerEditForm defaultValues={worker} onSubmit={handleSave} />
+              </DialogContent>
+            </Dialog>
+          </>
         )
       },
     },

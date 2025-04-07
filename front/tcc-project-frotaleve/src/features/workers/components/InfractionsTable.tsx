@@ -146,7 +146,7 @@ export function InfractionsTable() {
                                 {infracao.enviadoParaRH}
                             </TableCell>
                             <TableCell className="px-4 py-2 text-sm text-right">
-                                {infracao.valor.toLocaleString("pt-BR", {
+                                {(infracao.valor / 100).toLocaleString("pt-BR", {
                                     style: "currency",
                                     currency: "BRL",
                                 })}
