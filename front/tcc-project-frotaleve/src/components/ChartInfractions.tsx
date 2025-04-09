@@ -34,7 +34,7 @@ export function ChartInfracoes() {
     }, [])
 
     return (
-        <Card className="@container/card">
+        <Card>
             <CardHeader>
                 <CardTitle>Gasto Mensal com Infrações</CardTitle>
                 <CardDescription>Multa (azul) e Sem Parar (verde)</CardDescription>

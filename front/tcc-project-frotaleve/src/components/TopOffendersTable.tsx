@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@/components/ui/table';
-import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ShieldAlertIcon } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface Offender {
     colaboradorUid: string;
@@ -10,40 +12,76 @@ interface Offender {
 
 export default function TopOffendersTable() {
     const [data, setData] = useState<Offender[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        setLoading(true);
         fetch('http://localhost:3000/top-offenders')
             .then(response => response.json())
             .then(result => {
-                console.log("Top offenders:", result);
                 setData(result);
+                setLoading(false);
             })
             .catch(err => {
                 console.error("Erro ao buscar dados de top offenders:", err);
+                setLoading(false);
             });
     }, []);
 
     return (
-        <div className="p-4">
-            <Label className="mb-4 text-xl font-bold">Top Offenders do Mês Anterior</Label>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Colaborador UID</TableCell>
-                        <TableCell>Infrações</TableCell>
-                        <TableCell>Porcentagem (%)</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {data.map(item => (
-                        <TableRow key={item.colaboradorUid}>
-                            <TableCell>{item.colaboradorUid}</TableCell>
-                            <TableCell>{item.infractionCount}</TableCell>
-                            <TableCell>{item.percentage}%</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </div>
+        <Card className="w-full shadow-sm">
+            <CardHeader className="pb-2">
+                <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                    <ShieldAlertIcon className="h-5 w-5 text-yellow-500" />
+                    Top Offenders do Mês Anterior
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="p-2">
+                <div className="rounded-md border">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="bg-muted/50 hover:bg-muted/50">
+                                <TableHead className="font-medium">Colaborador</TableHead>
+                                <TableHead className="text-center font-medium">Infrações</TableHead>
+                                <TableHead className="text-right pr-6 font-medium">Porcentagem</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {loading ? (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="h-24 text-center">
+                                        Carregando dados...
+                                    </TableCell>
+                                </TableRow>
+                            ) : data.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="h-24 text-center">
+                                        Nenhum dado encontrado
+                                    </TableCell>
+                                </TableRow>
+                            ) : (
+                                data.map((item) => (
+                                    <TableRow key={item.colaboradorUid}>
+                                        <TableCell className="font-medium">{item.colaboradorUid}</TableCell>
+                                        <TableCell className="text-center">{item.infractionCount}</TableCell>
+                                        <TableCell className="text-right pr-6">
+                                            <Badge
+                                                variant={item.percentage > 20 ? "destructive" : "outline"}
+                                                className={`${item.percentage > 20
+                                                    ? 'bg-red-100 text-red-800 hover:bg-red-200'
+                                                    : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                                                    }`}
+                                            >
+                                                {item.percentage.toFixed(1)}%
+                                            </Badge>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+            </CardContent>
+        </Card>
     );
 }

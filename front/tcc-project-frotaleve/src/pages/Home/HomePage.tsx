@@ -6,6 +6,8 @@ import { ChartInfracoes } from "@/components/ChartInfractions";
 import ColaboradorAumentoTable from "@/components/ColaboradorAumentoTable";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import TopOffendersTable from "@/components/TopOffendersTable";
+import VeiculosProxManutencao from "@/components/VeiculosProxManutencao";
+import InfractionsDueDate from "@/components/MultasAVencer";
 
 interface DashboardMetrics {
   totalInfractionsValue: number;
@@ -46,7 +48,7 @@ export function HomePage() {
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-4">
 
-        <Card className="@container/card">
+        <Card>
           <CardHeader className="relative">
             <CardDescription>Total Gasto com Infrações</CardDescription>
             <CardTitle className="text-2xl font-semibold">
@@ -58,7 +60,7 @@ export function HomePage() {
           </CardFooter>
         </Card>
 
-        <Card className="@container/card">
+        <Card>
           <CardHeader className="relative">
             <CardDescription>Crescimento Gasto com Multas</CardDescription>
             <CardTitle className="text-2xl font-semibold">
@@ -76,7 +78,7 @@ export function HomePage() {
           </CardFooter>
         </Card>
 
-        <Card className="@container/card">
+        <Card>
           <CardHeader className="relative">
             <CardDescription>Crescimento Infrações "Sem Parar"</CardDescription>
             <CardTitle className="text-2xl font-semibold">
@@ -94,7 +96,7 @@ export function HomePage() {
           </CardFooter>
         </Card>
 
-        <Card className="@container/card">
+        <Card>
           <CardHeader className="relative">
             <CardDescription>Status dos Veículos</CardDescription>
             <CardTitle className="text-2xl font-semibold">
@@ -111,20 +113,14 @@ export function HomePage() {
         <ChartInfracoes />
       </div>
 
-      <Tabs defaultValue="outline" className="flex w-full flex-col gap-6">
+      <Tabs defaultValue="colaborador-aumento" className="flex w-full flex-col gap-6">
 
         <TabsList>
-          <TabsTrigger value="outline">Outline</TabsTrigger>
-          <TabsTrigger value="past-performance">Past Performance</TabsTrigger>
-          <TabsTrigger value="key-personnel">Key Personnel</TabsTrigger>
-          <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
           <TabsTrigger value="colaborador-aumento">Aumento Multas</TabsTrigger>
           <TabsTrigger value="top-offenders">Top Offenders</TabsTrigger>
+          <TabsTrigger value="veiculos-manutencao">Veículos Próximos de Manutenção</TabsTrigger>
+          <TabsTrigger value="multas-a-vencer">Multas Próximas do Vencimento</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="outline">
-
-        </TabsContent>
 
         <TabsContent value="colaborador-aumento">
           <ColaboradorAumentoTable />
@@ -132,6 +128,14 @@ export function HomePage() {
 
         <TabsContent value="top-offenders">
           <TopOffendersTable />
+        </TabsContent>
+
+        <TabsContent value="veiculos-manutencao">
+          <VeiculosProxManutencao />
+        </TabsContent>
+
+        <TabsContent value="multas-a-vencer">
+          <InfractionsDueDate />
         </TabsContent>
       </Tabs>
     </div>

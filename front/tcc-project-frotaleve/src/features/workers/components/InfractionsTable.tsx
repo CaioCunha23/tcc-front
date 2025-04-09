@@ -61,7 +61,7 @@ export function InfractionsTable() {
     );
 
     return (
-        <div className="overflow-x-auto">
+        <div className="rounded-md border overflow-x-auto">
             <Table className="min-w-full border">
                 <TableCaption className="text-sm italic">
                     Lista de Infrações
@@ -166,7 +166,7 @@ export function InfractionsTable() {
                             colSpan={2}
                             className="px-4 py-2 text-right text-sm font-semibold"
                         >
-                            {totalInfractions.toLocaleString("pt-BR", {
+                            {(totalInfractions / 100).toLocaleString("pt-BR", {
                                 style: "currency",
                                 currency: "BRL",
                             })}
