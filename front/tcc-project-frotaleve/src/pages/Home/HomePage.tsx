@@ -12,7 +12,9 @@ import InfractionsDueDate from "@/components/MultasAVencer";
 interface DashboardMetrics {
   totalInfractionsValue: number;
   growthMultas: number;
+  growthMultasPercent: number;
   growthSemParar: number;
+  growthSemPararPercent: number;
   availableCars: number;
   vehiclesInUse: number;
   vehiclesInMaintenance: number;
@@ -23,7 +25,9 @@ export function HomePage() {
   const [metrics, setMetrics] = useState<DashboardMetrics>({
     totalInfractionsValue: 0,
     growthMultas: 0,
+    growthMultasPercent: 0,
     growthSemParar: 0,
+    growthSemPararPercent: 0,
     availableCars: 0,
     vehiclesInUse: 0,
     vehiclesInMaintenance: 0,
@@ -64,12 +68,23 @@ export function HomePage() {
           <CardHeader className="relative">
             <CardDescription>Crescimento Gasto com Multas</CardDescription>
             <CardTitle className="text-2xl font-semibold">
-              {metrics.growthMultas.toFixed(1)}%
+              R$ {metrics.growthMultas.toFixed(2)}
             </CardTitle>
             <div className="absolute right-4 top-4">
-              <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
-                {metrics.growthMultas >= 0 ? <TrendingUpIcon className="size-3" /> : <TrendingDownIcon className="size-3" />}
-                {metrics.growthMultas >= 0 ? "+" : ""}{metrics.growthMultas.toFixed(1)}%
+              <Badge
+                variant="outline"
+                className={`flex gap-1 rounded-lg text-xs items-center ${metrics.growthMultasPercent >= 0
+                  ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                  : 'bg-red-100 text-red-800 hover:bg-red-200'
+                  }`}
+              >
+                {metrics.growthMultasPercent >= 0 ? (
+                  <TrendingUpIcon className="size-3" />
+                ) : (
+                  <TrendingDownIcon className="size-3" />
+                )}
+                {metrics.growthMultasPercent >= 0 ? "+" : ""}
+                {metrics.growthMultasPercent.toFixed(1)}%
               </Badge>
             </div>
           </CardHeader>
@@ -80,14 +95,25 @@ export function HomePage() {
 
         <Card>
           <CardHeader className="relative">
-            <CardDescription>Crescimento Infrações "Sem Parar"</CardDescription>
+            <CardDescription>Crescimento Infrações Sem Parar</CardDescription>
             <CardTitle className="text-2xl font-semibold">
-              {metrics.growthSemParar.toFixed(1)}%
+              R$ {metrics.growthSemParar.toFixed(2)}
             </CardTitle>
             <div className="absolute right-4 top-4">
-              <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
-                {metrics.growthSemParar >= 0 ? <TrendingUpIcon className="size-3" /> : <TrendingDownIcon className="size-3" />}
-                {metrics.growthSemParar >= 0 ? "+" : ""}{metrics.growthSemParar.toFixed(1)}%
+              <Badge
+                variant="outline"
+                className={`flex gap-1 rounded-lg text-xs items-center ${metrics.growthSemPararPercent >= 0
+                  ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                  : 'bg-red-100 text-red-800 hover:bg-red-200'
+                  }`}
+              >
+                {metrics.growthSemPararPercent >= 0 ? (
+                  <TrendingUpIcon className="size-3" />
+                ) : (
+                  <TrendingDownIcon className="size-3" />
+                )}
+                {metrics.growthSemPararPercent >= 0 ? "+" : ""}
+                {metrics.growthSemPararPercent.toFixed(1)}%
               </Badge>
             </div>
           </CardHeader>
