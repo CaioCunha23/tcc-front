@@ -1,46 +1,151 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useNavigate } from "react-router";
+import { useTokenStore } from "@/hooks/useTokenStore";
+
+const loginSchema = z.object({
+    login: z.string().nonempty("Email ou UID é obrigatório"),
+    password: z.string().nonempty("Senha é obrigatória"),
+});
+
+type LoginFormInputs = z.infer<typeof loginSchema>;
+
 export function LoginForm({
     className,
     ...props
 }: React.ComponentPropsWithoutRef<"form">) {
+    const [serverError, setServerError] = useState<string | null>(null);
+    const navigate = useNavigate();
+    const { setToken, setColaborador } = useTokenStore();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<LoginFormInputs>({
+        resolver: zodResolver(loginSchema),
+    });
+
+    const onSubmit = async (data: LoginFormInputs) => {
+        setServerError(null);
+
+        try {
+            const response = await fetch("http://localhost:3000/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                setServerError("Falha ao realizar login");
+                return;
+            }
+
+            const json = await response.json();
+
+            const responseEu = await fetch("http://localhost:3000/eu", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${json.token}`,
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!responseEu.ok) {
+                setServerError("Erro ao realizar autenticação. Verifique seus dados.");
+                return;
+            }
+
+            const colaborador = await responseEu.json();
+
+            if (colaborador?.status === false) {
+                setServerError(
+                    "Sua conta está inativa. Entre em contato com o suporte."
+                );
+                return;
+            }
+
+            localStorage.setItem("token", json.token);
+            setToken(json.token);
+            setColaborador(colaborador);
+            navigate("/home");
+        } catch (error) {
+            setServerError("Erro na comunicação com o servidor.");
+        }
+    };
+
     return (
-        <form className={cn("flex flex-col gap-6", className)} {...props}>
+        <form
+            onSubmit={handleSubmit(onSubmit)}
+            className={cn("flex flex-col gap-6", className)}
+            {...props}
+        >
             <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Login to your account</h1>
-                <p className="text-balance text-sm text-muted-foreground">
-                    Enter your email below to login to your account
+                <h1 className="text-2xl font-bold">Login na sua conta</h1>
+                <p className="text-muted-foreground text-sm">
+                    Insira seu email ou UID abaixo para efetuar login na sua conta.
                 </p>
             </div>
+
             <div className="grid gap-6">
                 <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="email@maersk.com" required />
+                    <Label htmlFor="login">Email ou UID</Label>
+                    <Input
+                        id="login"
+                        type="text"
+                        placeholder="email@maersk.com ou UID"
+                        {...register("login")}
+                    />
+                    {errors.login && (
+                        <p className="text-red-500 text-sm">{errors.login.message}</p>
+                    )}
                 </div>
+
                 <div className="grid gap-2">
                     <div className="flex items-center">
-                        <Label htmlFor="password">Password</Label>
+                        <Label htmlFor="password">Senha</Label>
                         <a
                             href="#"
                             className="ml-auto text-sm underline-offset-4 hover:underline"
                         >
-                            Forgot your password?
+                            Esqueceu sua senha?
                         </a>
                     </div>
-                    <Input id="password" type="password" required />
+                    <Input
+                        id="password"
+                        type="password"
+                        placeholder="Sua senha"
+                        {...register("password")}
+                    />
+                    {errors.password && (
+                        <p className="text-red-500 text-sm">{errors.password.message}</p>
+                    )}
                 </div>
+
+                {serverError && (
+                    <p className="text-red-500 text-center">{serverError}</p>
+                )}
+
                 <Button type="submit" className="w-full">
-                    Login
+                    Entrar
                 </Button>
             </div>
+
             <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
+                Não possui uma conta?{" "}
                 <a href="#" className="underline underline-offset-4">
-                    Sign up
+                    Cadastre-se
                 </a>
             </div>
         </form>
-    )
+    );
 }

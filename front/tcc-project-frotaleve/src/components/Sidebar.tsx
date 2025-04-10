@@ -1,10 +1,10 @@
-import * as React from "react"
-import { ChevronRight, LifeBuoy, Send } from "lucide-react"
+import * as React from "react";
+import { ChevronRight, LifeBuoy } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 import {
   Sidebar,
   SidebarContent,
@@ -16,17 +16,19 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { NavUser } from "./ui/nav-user"
-import { NavSecondary } from "./ui/nav-secondary"
-import { Link, useLocation } from "react-router"
+} from "@/components/ui/sidebar";
+import { NavUser } from "./ui/nav-user";
+import { NavSecondary } from "./ui/nav-secondary";
+import { Link, useLocation } from "react-router";
+import { useTokenStore } from "@/hooks/useTokenStore";
+
+const defaultUser = {
+  name: "shadcn",
+  email: "m@example.com",
+  avatar: "/avatars/shadcn.jpg",
+};
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Colaboradores",
@@ -63,16 +65,20 @@ const data = {
       url: "#",
       icon: LifeBuoy,
     },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
+  const { colaborador } = useTokenStore();
+
+  const user = colaborador
+    ? {
+      name: colaborador.nome,
+      email: colaborador.email,
+      avatar: defaultUser.avatar,
+    }
+    : defaultUser;
 
   return (
     <Sidebar {...props}>
@@ -115,7 +121,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {item.items.map((subItem) => {
-                      const isActive = location.pathname === subItem.url; // Verifica se o item está ativo
+                      const isActive = location.pathname === subItem.url;
                       return (
                         <SidebarMenuItem key={subItem.title}>
                           <SidebarMenuButton
@@ -137,7 +143,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )

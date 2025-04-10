@@ -1,10 +1,9 @@
 import {
-    BadgeCheck,
+    UserPen,
     Bell,
     ChevronsUpDown,
     CreditCard,
     LogOut,
-    Sparkles,
 } from "lucide-react"
 import {
     Avatar,
@@ -26,16 +25,54 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
-export function NavUser({
-    user,
-}: {
+import { useTokenStore } from "@/hooks/useTokenStore"
+import { useNavigate } from "react-router"
+import { useState } from "react"
+import WorkerEditForm from "@/features/workers/pages/EditWorkerPage"
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { DialogHeader } from "./dialog"
+
+export function NavUser({ user }: {
     user: {
         name: string
         email: string
         avatar: string
     }
 }) {
-    const { isMobile } = useSidebar()
+    const { colaborador, logout } = useTokenStore();
+    const [open, setOpen] = useState(false);
+    const { isMobile } = useSidebar();
+    const navigate = useNavigate();
+
+    async function handleSave(values: Partial<typeof colaborador>) {
+        if (!colaborador) return;
+
+        const updatedWorker = { ...colaborador, ...values };
+
+        const res = await fetch(`http://localhost:3000/colaborador/${colaborador.uidMSK}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedWorker),
+        });
+
+        if (res.ok) {
+            setOpen(false);
+        } else {
+            console.error("Erro ao atualizar o colaborador");
+        }
+    }
+
+    const handleEditClick = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        setOpen(true);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        logout();
+        navigate("/");
+    };
+
     return (
         <SidebarMenu>
             <SidebarMenuItem>
@@ -74,18 +111,10 @@ export function NavUser({
                                 </div>
                             </div>
                         </DropdownMenuLabel>
-                        <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <Sparkles />
-                                Upgrade to Pro
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <BadgeCheck />
-                                Account
+                            <DropdownMenuItem onClick={handleEditClick}>
+                                <UserPen />
+                                Editar Dados
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                 <CreditCard />
@@ -97,12 +126,28 @@ export function NavUser({
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleLogout}>
                             <LogOut />
                             Log out
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
+
+                <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                            <DialogTitle>Editar Colaborador</DialogTitle>
+                            <DialogDescription>
+                                Altere os dados do colaborador e salve.
+                            </DialogDescription>
+                        </DialogHeader>
+                        {
+                            colaborador && (
+                                <WorkerEditForm defaultValues={colaborador} onSubmit={handleSave} />
+                            )
+                        }
+                    </DialogContent>
+                </Dialog>
             </SidebarMenuItem>
         </SidebarMenu>
     )

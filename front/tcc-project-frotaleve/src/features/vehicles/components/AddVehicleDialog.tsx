@@ -9,10 +9,10 @@ import {
     DialogDescription,
     DialogClose,
 } from "@/components/ui/dialog";
-import { WorkerFormPage } from "../pages/WorkerFormPage";
-import UploadCSVWorker from "./UploadCSVWorker";
+import { VehicleFormPage } from "../pages/VehicleFormPage";
+import UploadCSVVehicle from "./UploadCSVVehicle";
 
-export default function AddWorkerDialog() {
+export default function AddVehicleDialog() {
     const [mode, setMode] = useState<"initial" | "manual" | "upload">("initial");
     const [open, setOpen] = useState(false);
 
@@ -30,9 +30,9 @@ export default function AddWorkerDialog() {
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Adicionar Colaborador</DialogTitle>
+                    <DialogTitle>Adicionar Veículo</DialogTitle>
                     <DialogDescription>
-                        Escolha uma forma de cadastrar o colaborador:
+                        Escolha uma forma de cadastrar o veículo:
                     </DialogDescription>
                 </DialogHeader>
 
@@ -45,13 +45,13 @@ export default function AddWorkerDialog() {
 
                 {mode === "manual" && (
                     <div className="mt-4">
-                        <WorkerFormPage />
+                        <VehicleFormPage />
                     </div>
                 )}
 
                 {mode === "upload" && (
                     <div className="mt-4">
-                        <UploadCSVWorker />
+                        <UploadCSVVehicle />
                     </div>
                 )}
 

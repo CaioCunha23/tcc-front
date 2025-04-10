@@ -26,18 +26,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-} from "@/components/ui/dialog";
 import { useEffect, useState } from "react"
 import { useVehiclesColumns } from "@/hooks/useVehiclesColumns"
-import { VehicleFormPage } from "../pages/VehicleFormPage"
+import AddVehicleDialog from "./AddVehicleDialog"
 
 export interface Veiculo {
   id: number;
@@ -120,25 +111,7 @@ export function DataTableVehicles() {
             className="max-w-sm mb-4 sm:mb-0"
           />
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>Adicionar</Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2x1">
-              <DialogHeader>
-                <DialogTitle>Cadastrar Veículo</DialogTitle>
-                <DialogDescription>
-                  Preencha os dados do novo Veículo.
-                </DialogDescription>
-              </DialogHeader>
-              <VehicleFormPage />
-              <DialogClose asChild>
-                <Button variant="ghost" className="mt-4">
-                  Fechar
-                </Button>
-              </DialogClose>
-            </DialogContent>
-          </Dialog>
+          <AddVehicleDialog />
         </div>
 
         <DropdownMenu>

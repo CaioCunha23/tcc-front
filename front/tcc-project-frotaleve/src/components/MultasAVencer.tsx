@@ -98,7 +98,7 @@ export default function VeiculosProxManutencao() {
                                                             : "secondary"
                                                 }
                                                 className={`${item.statusResposta === "Não"
-                                                    ? "bg-red-100 text-red-800 hover:bg-red-200"
+                                                    ? "bg-red-500 text-white hover:bg-red-200"
                                                     : item.statusResposta === "Respondida"
                                                         ? "bg-green-100 text-green-800 hover:bg-green-200"
                                                         : "bg-orange-100 text-orange-800 hover:bg-orange-200"

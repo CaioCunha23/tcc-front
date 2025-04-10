@@ -68,8 +68,8 @@ export default function TopOffendersTable() {
                                             <Badge
                                                 variant={item.percentage > 20 ? "destructive" : "outline"}
                                                 className={`${item.percentage > 20
-                                                    ? 'bg-red-100 text-red-800 hover:bg-red-200'
-                                                    : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                                                    ? 'bg-red-500 text-white hover:bg-red-400'
+                                                    : 'bg-blue-100 text-black hover:bg-blue-200'
                                                     }`}
                                             >
                                                 {item.percentage.toFixed(1)}%

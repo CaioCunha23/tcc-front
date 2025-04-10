@@ -9,42 +9,45 @@ import Layout from './components/Layout.tsx';
 import { VehiclesPage } from './features/vehicles/pages/VehiclesPage.tsx';
 import { VehiclesHistoryPage } from './features/vehicles/pages/VehiclesHistoryPage.tsx';
 import { InfractionsPage } from './features/workers/pages/InfractionsPage.tsx';
+import { ThemeProvider } from "@/components/ui/theme-provider";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path='/'
-          element={<App />}
-        />
-
-        <Route element={<Layout />}>
-          <Route
-            path='/home'
-            element={<HomePage />}
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <Routes>
+          <Route path='/'
+            element={<App />}
           />
 
-          <Route
-            path='/colaboradores'
-            element={<UsersPage />}
-          />
+          <Route element={<Layout />}>
+            <Route
+              path='/home'
+              element={<HomePage />}
+            />
 
-          <Route
-            path="/colaboradores/multas"
-            element={<InfractionsPage />}
-          />
+            <Route
+              path='/colaboradores'
+              element={<UsersPage />}
+            />
 
-          <Route
-            path='/veiculos'
-            element={<VehiclesPage />}
-          />
+            <Route
+              path="/colaboradores/multas"
+              element={<InfractionsPage />}
+            />
 
-          <Route
-            path="/veiculo_colaborador"
-            element={<VehiclesHistoryPage />}
-          />
-        </Route>
-      </Routes>
+            <Route
+              path='/veiculos'
+              element={<VehiclesPage />}
+            />
+
+            <Route
+              path="/veiculo_colaborador"
+              element={<VehiclesHistoryPage />}
+            />
+          </Route>
+        </Routes>
+      </ThemeProvider>
     </BrowserRouter>
   </StrictMode>,
 )

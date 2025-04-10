@@ -82,10 +82,10 @@ export default function ColaboradorAumentoTable() {
                       <Badge
                         variant={item.growth > 50 ? "destructive" : item.growth > 20 ? "outline" : "secondary"}
                         className={`${item.growth > 50
-                          ? 'bg-red-100 text-red-800 hover:bg-red-200'
+                          ? 'bg-red-500 text-white hover:bg-red-400'
                           : item.growth > 20
                             ? 'bg-orange-100 text-orange-800 hover:bg-orange-200'
-                            : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                            : 'bg-blue-100 text-black hover:bg-blue-200'
                           }`}
                       >
                         +{item.growth.toFixed(1)}%
