@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 export interface Infracao {
     id: number;
     tipo: string;
-    placa: string;
+    placaVeiculo: string;
     colaboradorUid: string;
     veiculoId: number;
     costCenter: string;
@@ -32,8 +32,8 @@ export interface Infracao {
     codigoMulta: string;
     indicacaoLimite: string;
     statusResposta: string;
-    reconhecimento: string;
-    enviadoParaRH: string;
+    reconhecimento: boolean;
+    enviadoParaRH: boolean;
 }
 
 export function InfractionsTable() {
@@ -119,7 +119,7 @@ export function InfractionsTable() {
                                 {infracao.tipo}
                             </TableCell>
                             <TableCell className="px-4 py-2 text-sm">
-                                {infracao.placa}
+                                {infracao.placaVeiculo}
                             </TableCell>
                             <TableCell className="px-4 py-2 text-sm">
                                 {infracao.tag}
@@ -140,10 +140,10 @@ export function InfractionsTable() {
                                 {infracao.statusResposta}
                             </TableCell>
                             <TableCell className="px-4 py-2 text-sm">
-                                {infracao.reconhecimento}
+                                {infracao.reconhecimento ? "Reconhedio" : "Não reconhecido"}
                             </TableCell>
                             <TableCell className="px-4 py-2 text-sm">
-                                {infracao.enviadoParaRH}
+                                {infracao.enviadoParaRH ? "Sim" : "Não"}
                             </TableCell>
                             <TableCell className="px-4 py-2 text-sm text-right">
                                 {(infracao.valor / 100).toLocaleString("pt-BR", {

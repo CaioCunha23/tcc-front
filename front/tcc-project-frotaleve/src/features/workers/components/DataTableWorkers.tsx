@@ -26,18 +26,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-} from "@/components/ui/dialog";
 import { useState, useEffect } from "react"
 import { useColaboradoresColumns } from "@/hooks/useColaboradoresColumns"
-import { WorkerFormPage } from "../pages/WorkerFormPage"
+import AddWorkerDialog from "./AddWorkerDialog"
 
 export interface Infracao {
   valor: string;
@@ -110,25 +101,7 @@ export function DataTableWorker() {
             className="max-w-sm mb-4 sm:mb-0"
           />
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>Adicionar</Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Cadastrar Colaborador</DialogTitle>
-                <DialogDescription>
-                  Preencha os dados do novo colaborador.
-                </DialogDescription>
-              </DialogHeader>
-              <WorkerFormPage />
-              <DialogClose asChild>
-                <Button variant="ghost" className="mt-4">
-                  Fechar
-                </Button>
-              </DialogClose>
-            </DialogContent>
-          </Dialog>
+          <AddWorkerDialog />
         </div>
 
         <DropdownMenu>
