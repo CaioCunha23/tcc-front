@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldAlertIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useTokenStore } from '@/hooks/useTokenStore';
 
 interface Offender {
     colaboradorUid: string;
@@ -13,10 +14,18 @@ interface Offender {
 export default function TopOffendersTable() {
     const [data, setData] = useState<Offender[]>([]);
     const [loading, setLoading] = useState(true);
+    const { token } = useTokenStore();
 
     useEffect(() => {
         setLoading(true);
-        fetch('http://localhost:3000/top-offenders')
+        fetch('http://localhost:3000/top-offenders', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        }
+        )
             .then(response => response.json())
             .then(result => {
                 setData(result);

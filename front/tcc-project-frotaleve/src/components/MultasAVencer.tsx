@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ClockAlert } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
+import { useTokenStore } from '@/hooks/useTokenStore';
 
 interface VehicleMaintenance {
     tipo: string;
@@ -20,9 +21,16 @@ interface VehicleMaintenance {
 export default function VeiculosProxManutencao() {
     const [data, setData] = useState<VehicleMaintenance[]>([]);
     const [loading, setLoading] = useState(true);
+    const { token } = useTokenStore();
 
     useEffect(() => {
-        fetch('http://localhost:3000/vencimento-multas')
+        fetch('http://localhost:3000/vencimento-multas', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(response => response.json())
             .then(result => {
                 setData(result);

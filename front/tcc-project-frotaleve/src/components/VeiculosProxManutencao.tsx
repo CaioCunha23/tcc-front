@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CarIcon } from 'lucide-react';
+import { useTokenStore } from '@/hooks/useTokenStore';
 
 interface VehicleMaintenance {
     placa: string;
@@ -11,10 +12,17 @@ interface VehicleMaintenance {
 export default function VeiculosProxManutencao() {
     const [data, setData] = useState<VehicleMaintenance[]>([]);
     const [loading, setLoading] = useState(true);
+    const { token } = useTokenStore();
 
     useEffect(() => {
         setLoading(true);
-        fetch('http://localhost:3000/veiculos-manutencao')
+        fetch('http://localhost:3000/veiculos-manutencao', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(response => response.json())
             .then(result => {
                 setData(result);

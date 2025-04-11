@@ -39,7 +39,7 @@ export function NavUser({ user }: {
         avatar: string
     }
 }) {
-    const { colaborador, logout } = useTokenStore();
+    const { colaborador, token, logout } = useTokenStore();
     const [open, setOpen] = useState(false);
     const { isMobile } = useSidebar();
     const navigate = useNavigate();
@@ -51,7 +51,10 @@ export function NavUser({ user }: {
 
         const res = await fetch(`http://localhost:3000/colaborador/${colaborador.uidMSK}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(updatedWorker),
         });
 

@@ -29,6 +29,7 @@ import {
 import { useEffect, useState } from "react"
 import { useVehiclesColumns } from "@/hooks/useVehiclesColumns"
 import AddVehicleDialog from "./AddVehicleDialog"
+import { useTokenStore } from "@/hooks/useTokenStore"
 
 export interface Veiculo {
   id: number;
@@ -56,16 +57,23 @@ export interface Veiculo {
 }
 
 export function DataTableVehicles() {
-  const [data, setData] = useState<Veiculo[]>([])
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = useState({})
+  const [data, setData] = useState<Veiculo[]>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
+  const { token } = useTokenStore();
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://localhost:3000/veiculos")
+        const response = await fetch("http://localhost:3000/veiculos", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        })
         if (!response.ok) throw new Error("Erro ao buscar dados")
         const data = await response.json()
         console.log("Dados recebidos:", data)

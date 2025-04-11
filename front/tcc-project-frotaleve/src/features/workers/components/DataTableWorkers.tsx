@@ -29,6 +29,7 @@ import {
 import { useState, useEffect } from "react"
 import { useColaboradoresColumns } from "@/hooks/useColaboradoresColumns"
 import AddWorkerDialog from "./AddWorkerDialog"
+import { useTokenStore } from "@/hooks/useTokenStore"
 
 export interface Infracao {
   valor: string;
@@ -37,7 +38,7 @@ export interface Infracao {
 export interface Colaborador {
   id: number;
   nome: string;
-  status: string;
+  status: boolean;
   email: string;
   uidMSK: string;
   localidade: string;
@@ -52,15 +53,22 @@ export interface Colaborador {
 }
 
 export function DataTableWorker() {
-  const [data, setData] = useState<Colaborador[]>([])
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = useState({})
+  const [data, setData] = useState<Colaborador[]>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
+  const { token } = useTokenStore();
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch("http://localhost:3000/colaboradores");
+      const response = await fetch("http://localhost:3000/colaboradores", {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const jsonData = await response.json();
       setData(jsonData);
     }

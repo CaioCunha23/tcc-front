@@ -19,6 +19,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useTokenStore } from "@/hooks/useTokenStore";
 
 const vehicleSchema = z.object({
     fornecedor: z.string().min(1, { message: "Fornecedor é obrigatório." }),
@@ -62,6 +63,8 @@ const vehicleSchema = z.object({
 });
 
 export function VehicleFormPage() {
+    const { token } = useTokenStore();
+
     const form = useForm<z.infer<typeof vehicleSchema>>({
         resolver: zodResolver(vehicleSchema),
         defaultValues: {
@@ -94,6 +97,7 @@ export function VehicleFormPage() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(values),
             });

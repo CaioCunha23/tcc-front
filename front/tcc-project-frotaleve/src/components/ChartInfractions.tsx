@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { useTokenStore } from "@/hooks/useTokenStore"
 
 const chartConfig = {
     multa: {
@@ -15,12 +16,19 @@ const chartConfig = {
 }
 
 export function ChartInfracoes() {
-    const [chartData, setChartData] = useState([])
+    const [chartData, setChartData] = useState([]);
+    const { token } = useTokenStore();
 
     useEffect(() => {
         async function fetchChartData() {
             try {
-                const response = await fetch("http://localhost:3000/infracoes-chart-data")
+                const response = await fetch("http://localhost:3000/infracoes-chart-data", {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
                 if (!response.ok) {
                     throw new Error("Erro ao buscar dados do gráfico")
                 }

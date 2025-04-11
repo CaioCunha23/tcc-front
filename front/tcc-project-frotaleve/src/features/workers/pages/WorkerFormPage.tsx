@@ -17,44 +17,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Toaster, toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useTokenStore } from "@/hooks/useTokenStore";
+import { useState } from "react";
+import { workerFormSchema } from "../Schemas/workerFormSchema"
 
-const formSchema = z.object({
-  nome: z.string().min(2, {
-    message: "Nome deve ter pelo menos 2 caracteres.",
-  }),
-  cpf: z.string().length(11, {
-    message: "CPF deve ter 11 caracteres.",
-  }),
-  email: z.string().endsWith("@maersk.com", {
-    message: "O e-mail deve ser corporativo (terminar com @maersk.com).",
-  }),
-  uidMSK: z.string().length(6, {
-    message: "UID deve ter 6 caracteres.",
-  }),
-  localidade: z.string({
-    required_error: "Selecione a localidade.",
-  }),
-  brand: z.string({
-    required_error: "Selecione a marca.",
-  }),
-  jobTitle: z.string({
-    required_error: "Informe o cargo/área de atuação.",
-  }),
-  usaEstacionamento: z.boolean(),
-  cidadeEstacionamento: z.string().optional(),
-  cnh: z.string().length(9, {
-    message: "CNH deve ter 9 caracteres.",
-  }),
-  tipoCNH: z.string().min(1, {
-    message: "Informe o tipo da CNH.",
-  }),
-});
 
 export function WorkerFormPage() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { token } = useTokenStore();
+  const [alertOpen, setAlertOpen] = useState(false);
+
+  const form = useForm<z.infer<typeof workerFormSchema>>({
+    resolver: zodResolver(workerFormSchema),
     defaultValues: {
       nome: "",
       cpf: "",
@@ -70,12 +55,13 @@ export function WorkerFormPage() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof workerFormSchema>) {
     try {
       const response = await fetch("http://localhost:3000/colaborador", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(values),
       });
@@ -88,11 +74,27 @@ export function WorkerFormPage() {
 
       const data = await response.json();
       console.log("Colaborador adicionado com sucesso:", data);
-      alert("Colaborador adicionado com sucesso!");
-      reset();
+
+      toast.success(`Colaborador adicionado! (às ${new Date().toLocaleTimeString()})`);
+
+      setAlertOpen(true);
     } catch (error) {
       console.error("Erro ao adicionar colaborador:", error);
-      alert(error instanceof Error ? error.message : "Erro desconhecido");
+      toast.error(
+        error instanceof Error ? error.message : "Erro desconhecido"
+      );
+    }
+  }
+
+  function handleDialogResponse(insertMore: boolean) {
+    if (insertMore) {
+      form.reset();
+      setAlertOpen(false);
+    } else {
+      setAlertOpen(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     }
   }
 
@@ -100,6 +102,9 @@ export function WorkerFormPage() {
 
   return (
     <main className="flex-1 p-4 md:p-8">
+
+      <Toaster position="top-center" />
+
       <div className="mx-auto w-full max-w-3xl">
         <h1 className="text-4xl font-bold mb-6 text-center">
           Cadastrar Colaborador
@@ -224,7 +229,9 @@ export function WorkerFormPage() {
                             <SelectItem value="Maersk Brasil">
                               Maersk Brasil
                             </SelectItem>
-                            <SelectItem value="Aliança">Aliança</SelectItem>
+                            <SelectItem value="Aliança">
+                              Aliança
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -349,6 +356,27 @@ export function WorkerFormPage() {
           </CardContent>
         </Card>
       </div>
+
+      <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Deseja inserir outro colaborador?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Se optar por não inserir, a página será recarregada para atualizar a tabela.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex justify-end space-x-2 mt-4">
+            <AlertDialogAction onClick={() => handleDialogResponse(true)}>
+              Inserir outro
+            </AlertDialogAction>
+            <AlertDialogCancel onClick={() => handleDialogResponse(false)}>
+              Fechar
+            </AlertDialogCancel>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }

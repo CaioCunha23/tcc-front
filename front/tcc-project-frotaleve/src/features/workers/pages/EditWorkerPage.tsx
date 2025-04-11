@@ -21,37 +21,52 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { DialogClose } from "@/components/ui/dialog";
 
-const formSchema = z.object({
-    nome: z.string().min(2, {
-        message: "Nome deve ter pelo menos 2 caracteres.",
-    }),
+export const formSchema = z.object({
+    nome: z.string().refine(
+      (val) => val.trim().split(/\s+/).length >= 2,
+      { message: "Inclua nome e sobrenome." }
+    ),
     cpf: z.string().length(11, {
-        message: "CPF deve ter 11 caracteres.",
+      message: "CPF deve ter 11 caracteres.",
     }),
-    email: z.string().endsWith("@maersk.com", {
-        message: "O e-mail deve ser corporativo (terminar com @maersk.com).",
+    email: z.string().refine(
+      (val) => /@(lns\.maersk\.com|maersk\.com|alianca\.com\.br)$/.test(val),
+      {
+        message:
+          "O e-mail deve ser corporativo (terminar com @lns.maersk.com, @maersk.com ou @alianca.com.br).",
+      }
+    ),
+    uidMSK: z.string().regex(/^[A-Za-z]{3}\d{3}$/, {
+      message:
+        "UID deve ter 6 caracteres: 3 letras e 3 números.",
     }),
-    uidMSK: z.string().length(6, {
-        message: "UID deve ter 6 caracteres.",
+    localidade: z.string().min(1, {
+      message: "Selecione uma localidade."
     }),
-    localidade: z.string({
-        required_error: "Selecione a localidade.",
+    brand: z.string().min(1, {
+      message: "Selecione uma brand."
     }),
-    brand: z.string({
-        required_error: "Selecione a marca.",
+    jobTitle: z.string().min(1, {
+      message: "Informe o cargo/área de atuação.",
     }),
-    jobTitle: z.string({
-        required_error: "Informe o cargo/área de atuação.",
-    }),
-    usaEstacionamento: z.boolean(),
+    usaEstacionamento: z.boolean().optional(),
     cidadeEstacionamento: z.string().optional(),
     cnh: z.string().length(9, {
-        message: "CNH deve ter 9 caracteres.",
+      message: "CNH deve ter 9 caracteres.",
     }),
     tipoCNH: z.string().min(1, {
-        message: "Informe o tipo da CNH.",
+      message: "Informe o tipo da CNH.",
     }),
-});
+  })
+    .superRefine((data, ctx) => {
+      if (data.usaEstacionamento && (!data.cidadeEstacionamento || data.cidadeEstacionamento.trim() === "")) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Cidade Estacionamento deve ser preenchido se usar estacionamento.",
+          path: ["cidadeEstacionamento"],
+        });
+      }
+    });
 
 interface WorkerEditFormProps {
     defaultValues: z.infer<typeof formSchema>;
@@ -173,7 +188,9 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                                 <SelectItem value="Maersk Brasil">
                                                     Maersk Brasil
                                                 </SelectItem>
-                                                <SelectItem value="Aliança">Aliança</SelectItem>
+                                                <SelectItem value="Aliança">
+                                                    Aliança
+                                                </SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />

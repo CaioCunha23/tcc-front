@@ -26,6 +26,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import { useTokenStore } from "./useTokenStore";
 
 export interface Infracao {
   valor: string;
@@ -34,7 +35,7 @@ export interface Infracao {
 export interface Colaborador {
   id: number;
   nome: string;
-  status: string;
+  status: boolean;
   email: string;
   uidMSK: string;
   localidade: string;
@@ -50,6 +51,7 @@ export interface Colaborador {
 
 export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
   const navigate = useNavigate();
+  const { token } = useTokenStore();
 
   return useMemo(() => [
     {
@@ -106,7 +108,7 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="flex justify-center">{row.getValue("status")}</div>,
+      cell: ({ row }) => <div className="flex justify-center">{row.getValue("status") ? "Ativo" : "Inativo"}</div>,
     },
     {
       accessorKey: "email",
@@ -363,7 +365,10 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
           const updatedWorker: Colaborador = { ...worker, ...values };
           const res = await fetch(`http://localhost:3000/colaborador/${worker.id}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
             body: JSON.stringify(updatedWorker),
           });
           if (res.ok) {

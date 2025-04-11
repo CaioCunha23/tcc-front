@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUpIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useTokenStore } from '@/hooks/useTokenStore';
 
 interface ColaboradorAumento {
   colaboradorUid: string;
@@ -14,10 +15,17 @@ interface ColaboradorAumento {
 export default function ColaboradorAumentoTable() {
   const [data, setData] = useState<ColaboradorAumento[]>([]);
   const [loading, setLoading] = useState(true);
+  const { token } = useTokenStore();
 
   useEffect(() => {
     setLoading(true);
-    fetch('http://localhost:3000/dashboard-metrics-colaborador-maior-aumento')
+    fetch('http://localhost:3000/dashboard-metrics-colaborador-maior-aumento', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(response => response.json())
       .then(result => {
         setData(result);

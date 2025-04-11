@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import TopOffendersTable from "@/components/TopOffendersTable";
 import VeiculosProxManutencao from "@/components/VeiculosProxManutencao";
 import InfractionsDueDate from "@/components/MultasAVencer";
+import { useTokenStore } from "@/hooks/useTokenStore";
 
 interface DashboardMetrics {
   totalInfractionsValue: number;
@@ -22,6 +23,7 @@ interface DashboardMetrics {
 }
 
 export function HomePage() {
+  const { token } = useTokenStore();
   const [metrics, setMetrics] = useState<DashboardMetrics>({
     totalInfractionsValue: 0,
     growthMultas: 0,
@@ -37,7 +39,13 @@ export function HomePage() {
   useEffect(() => {
     async function fetchMetrics() {
       try {
-        const response = await fetch("http://localhost:3000/dashboard-metrics");
+        const response = await fetch("http://localhost:3000/dashboard-metrics", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
         if (!response.ok) throw new Error("Erro ao buscar métricas");
         const data: DashboardMetrics = await response.json();
         setMetrics(data);
