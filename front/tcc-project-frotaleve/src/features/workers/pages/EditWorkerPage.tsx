@@ -71,9 +71,10 @@ export const formSchema = z.object({
 interface WorkerEditFormProps {
     defaultValues: z.infer<typeof formSchema>;
     onSubmit: (values: z.infer<typeof formSchema>) => Promise<void>;
+    onCancel: () => void;
 }
 
-export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFormProps) {
+export default function WorkerEditForm({ defaultValues, onSubmit, onCancel }: WorkerEditFormProps) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues,
@@ -256,7 +257,7 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                         </div>
                         <div className="flex justify-end gap-2 mt-4">
                             <DialogClose asChild>
-                                <Button variant="outline">Cancelar</Button>
+                                <Button variant="outline" onClick={onCancel}>Cancelar</Button>
                             </DialogClose>
                             <Button type="submit">Salvar</Button>
                         </div>

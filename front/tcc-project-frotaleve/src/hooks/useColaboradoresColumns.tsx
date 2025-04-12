@@ -379,14 +379,19 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
         }
 
         const handleEditClick = (event: React.MouseEvent) => {
-          event.stopPropagation();
+          // event.stopPropagation();
           setOpen(true);
         };
 
+        const handleCancelClick = () => {
+          setOpen(false)
+        }
+
+        console.log('open', open);
 
         return (
           <>
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
                   <span className="sr-only">Abrir Menu</span>
@@ -419,7 +424,7 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
                   </DialogDescription>
                 </DialogHeader>
 
-                <WorkerEditForm defaultValues={worker} onSubmit={handleSave} />
+                <WorkerEditForm defaultValues={worker} onSubmit={handleSave} onCancel={handleCancelClick} />
               </DialogContent>
             </Dialog>
           </>
