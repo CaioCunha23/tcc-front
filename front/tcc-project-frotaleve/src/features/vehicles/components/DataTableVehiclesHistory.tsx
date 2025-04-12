@@ -39,7 +39,7 @@ export interface Colaborador {
 export interface Veiculo {
   placa: string;
   modelo: string;
-  renavan: string;
+  renavam: string;
   chassi: string;
   status: string;
 }

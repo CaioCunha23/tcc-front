@@ -21,7 +21,7 @@ export interface Colaborador {
 export interface Veiculo {
     placa: string;
     modelo: string;
-    renavan: string;
+    renavam: string;
     chassi: string;
     status: string;
 }
@@ -155,21 +155,21 @@ export function useVehiclesHistoryColumns(): ColumnDef<VehiclesHistory>[] {
             ),
         },
         {
-            id: "veiculoRenavan",
-            accessorFn: (row) => row.veiculo?.renavan,
+            id: "veiculorenavam",
+            accessorFn: (row) => row.veiculo?.renavam,
             header: ({ column }) => (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
-                    Renavan
+                    renavam
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             ),
             cell: ({ row }) => (
                 <div className="flex justify-center">
-                    {row.getValue("veiculoRenavan") || "Sem renavan"}
+                    {row.getValue("veiculorenavam") || "Sem renavam"}
                 </div>
             ),
         },

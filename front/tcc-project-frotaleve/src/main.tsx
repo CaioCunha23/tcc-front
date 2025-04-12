@@ -8,7 +8,7 @@ import { UsersPage } from './features/workers/pages/WorkersPage.tsx';
 import Layout from './components/Layout.tsx';
 import { VehiclesPage } from './features/vehicles/pages/VehiclesPage.tsx';
 import { VehiclesHistoryPage } from './features/vehicles/pages/VehiclesHistoryPage.tsx';
-import { InfractionsPage } from './features/workers/pages/InfractionsPage.tsx';
+import { InfractionsPage } from './features/infractions/pages/InfractionsPage.tsx';
 import { ThemeProvider } from "@/components/ui/theme-provider";
 
 createRoot(document.getElementById('root')!).render(

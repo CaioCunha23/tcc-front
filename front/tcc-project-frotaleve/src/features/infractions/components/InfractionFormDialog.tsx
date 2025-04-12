@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useTokenStore } from "@/hooks/useTokenStore";
-import { InfractionFormSchema } from "../Schemas/infractionFormSchema";
+import { InfractionFormSchema } from "../schemas/infractionFormSchema";
 
 export function InfractionFormDialog() {
     const { token } = useTokenStore();

@@ -31,10 +31,10 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useTokenStore } from "@/hooks/useTokenStore";
 import { useState } from "react";
-import { workerFormSchema } from "../Schemas/workerFormSchema"
+import { workerFormSchema } from "../schemas/workerFormSchema"
 
 
-export function WorkerFormPage() {
+export function WorkerFormDialog() {
   const { token } = useTokenStore();
   const [alertOpen, setAlertOpen] = useState(false);
 

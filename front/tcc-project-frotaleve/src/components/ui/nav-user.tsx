@@ -28,7 +28,7 @@ import {
 import { useTokenStore } from "@/hooks/useTokenStore"
 import { useNavigate } from "react-router"
 import { useState } from "react"
-import WorkerEditForm from "@/features/workers/pages/EditWorkerPage"
+import WorkerEditForm from "@/features/workers/components/EditWorkerDialog"
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { DialogHeader } from "./dialog"
 

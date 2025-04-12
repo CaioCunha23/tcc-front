@@ -8,78 +8,16 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DialogClose } from "@/components/ui/dialog";
-
-const formSchema = z.object({
-    fornecedor: z.string().min(1, {
-        message: "Fornecedor é obrigatório."
-    }),
-    contrato: z.string().min(1, {
-        message: "Contrato é obrigatório."
-    }),
-    placa: z.string().min(1, {
-        message: "Placa é obrigatória."
-
-    }),
-    renavan: z.string().min(1, {
-        message: "Renavan é obrigatório."
-    }),
-    chassi: z.string().min(1, {
-        message: "Chassi é obrigatório."
-
-    }),
-    modelo: z.string().min(1, {
-        message: "Modelo é obrigatório."
-    }),
-    cor: z.string().min(1, {
-        message: "Cor é obrigatória."
-    }),
-    status: z.string().min(1, {
-        message: "Status é obrigatório."
-    }),
-    cliente: z.string().min(1, {
-        message: "Cliente é obrigatório."
-    }),
-    centroCusto: z.string().min(1, {
-        message: "Centro de custo é obrigatório."
-    }),
-    franquiaKM: z.string({
-        invalid_type_error: "Franquia KM deve ser um número."
-    }),
-    carroReserva: z.boolean(),
-    dataDisponibilizacao: z.string().min(1, {
-        message: "Data de disponibilização é obrigatória."
-    }),
-    mesesContratados: z.number({
-        invalid_type_error: "Meses contratados deve ser um número."
-    }),
-    previsaoDevolucao: z.string().min(1, {
-        message: "Previsão de devolução é obrigatória."
-    }),
-    mesesFaltantes: z.number({
-        invalid_type_error: "Meses faltantes deve ser um número."
-    }),
-    mensalidade: z.number({
-        invalid_type_error: "Mensalidade deve ser um número."
-    }),
-    budget: z.number({
-        invalid_type_error: "Budget deve ser um número."
-    }),
-    multa: z.number({
-        invalid_type_error: "Multa deve ser um número."
-    }),
-    proximaRevisao: z.string().min(1, {
-        message: "Próxima revisão é obrigatória."
-    }),
-});
+import { vehicleFormSchema } from "../schemas/vehicleFormSchema";
 
 interface VehicleEditFormProps {
-    defaultValues: z.infer<typeof formSchema>;
-    onSubmit: (values: z.infer<typeof formSchema>) => Promise<void>;
+    defaultValues: z.infer<typeof vehicleFormSchema>;
+    onSubmit: (values: z.infer<typeof vehicleFormSchema>) => Promise<void>;
 }
 
-export default function VehicleEditForm({ defaultValues, onSubmit }: VehicleEditFormProps) {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+export default function VehicleEditFormDialog({ defaultValues, onSubmit }: VehicleEditFormProps) {
+    const form = useForm<z.infer<typeof vehicleFormSchema>>({
+        resolver: zodResolver(vehicleFormSchema),
         defaultValues,
     })
 
@@ -136,11 +74,11 @@ export default function VehicleEditForm({ defaultValues, onSubmit }: VehicleEdit
                                 <div className="flex flex-col md:flex-row gap-4">
                                     <FormField
                                         control={form.control}
-                                        name="renavan"
+                                        name="renavam"
                                         render={({ field }) => (
                                             <FormItem className="flex-1">
                                                 <FormControl>
-                                                    <Input className="border-primary" placeholder="Renavan" {...field} />
+                                                    <Input className="border-primary" placeholder="renavam" {...field} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>

@@ -18,7 +18,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useNavigate } from "react-router";
-import WorkerEditForm from "@/features/workers/pages/EditWorkerPage";
+import WorkerEditForm from "@/features/workers/components/EditWorkerDialog";
 import {
   Sheet,
   SheetContent,
@@ -379,13 +379,9 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
         }
 
         const handleEditClick = (event: React.MouseEvent) => {
-          // event.stopPropagation();
+          event.stopPropagation();
           setOpen(true);
         };
-
-        const handleCancelClick = () => {
-          setOpen(false)
-        }
 
         console.log('open', open);
 
@@ -424,7 +420,7 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
                   </DialogDescription>
                 </DialogHeader>
 
-                <WorkerEditForm defaultValues={worker} onSubmit={handleSave} onCancel={handleCancelClick} />
+                <WorkerEditForm defaultValues={worker} onSubmit={handleSave} />
               </DialogContent>
             </Dialog>
           </>

@@ -9,7 +9,7 @@ import {
     DialogDescription,
     DialogClose,
 } from "@/components/ui/dialog";
-import { WorkerFormPage } from "../pages/WorkerFormPage";
+import { WorkerFormDialog } from "./WorkerFormDialog";
 import UploadCSVWorker from "./UploadCSVWorker";
 
 export default function AddWorkerDialog() {
@@ -45,7 +45,7 @@ export default function AddWorkerDialog() {
 
                 {mode === "manual" && (
                     <div className="mt-4">
-                        <WorkerFormPage />
+                        <WorkerFormDialog />
                     </div>
                 )}
 

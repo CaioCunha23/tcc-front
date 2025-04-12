@@ -9,7 +9,7 @@ import {
     DialogDescription,
     DialogClose,
 } from "@/components/ui/dialog";
-import { VehicleFormPage } from "../pages/VehicleFormPage";
+import { VehicleFormDialog } from "./VehicleFormDialog";
 import UploadCSVVehicle from "./UploadCSVVehicle";
 
 export default function AddVehicleDialog() {
@@ -45,7 +45,7 @@ export default function AddVehicleDialog() {
 
                 {mode === "manual" && (
                     <div className="mt-4">
-                        <VehicleFormPage />
+                        <VehicleFormDialog />
                     </div>
                 )}
 

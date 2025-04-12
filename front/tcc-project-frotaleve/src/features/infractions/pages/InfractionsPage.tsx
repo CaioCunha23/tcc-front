@@ -1,4 +1,4 @@
-import { InfractionsTable } from "@/features/workers/components/InfractionsTable";
+import { InfractionsTable } from "@/features/infractions/components/InfractionsTable"
 
 export function InfractionsPage() {
     return (

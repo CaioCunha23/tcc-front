@@ -36,7 +36,7 @@ export interface Veiculo {
   fornecedor: string;
   contrato: string;
   placa: string;
-  renavan: string;
+  renavam: string;
   chassi: string;
   modelo: string;
   cor: string;

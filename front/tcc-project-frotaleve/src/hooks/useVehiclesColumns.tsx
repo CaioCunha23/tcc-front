@@ -18,32 +18,8 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog";
 import { useNavigate } from "react-router";
-import VehicleEditForm from "@/features/vehicles/pages/EditVehiclePage";
-
-export interface Veiculo {
-    id: number;
-    fornecedor: string;
-    contrato: string;
-    placa: string;
-    renavan: string;
-    chassi: string;
-    modelo: string;
-    cor: string;
-    status: string;
-    cliente: string;
-    perfil: string;
-    centroCusto: string;
-    franquiaKM: string;
-    carroReserva: boolean;
-    dataDisponibilizacao: string;
-    mesesContratados: number;
-    previsaoDevolucao: string;
-    mesesFaltantes: number;
-    mensalidade: number;
-    budget: number;
-    multa: number;
-    proximaRevisao: string;
-}
+import VehicleEditFormDialog from "@/features/vehicles/components/EditVehicleDialog";
+import { Veiculo } from "@/features/vehicles/components/DataTableVehicles";
 
 export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
     const navigate = useNavigate();
@@ -122,19 +98,19 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
             ),
         },
         {
-            accessorKey: "renavan",
+            accessorKey: "renavam",
             header: ({ column }) => (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
-                    Renavan
+                    renavam
                     <ArrowUpDown />
                 </Button>
             ),
             cell: ({ row }) => (
-                <div className="flex justify-center">{row.getValue("renavan")}</div>
+                <div className="flex justify-center">{row.getValue("renavam")}</div>
             ),
         },
         {
@@ -462,7 +438,7 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
 
                 return (
                     <>
-                        <DropdownMenu>
+                        <DropdownMenu modal={false}>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="h-8 w-8 p-0">
                                     <span className="sr-only">Abrir Menu</span>
@@ -495,7 +471,7 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                                     </DialogDescription>
                                 </DialogHeader>
 
-                                <VehicleEditForm defaultValues={vehicle} onSubmit={handleSave} />
+                                <VehicleEditFormDialog defaultValues={vehicle} onSubmit={handleSave} />
                             </DialogContent>
                         </Dialog>
                     </>

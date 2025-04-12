@@ -27,30 +27,9 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useState, useEffect } from "react"
-import { useColaboradoresColumns } from "@/hooks/useColaboradoresColumns"
+import { Colaborador, useColaboradoresColumns } from "@/hooks/useColaboradoresColumns"
 import AddWorkerDialog from "./AddWorkerDialog"
 import { useTokenStore } from "@/hooks/useTokenStore"
-
-export interface Infracao {
-  valor: string;
-}
-
-export interface Colaborador {
-  id: number;
-  nome: string;
-  status: boolean;
-  email: string;
-  uidMSK: string;
-  localidade: string;
-  brand: string;
-  jobTitle: string;
-  cpf: string;
-  usaEstacionamento: boolean;
-  cidadeEstacionamento: string;
-  cnh: string;
-  tipoCNH: string;
-  infracaos: Infracao[];
-}
 
 export function DataTableWorker() {
   const [data, setData] = useState<Colaborador[]>([]);
@@ -69,8 +48,10 @@ export function DataTableWorker() {
           'Authorization': `Bearer ${token}`
         }
       });
-      const jsonData = await response.json();
-      setData(jsonData);
+      if (!response.ok) throw new Error("Erro ao buscar dados")
+      const data = await response.json()
+      console.log("Dados recebidos:", data)
+      setData(data)
     }
     fetchData();
   }, []);
