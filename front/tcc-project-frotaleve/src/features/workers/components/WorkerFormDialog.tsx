@@ -26,15 +26,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useTokenStore } from "@/hooks/useTokenStore";
 import { useState } from "react";
 import { workerFormSchema } from "../schemas/workerFormSchema"
+import { ClipboardCheckIcon, RefreshCcwIcon } from "lucide-react";
 
+interface WorkerFormDialogProps {
+  onWorkerAdded: () => void;
+  onCloseDialog: () => void;
+}
 
-export function WorkerFormDialog() {
+export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDialogProps) {
   const { token } = useTokenStore();
   const [alertOpen, setAlertOpen] = useState(false);
 
@@ -75,13 +80,11 @@ export function WorkerFormDialog() {
       const data = await response.json();
       console.log("Colaborador adicionado com sucesso:", data);
 
-      toast.success(`Colaborador adicionado! (às ${new Date().toLocaleTimeString()})`);
-
       setAlertOpen(true);
     } catch (error) {
       console.error("Erro ao adicionar colaborador:", error);
       toast.error(
-        error instanceof Error ? error.message : "Erro desconhecido"
+        error instanceof Error ? error.message : "Erro ao adicionar colaborador"
       );
     }
   }
@@ -92,283 +95,280 @@ export function WorkerFormDialog() {
       setAlertOpen(false);
     } else {
       setAlertOpen(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      onCloseDialog();
+      onWorkerAdded();
+      toast.success(`Colaborador adicionado! (às ${new Date().toLocaleTimeString()})`);
     }
   }
 
   const { reset } = form;
 
   return (
-    <main className="flex-1 p-4 md:p-8">
+    <div className="w-full max-w-3xl mx-auto">
+      <Card className="shadow border border-border">
+        <CardContent className="p-4 md:p-6">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-5"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="nome"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder="Nome Completo"
+                          {...field}
+                          className="border-input focus:ring-2 focus:ring-offset-0 focus:ring-ring/30"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs font-medium" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="cpf"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder="CPF"
+                          {...field}
+                          className="border-input focus:ring-2 focus:ring-offset-0 focus:ring-ring/30"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs font-medium" />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-      <Toaster position="top-center" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder="E-mail"
+                          {...field}
+                          className="border-input focus:ring-2 focus:ring-offset-0 focus:ring-ring/30"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs font-medium" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="uidMSK"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder="UID (6 caracteres)"
+                          {...field}
+                          className="border-input focus:ring-2 focus:ring-offset-0 focus:ring-ring/30"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs font-medium" />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-      <div className="mx-auto w-full max-w-3xl">
-        <h1 className="text-4xl font-bold mb-6 text-center">
-          Cadastrar Colaborador
-        </h1>
-
-        <Card className="shadow-lg rounded-lg border overflow-hidden">
-          <CardContent className="p-6">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
-              >
-                <div className="flex flex-col md:flex-row gap-4">
-                  <FormField
-                    control={form.control}
-                    name="nome"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="localidade"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
-                          <Input
-                            placeholder="Nome Completo"
-                            {...field}
-                            className="border-primary"
-                          />
+                          <SelectTrigger className="border-input focus:ring-2 focus:ring-offset-0 focus:ring-ring/30">
+                            <SelectValue placeholder="Localidade" />
+                          </SelectTrigger>
                         </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="cpf"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
+                        <SelectContent>
+                          <SelectItem value="SSZ">SSZ</SelectItem>
+                          <SelectItem value="SPO">SPO</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-xs font-medium" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="brand"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
-                          <Input
-                            placeholder="CPF"
-                            {...field}
-                            className="border-primary"
-                          />
+                          <SelectTrigger className="border-input focus:ring-2 focus:ring-offset-0 focus:ring-ring/30">
+                            <SelectValue placeholder="Brand" />
+                          </SelectTrigger>
                         </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                        <SelectContent>
+                          <SelectItem value="Maersk Brasil">
+                            Maersk Brasil
+                          </SelectItem>
+                          <SelectItem value="Aliança">
+                            Aliança
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-xs font-medium" />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-                <div className="flex flex-col md:flex-row gap-4">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormControl>
-                          <Input
-                            placeholder="E-mail"
-                            {...field}
-                            className="border-primary"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="uidMSK"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormControl>
-                          <Input
-                            placeholder="UID (6 caracteres)"
-                            {...field}
-                            className="border-primary"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+              <div className="w-full">
+                <FormField
+                  control={form.control}
+                  name="jobTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder="Cargo / Área de atuação"
+                          {...field}
+                          className="border-input focus:ring-2 focus:ring-offset-0 focus:ring-ring/30"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs font-medium" />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-                <div className="flex flex-col md:flex-row gap-4">
-                  <FormField
-                    control={form.control}
-                    name="localidade"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-primary w-full">
-                              <SelectValue placeholder="Localidade" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="SSZ">SSZ</SelectItem>
-                            <SelectItem value="SPO">SPO</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="brand"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-primary w-full">
-                              <SelectValue placeholder="Brand" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="Maersk Brasil">
-                              Maersk Brasil
-                            </SelectItem>
-                            <SelectItem value="Aliança">
-                              Aliança
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="w-full">
-                  <FormField
-                    control={form.control}
-                    name="jobTitle"
-                    render={({ field }) => (
-                      <FormItem>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                <FormField
+                  control={form.control}
+                  name="usaEstacionamento"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                        />
+                      </FormControl>
+                      <span className="text-sm font-medium">Utiliza Estacionamento?</span>
+                      <FormMessage className="text-xs font-medium" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="cidadeEstacionamento"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
-                          <Input
-                            placeholder="Cargo / Área de atuação"
-                            {...field}
-                            className="border-primary"
-                          />
+                          <SelectTrigger className="border-input focus:ring-2 focus:ring-offset-0 focus:ring-ring/30">
+                            <SelectValue placeholder="Cidade Estacionamento" />
+                          </SelectTrigger>
                         </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                        <SelectContent>
+                          <SelectItem value="Santos">Santos</SelectItem>
+                          <SelectItem value="São Paulo">
+                            São Paulo
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-xs font-medium" />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-                <div className="flex flex-col md:flex-row gap-4 items-center">
-                  <FormField
-                    control={form.control}
-                    name="usaEstacionamento"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center gap-2">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <span className="text-sm">Utiliza Estacionamento?</span>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="cidadeEstacionamento"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-primary w-full">
-                              <SelectValue placeholder="Cidade Estacionamento" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="Santos">Santos</SelectItem>
-                            <SelectItem value="São Paulo">
-                              São Paulo
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="cnh"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder="CNH (9 caracteres)"
+                          {...field}
+                          className="border-input focus:ring-2 focus:ring-offset-0 focus:ring-ring/30"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs font-medium" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="tipoCNH"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder="Tipo CNH"
+                          {...field}
+                          className="border-input focus:ring-2 focus:ring-offset-0 focus:ring-ring/30"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs font-medium" />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-                <div className="flex flex-col md:flex-row gap-4">
-                  <FormField
-                    control={form.control}
-                    name="cnh"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormControl>
-                          <Input
-                            placeholder="CNH (9 caracteres)"
-                            {...field}
-                            className="border-primary"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="tipoCNH"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormControl>
-                          <Input
-                            placeholder="Tipo CNH"
-                            {...field}
-                            className="border-primary"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="flex flex-col sm:flex-row-reverse gap-3">
-                  <Button type="submit" className="w-full sm:w-auto">
-                    Submit
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={"destructive"}
-                    onClick={() => reset()}
-                    className="w-full sm:w-auto"
-                  >
-                    Clear
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      </div>
+              <div className="flex flex-col sm:flex-row gap-3 sm:justify-end pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => reset()}
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCcwIcon size={16} />
+                  <span>Limpar</span>
+                </Button>
+                <Button type="submit" className="flex items-center gap-2">
+                  <ClipboardCheckIcon size={16} />
+                  <span>Salvar</span>
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
 
       <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>
               Deseja inserir outro colaborador?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Se optar por não inserir, a página será recarregada para atualizar a tabela.
+              Se optar por não inserir, o pop-up será fechado e a tabela será atualizada.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <div className="flex justify-end space-x-2 mt-4">
-            <AlertDialogAction onClick={() => handleDialogResponse(true)}>
+          <div className="flex justify-end space-x-3 mt-4">
+            <AlertDialogAction
+              onClick={() => handleDialogResponse(true)}
+              className="bg-primary hover:bg-primary/90"
+            >
               Inserir outro
             </AlertDialogAction>
             <AlertDialogCancel onClick={() => handleDialogResponse(false)}>
@@ -377,6 +377,6 @@ export function WorkerFormDialog() {
           </div>
         </AlertDialogContent>
       </AlertDialog>
-    </main>
+    </div>
   );
 }

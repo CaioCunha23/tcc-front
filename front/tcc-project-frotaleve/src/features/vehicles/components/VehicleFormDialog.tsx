@@ -21,9 +21,18 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { useTokenStore } from "@/hooks/useTokenStore";
 import { vehicleFormSchema } from "../schemas/vehicleFormSchema";
+import { useState } from "react";
+import { toast } from "sonner";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
-export function VehicleFormDialog() {
+interface VehicleFormDialogProps {
+    onVehicleAdded: () => void;
+    onCloseDialog: () => void;
+}
+
+export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleFormDialogProps) {
     const { token } = useTokenStore();
+    const [alertOpen, setAlertOpen] = useState(false);
 
     const form = useForm<z.infer<typeof vehicleFormSchema>>({
         resolver: zodResolver(vehicleFormSchema),
@@ -64,15 +73,31 @@ export function VehicleFormDialog() {
 
             if (!response.ok) {
                 const errorData = await response.json();
+                console.log("Enviando para o backend:", values);
                 throw new Error(errorData.message || "Erro ao adicionar veículo");
             }
 
             const data = await response.json();
             console.log("Veículo adicionado com sucesso:", data);
-            alert("Veículo adicionado com sucesso!");
+
+            setAlertOpen(true);
         } catch (error) {
             console.error("Erro ao adicionar veículo:", error);
-            alert(error instanceof Error ? error.message : "Erro desconhecido");
+            toast.error(
+                error instanceof Error ? error.message : "Erro ao adicionar veículo"
+            );
+        }
+    }
+
+    function handleDialogResponse(insertMore: boolean) {
+        if (insertMore) {
+            form.reset();
+            setAlertOpen(false);
+        } else {
+            setAlertOpen(false);
+            onCloseDialog();
+            onVehicleAdded();
+            toast.success(`Colaborador adicionado! (às ${new Date().toLocaleTimeString()})`);
         }
     }
 
@@ -80,10 +105,12 @@ export function VehicleFormDialog() {
 
     return (
         <main className="flex-1 p-4 md:p-8">
+
             <div className="mx-auto w-full max-w-full md:max-w-[60%]">
                 <h1 className="block text-4xl font-bold mb-6 text-center">
                     Cadastrar Veículo
                 </h1>
+
                 <Card className="shadow-lg rounded-lg border overflow-y-auto max-h-[45rem]">
                     <CardContent className="p-6">
                         <Form {...form}>
@@ -91,7 +118,6 @@ export function VehicleFormDialog() {
                                 onSubmit={form.handleSubmit(onSubmit)}
                                 className="space-y-6"
                             >
-
                                 <div className="flex flex-col md:flex-row gap-4">
                                     <FormField
                                         control={form.control}
@@ -477,6 +503,27 @@ export function VehicleFormDialog() {
                     </CardContent>
                 </Card>
             </div>
+
+            <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            Deseja inserir outro veículo?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Se optar por não inserir, o pop-up será fechado e a tabela será atualizada.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="flex justify-end space-x-2 mt-4">
+                        <AlertDialogAction onClick={() => handleDialogResponse(true)}>
+                            Inserir outro
+                        </AlertDialogAction>
+                        <AlertDialogCancel onClick={() => handleDialogResponse(false)}>
+                            Fechar
+                        </AlertDialogCancel>
+                    </div>
+                </AlertDialogContent>
+            </AlertDialog>
         </main>
     );
 }

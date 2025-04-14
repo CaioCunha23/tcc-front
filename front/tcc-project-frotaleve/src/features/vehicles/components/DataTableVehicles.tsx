@@ -27,34 +27,9 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useEffect, useState } from "react"
-import { useVehiclesColumns } from "@/hooks/useVehiclesColumns"
+import { useVehiclesColumns, Veiculo } from "@/hooks/useVehiclesColumns"
 import AddVehicleDialog from "./AddVehicleDialog"
 import { useTokenStore } from "@/hooks/useTokenStore"
-
-export interface Veiculo {
-  id: number;
-  fornecedor: string;
-  contrato: string;
-  placa: string;
-  renavam: string;
-  chassi: string;
-  modelo: string;
-  cor: string;
-  status: string;
-  cliente: string;
-  perfil: string;
-  centroCusto: string;
-  franquiaKM: string;
-  carroReserva: boolean;
-  dataDisponibilizacao: string;
-  mesesContratados: number;
-  previsaoDevolucao: string;
-  mesesFaltantes: number;
-  mensalidade: number;
-  budget: number;
-  multa: number;
-  proximaRevisao: string;
-}
 
 export function DataTableVehicles() {
   const [data, setData] = useState<Veiculo[]>([]);
@@ -64,26 +39,27 @@ export function DataTableVehicles() {
   const [rowSelection, setRowSelection] = useState({});
   const { token } = useTokenStore();
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("http://localhost:3000/veiculos", {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        if (!response.ok) throw new Error("Erro ao buscar dados")
-        const data = await response.json()
-        console.log("Dados recebidos:", data)
-        setData(data)
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error)
-      }
+  async function fetchData() {
+    try {
+      const response = await fetch("http://localhost:3000/veiculos", {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      if (!response.ok) throw new Error("Erro ao buscar dados")
+      const data = await response.json()
+      console.log("Dados recebidos:", data)
+      setData(data)
+    } catch (error) {
+      console.error("Erro no fetch:", error)
     }
-    fetchData()
-  }, [])
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [token]);
 
   const columns = useVehiclesColumns();
 
@@ -119,7 +95,7 @@ export function DataTableVehicles() {
             className="max-w-sm mb-4 sm:mb-0"
           />
 
-          <AddVehicleDialog />
+          <AddVehicleDialog onVehicleAdded={fetchData} />
         </div>
 
         <DropdownMenu>
@@ -205,7 +181,7 @@ export function DataTableVehicles() {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            Anterior
           </Button>
           <Button
             variant="outline"
@@ -213,7 +189,7 @@ export function DataTableVehicles() {
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            Próxima
           </Button>
         </div>
       </div>

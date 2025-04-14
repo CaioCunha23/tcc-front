@@ -12,7 +12,11 @@ import {
 import { VehicleFormDialog } from "./VehicleFormDialog";
 import UploadCSVVehicle from "./UploadCSVVehicle";
 
-export default function AddVehicleDialog() {
+interface AddVehicleDialogProps {
+    onVehicleAdded: () => void;
+}
+
+export default function AddVehicleDialog({ onVehicleAdded }: AddVehicleDialogProps) {
     const [mode, setMode] = useState<"initial" | "manual" | "upload">("initial");
     const [open, setOpen] = useState(false);
 
@@ -45,7 +49,7 @@ export default function AddVehicleDialog() {
 
                 {mode === "manual" && (
                     <div className="mt-4">
-                        <VehicleFormDialog />
+                        <VehicleFormDialog onVehicleAdded={onVehicleAdded} onCloseDialog={() => setOpen(false)} />
                     </div>
                 )}
 

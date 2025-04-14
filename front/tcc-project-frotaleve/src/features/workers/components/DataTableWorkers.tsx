@@ -39,8 +39,8 @@ export function DataTableWorker() {
   const [rowSelection, setRowSelection] = useState({});
   const { token } = useTokenStore();
 
-  useEffect(() => {
-    async function fetchData() {
+  async function fetchData() {
+    try {
       const response = await fetch("http://localhost:3000/colaboradores", {
         method: 'GET',
         headers: {
@@ -48,13 +48,18 @@ export function DataTableWorker() {
           'Authorization': `Bearer ${token}`
         }
       });
-      if (!response.ok) throw new Error("Erro ao buscar dados")
-      const data = await response.json()
-      console.log("Dados recebidos:", data)
-      setData(data)
+      if (!response.ok) throw new Error("Erro ao buscar dados");
+      const data = await response.json();
+      console.log("Dados recebidos:", data);
+      setData(data);
+    } catch (error) {
+      console.error("Erro no fetch:", error);
     }
+  }
+
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
 
   const columns = useColaboradoresColumns();
 
@@ -90,7 +95,7 @@ export function DataTableWorker() {
             className="max-w-sm mb-4 sm:mb-0"
           />
 
-          <AddWorkerDialog />
+          <AddWorkerDialog onWorkerAdded={fetchData} />
         </div>
 
         <DropdownMenu>

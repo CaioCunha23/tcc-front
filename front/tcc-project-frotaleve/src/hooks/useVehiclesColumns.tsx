@@ -19,7 +19,31 @@ import {
 } from "@/components/ui/dialog";
 import { useNavigate } from "react-router";
 import VehicleEditFormDialog from "@/features/vehicles/components/EditVehicleDialog";
-import { Veiculo } from "@/features/vehicles/components/DataTableVehicles";
+
+export interface Veiculo {
+  id: number;
+  fornecedor: string;
+  contrato: string;
+  placa: string;
+  renavam: string;
+  chassi: string;
+  modelo: string;
+  cor: string;
+  status: string;
+  cliente: string;
+  perfil: string;
+  centroCusto: string;
+  franquiaKM: string;
+  carroReserva: boolean;
+  dataDisponibilizacao: string;
+  mesesContratados: number;
+  previsaoDevolucao: string;
+  mesesFaltantes: number;
+  mensalidade: number;
+  budget: number;
+  multa: number;
+  proximaRevisao: string;
+}
 
 export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
     const navigate = useNavigate();

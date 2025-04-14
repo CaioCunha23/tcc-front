@@ -24,34 +24,8 @@ import {
     TableFooter,
 } from "@/components/ui/table";
 import { useTokenStore } from "@/hooks/useTokenStore";
-import { useInfractionsColumns } from "@/hooks/useInfractionsColumns";
+import { Infracao, useInfractionsColumns } from "@/hooks/useInfractionsColumns";
 import AddInfractionDialog from "./AddInfractionDialog";
-
-export interface Infracao {
-    id: number;
-    tipo: string;
-    placaVeiculo: string;
-    colaboradorUid: string;
-    veiculoId: number;
-    costCenter: string;
-    dataInfracao: string;
-    tag: string;
-    hora: string;
-    valor: number;
-    prefixo: string;
-    marca: string;
-    categoria: string;
-    rodovia: string;
-    praca: string;
-    nome: string;
-    dataEnvio: string;
-    valorMulta: number;
-    codigoMulta: string;
-    indicacaoLimite: string;
-    statusResposta: string;
-    reconhecimento: boolean;
-    enviadoParaRH: boolean;
-}
 
 export function InfractionsTable() {
     const [data, setData] = useState<Infracao[]>([]);

@@ -12,6 +12,12 @@ import { useTokenStore } from "@/hooks/useTokenStore";
 const loginSchema = z.object({
     login: z.string().nonempty("Email ou UID é obrigatório"),
     password: z.string().nonempty("Senha é obrigatória"),
+    /*password: z.string()
+        .nonempty("Senha é obrigatória")
+        .regex(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&()[\]{}\-_=+<>.,;:])[A-Za-z\d@$!%*?&()[\]{}\-_=+<>.,;:]{8,}$/,
+            "A senha deve ter no mínimo 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial."
+        ),*/
 });
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
