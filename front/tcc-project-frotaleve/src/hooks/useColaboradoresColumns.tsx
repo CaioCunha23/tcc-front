@@ -383,8 +383,6 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
           setOpen(true);
         };
 
-        console.log('open', open);
-
         return (
           <>
             <DropdownMenu modal={false}>

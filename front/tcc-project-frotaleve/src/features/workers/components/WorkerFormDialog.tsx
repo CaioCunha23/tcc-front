@@ -8,6 +8,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -118,6 +119,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
                   name="nome"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>Nome</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Nome Completo"
@@ -134,6 +136,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
                   name="cpf"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>CPF</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="CPF"
@@ -153,6 +156,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
                   name="email"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>E-Mail</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="E-mail"
@@ -169,6 +173,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
                   name="uidMSK"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>UID MSK</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="UID (6 caracteres)"
@@ -188,6 +193,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
                   name="localidade"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>Cidade que trabalha</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -211,6 +217,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
                   name="brand"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>Brand</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -241,9 +248,10 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
                   name="jobTitle"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>Cargo / Área de Atuação</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Cargo / Área de atuação"
+                          placeholder="Ex: Customer Excellence"
                           {...field}
                           className="border-input focus:ring-2 focus:ring-offset-0 focus:ring-ring/30"
                         />
@@ -277,6 +285,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
                   name="cidadeEstacionamento"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>Cidade do Estacionamento</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -305,6 +314,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
                   name="cnh"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>Número da CNH</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="CNH (9 caracteres)"
@@ -321,6 +331,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
                   name="tipoCNH"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>Tipo da CNH</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Tipo CNH"

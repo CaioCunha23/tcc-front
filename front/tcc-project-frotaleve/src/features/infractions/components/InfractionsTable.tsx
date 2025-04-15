@@ -35,24 +35,25 @@ export function InfractionsTable() {
     const [rowSelection, setRowSelection] = useState({});
     const { token } = useTokenStore();
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const response = await fetch("http://localhost:3000/infracoes", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                if (!response.ok) throw new Error("Erro ao buscar dados");
-                const infracoes: Infracao[] = await response.json();
-                console.log("Dados recebidos:", infracoes);
-                setData(infracoes);
-            } catch (error) {
-                console.error("Erro ao buscar dados:", error);
-            }
+    async function fetchData() {
+        try {
+            const response = await fetch("http://localhost:3000/infracoes", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+            if (!response.ok) throw new Error("Erro ao buscar dados");
+            const data = await response.json();
+            console.log("Dados recebidos:", data);
+            setData(data);
+        } catch (error) {
+            console.error("Erro no fetch:", error);
         }
+    }
+
+    useEffect(() => {
         fetchData();
     }, [token]);
 

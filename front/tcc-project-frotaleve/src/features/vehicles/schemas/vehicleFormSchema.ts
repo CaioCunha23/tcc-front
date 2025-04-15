@@ -36,13 +36,13 @@ export const vehicleFormSchema = z.object({
 
     dataDisponibilizacao: z.preprocess((arg) => {
         if (typeof arg === 'string' || arg instanceof Date) return new Date(arg);
-    }, z.string({ required_error: 'Data de disponibilização é obrigatória' })),
+    }, z.date({ required_error: 'Data de disponibilização é obrigatória' })),
 
     mesesContratados: z.number({ required_error: 'Meses contratados é obrigatório' }),
 
     previsaoDevolucao: z.preprocess((arg) => {
         if (typeof arg === 'string' || arg instanceof Date) return new Date(arg);
-    }, z.string({ required_error: 'Previsão de devolução é obrigatória' })),
+    }, z.date({ required_error: 'Previsão de devolução é obrigatória' })),
 
     mesesFaltantes: z.number({ required_error: 'Meses faltantes é obrigatório' }),
 
@@ -54,5 +54,5 @@ export const vehicleFormSchema = z.object({
 
     proximaRevisao: z.preprocess((arg) => {
         if (typeof arg === 'string' || arg instanceof Date) return new Date(arg);
-    }, z.string({ required_error: 'Próxima revisão é obrigatória' })),
+    }, z.date({ required_error: 'Próxima revisão é obrigatória' })),
 });

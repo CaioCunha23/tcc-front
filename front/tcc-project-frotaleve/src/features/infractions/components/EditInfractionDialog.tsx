@@ -20,16 +20,16 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { DialogClose } from "@/components/ui/dialog";
-import { workerFormSchema } from "../schemas/workerFormSchema";
+import { InfractionFormSchema } from "../schemas/infractionFormSchema";
 
-interface WorkerEditFormProps {
-    defaultValues: z.infer<typeof workerFormSchema>;
-    onSubmit: (values: z.infer<typeof workerFormSchema>) => Promise<void>;
+interface InfractionEditFormProps {
+    defaultValues: z.infer<typeof InfractionFormSchema>;
+    onSubmit: (values: z.infer<typeof InfractionFormSchema>) => Promise<void>;
 }
 
-export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFormProps) {
-    const form = useForm<z.infer<typeof workerFormSchema>>({
-        resolver: zodResolver(workerFormSchema),
+export default function InfractionEditForm({ defaultValues, onSubmit }: InfractionEditFormProps) {
+    const form = useForm<z.infer<typeof InfractionFormSchema>>({
+        resolver: zodResolver(InfractionFormSchema),
         defaultValues,
     });
 
@@ -37,18 +37,22 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
         <Card className="shadow-lg rounded-lg border overflow-hidden">
             <CardContent className="p-6">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-6"
+                    >
+
                         <div className="flex flex-col md:flex-row gap-4">
                             <FormField
                                 control={form.control}
-                                name="nome"
+                                name="tipo"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
                                         <FormControl>
                                             <Input
-                                                placeholder="Nome Completo"
+                                                placeholder="Tipo de Infração"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="border-primary"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -57,14 +61,14 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                             />
                             <FormField
                                 control={form.control}
-                                name="cpf"
+                                name="colaboradorUid"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
                                         <FormControl>
                                             <Input
-                                                placeholder="CPF"
+                                                placeholder="UID do Colaborador (6 caracteres)"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="border-primary"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -72,17 +76,18 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                 )}
                             />
                         </div>
+
                         <div className="flex flex-col md:flex-row gap-4">
                             <FormField
                                 control={form.control}
-                                name="email"
+                                name="placaVeiculo"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
                                         <FormControl>
                                             <Input
-                                                placeholder="E-mail"
+                                                placeholder="Placa do Veículo (7 caracteres)"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="border-primary"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -91,14 +96,14 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                             />
                             <FormField
                                 control={form.control}
-                                name="uidMSK"
+                                name="costCenter"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
                                         <FormControl>
                                             <Input
-                                                placeholder="UID (6 caracteres)"
+                                                placeholder="Centro de Custo"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="border-primary"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -106,35 +111,52 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                 )}
                             />
                         </div>
+
                         <div className="flex flex-col md:flex-row gap-4">
                             <FormField
                                 control={form.control}
-                                name="localidade"
+                                name="dataInfracao"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
-                                        <Select onValueChange={field.onChange} value={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
-                                                    <SelectValue placeholder="Localidade" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="SSZ">SSZ</SelectItem>
-                                                <SelectItem value="SPO">SPO</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Data de Infração"
+                                                {...field}
+                                                className="border-primary"
+                                            />
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
-                                name="brand"
+                                name="tag"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Tag"
+                                                {...field}
+                                                className="border-primary"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="marca"
+                                render={({ field }) => (
+                                    <FormItem className="flex-1">
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
                                             <FormControl>
-                                                <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
+                                                <SelectTrigger className="border-primary w-full">
                                                     <SelectValue placeholder="Brand" />
                                                 </SelectTrigger>
                                             </FormControl>
@@ -152,17 +174,18 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                 )}
                             />
                         </div>
+
                         <div className="w-full">
                             <FormField
                                 control={form.control}
-                                name="jobTitle"
+                                name="hora"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormControl>
                                             <Input
-                                                placeholder="Cargo / Área de atuação"
+                                                placeholder="Hora da Infração"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="border-primary"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -170,10 +193,47 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                 )}
                             />
                         </div>
+
+                        <div className="flex flex-col md:flex-row gap-4">
+                            <FormField
+                                control={form.control}
+                                name="valor"
+                                render={({ field }) => (
+                                    <FormItem className="flex-1">
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="Valor"
+                                                {...field}
+                                                className="border-primary"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="prefixo"
+                                render={({ field }) => (
+                                    <FormItem className="flex-1">
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Prefixo"
+                                                {...field}
+                                                className="border-primary"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
                         <div className="flex flex-col md:flex-row gap-4 items-center">
                             <FormField
                                 control={form.control}
-                                name="usaEstacionamento"
+                                name="reconhecimento"
                                 render={({ field }) => (
                                     <FormItem className="flex items-center gap-2">
                                         <FormControl>
@@ -182,27 +242,23 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                                 onCheckedChange={field.onChange}
                                             />
                                         </FormControl>
-                                        <span className="text-sm">Utiliza Estacionamento?</span>
+                                        <span className="text-sm">Reconhecimento?</span>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
-                                name="cidadeEstacionamento"
+                                name="enviadoParaRH"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <Select onValueChange={field.onChange} value={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
-                                                    <SelectValue placeholder="Cidade Estacionamento" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="Santos">Santos</SelectItem>
-                                                <SelectItem value="São Paulo">São Paulo</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                    <FormItem className="flex items-center gap-2">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <span className="text-sm">Enviado para RH?</span>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -218,5 +274,5 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                 </Form>
             </CardContent>
         </Card>
-    );
+    )
 }

@@ -1,4 +1,5 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface Colaborador {
     nome: string;
@@ -26,12 +27,17 @@ interface TokenStore {
     logout: () => void;
 }
 
-export const useTokenStore = create<TokenStore>()((set) => {
-    return {
-        token: undefined,
-        colaborador: undefined,
-        setToken: (token) => set({ token }),
-        setColaborador: (colaborador) => set({ colaborador }),
-        logout: () => set({ token: undefined, colaborador: undefined }),
-    }
-})
+export const useTokenStore = create<TokenStore>()(
+    persist(
+        (set) => ({
+            token: undefined,
+            colaborador: undefined,
+            setToken: (token) => set({ token }),
+            setColaborador: (colaborador) => set({ colaborador }),
+            logout: () => set({ token: undefined, colaborador: undefined }),
+        }),
+        {
+            name: "token-store",
+        }
+    )
+);

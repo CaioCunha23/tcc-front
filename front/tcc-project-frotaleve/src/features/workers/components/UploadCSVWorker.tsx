@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { DialogClose } from "@/components/ui/dialog";
 import { FileUpIcon, SendIcon, XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function UploadCSVWorker() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -39,8 +40,12 @@ export default function UploadCSVWorker() {
                 throw new Error(result.error || "Falha no upload do arquivo.");
             }
             setUploadSuccess("Arquivo carregado com sucesso!");
+            toast.success(`Arquivo carregado com sucesso! (às ${new Date().toLocaleTimeString()})`);
         } catch (error: any) {
             setUploadError(error.message);
+            toast.error(
+                error instanceof Error ? error.message : "Erro ao submeter arquivo."
+            );
         } finally {
             setIsUploading(false);
         }
