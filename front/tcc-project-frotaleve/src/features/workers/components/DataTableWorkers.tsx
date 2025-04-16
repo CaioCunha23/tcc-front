@@ -39,7 +39,7 @@ export function DataTableWorker() {
   const [rowSelection, setRowSelection] = useState({});
   const { token } = useTokenStore();
 
-  async function fetchData() {
+  const fetchData = async () => {
     try {
       const response = await fetch("http://localhost:3000/colaboradores", {
         method: 'GET',
@@ -61,7 +61,7 @@ export function DataTableWorker() {
     fetchData();
   }, [token]);
 
-  const columns = useColaboradoresColumns();
+  const columns = useColaboradoresColumns({ onWorkerUpdated: fetchData });
 
   const table = useReactTable({
     data,

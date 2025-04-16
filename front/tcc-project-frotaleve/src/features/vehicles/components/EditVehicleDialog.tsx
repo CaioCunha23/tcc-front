@@ -25,6 +25,7 @@ import {
     ChevronRight,
     Check,
     AlertCircle,
+    ClipboardCheckIcon,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -49,7 +50,7 @@ const steps = [
         id: "utilizacao",
         name: "Utilização",
         icon: <CarFront size={18} />,
-        fields: ["status", "cliente", "centroCusto", "franquiaKM", "carroReserva"],
+        fields: ["status", "cliente", "centroCusto", "perfil", "franquiaKM", "carroReserva"],
     },
     {
         id: "contrato",
@@ -76,31 +77,18 @@ export default function VehicleEditFormDialog({ defaultValues, onSubmit }: Vehic
         mode: "onChange",
     });
 
-    const validateCurrentStep = () => {
+    const nextStep = async () => {
         const currentFields = steps[currentStep].fields;
-        let isValid = true;
-        let errorMessage = "";
+        const isValid = await form.trigger(currentFields as any);
 
-        for (const field of currentFields) {
-            const value = form.getValues(field as any);
-
-            if (field !== "carroReserva" && (!value || value === "")) {
-                isValid = false;
-                errorMessage = "Preencha todos os campos obrigatórios antes de continuar.";
-                form.trigger(field as any);
-            }
+        if (!isValid) {
+            setValidationError("Preencha todos os campos obrigatórios antes de continuar.");
+            return;
         }
-
-        setValidationError(errorMessage);
-        return isValid;
-    };
-
-    const nextStep = () => {
-        if (validateCurrentStep() && currentStep < steps.length - 1) {
-            setCurrentStep(currentStep + 1);
-            setProgress(((currentStep + 1) / (steps.length - 1)) * 100);
-            setValidationError("");
-        }
+        const next = currentStep + 1;
+        setCurrentStep(next);
+        setProgress((next / (steps.length - 1)) * 100);
+        setValidationError("");
     };
 
     const prevStep = () => {
@@ -109,6 +97,16 @@ export default function VehicleEditFormDialog({ defaultValues, onSubmit }: Vehic
             setProgress(((currentStep - 1) / (steps.length - 1)) * 100);
             setValidationError("");
         }
+    };
+
+    const handleFinalSubmit = async () => {
+        const isValid = await form.trigger();
+        if (!isValid) {
+            setValidationError("Existem campos inválidos. Revise o formulário.");
+            return;
+        }
+
+        form.handleSubmit(onSubmit)();
     };
 
     const isLastStep = currentStep === steps.length - 1;
@@ -289,6 +287,25 @@ export default function VehicleEditFormDialog({ defaultValues, onSubmit }: Vehic
                                 </FormItem>
                             )}
                         />
+                        {currentFields.includes("perfil") && (
+                            <FormField
+                                control={form.control}
+                                name="perfil"
+                                render={({ field }) => (
+                                    <FormItem className="flex-1">
+                                        <FormLabel>Perfil</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Perfil"
+                                                {...field}
+                                                className="border-primary rounded-md shadow-sm"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
                     </div>
                 )}
 
@@ -540,7 +557,14 @@ export default function VehicleEditFormDialog({ defaultValues, onSubmit }: Vehic
                 <Card className="shadow-lg rounded-lg border">
                     <CardContent className="p-6">
                         <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                            <form
+                                onSubmit={form.handleSubmit(onSubmit)}
+                                onKeyDown={(e) => {
+                                    if ((e.key === "Enter" || e.key === "NumpadEnter") && !isLastStep) {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                className="space-y-6">
                                 <div className="mb-8">
                                     <div className="flex justify-between items-center mb-4">
                                         {steps.map((step, index) => (
@@ -592,16 +616,26 @@ export default function VehicleEditFormDialog({ defaultValues, onSubmit }: Vehic
                                     {isLastStep ? (
                                         <>
                                             <DialogClose asChild>
-                                                <Button variant="outline" className="mr-2">
+                                                <Button
+                                                    variant="outline"
+                                                    className="mr-2">
                                                     Cancelar
                                                 </Button>
                                             </DialogClose>
-                                            <Button type="submit" className="flex items-center gap-1" disabled={!validateCurrentStep()}>
-                                                Salvar <Check size={16} />
+                                            <Button
+                                                type="button"
+                                                onClick={handleFinalSubmit}
+                                                className="flex items-center gap-1"
+                                            >
+                                                <ClipboardCheckIcon size={16} />
+                                                <span>Salvar</span>
                                             </Button>
                                         </>
                                     ) : (
-                                        <Button type="button" onClick={nextStep} className="flex items-center gap-1">
+                                        <Button
+                                            type="button"
+                                            onClick={nextStep}
+                                            className="flex items-center gap-1">
                                             Próximo <ChevronRight size={16} />
                                         </Button>
                                     )}

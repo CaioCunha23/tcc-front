@@ -6,6 +6,7 @@ import {
     FormControl,
     FormMessage,
     Form,
+    FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,29 +22,38 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { DialogClose } from "@/components/ui/dialog";
 import { workerFormSchema } from "../schemas/workerFormSchema";
+import { ClipboardCheckIcon } from "lucide-react";
+import { Colaborador } from "@/hooks/useColaboradoresColumns";
 
 interface WorkerEditFormProps {
-    defaultValues: z.infer<typeof workerFormSchema>;
-    onSubmit: (values: z.infer<typeof workerFormSchema>) => Promise<void>;
+    defaultValues: Colaborador;
+    onSubmit: (values: Partial<Colaborador>) => Promise<void>;
+    onWorkerUpdated?: () => void;
 }
 
-export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFormProps) {
+export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdated }: WorkerEditFormProps) {
     const form = useForm<z.infer<typeof workerFormSchema>>({
         resolver: zodResolver(workerFormSchema),
         defaultValues,
     });
 
+    const handleFormSubmit = async (values: Partial<Colaborador>) => {
+        await onSubmit(values);
+        onWorkerUpdated && onWorkerUpdated();
+    };
+
     return (
         <Card className="shadow-lg rounded-lg border overflow-hidden">
             <CardContent className="p-6">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
                         <div className="flex flex-col md:flex-row gap-4">
                             <FormField
                                 control={form.control}
                                 name="nome"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
+                                        <FormLabel>Nome</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Nome Completo"
@@ -60,6 +70,7 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                 name="cpf"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
+                                        <FormLabel>CPF</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="CPF"
@@ -78,6 +89,7 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
+                                        <FormLabel>E-Mail</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="E-mail"
@@ -94,6 +106,7 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                 name="uidMSK"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
+                                        <FormLabel>UID MSK</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="UID (6 caracteres)"
@@ -112,6 +125,7 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                 name="localidade"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
+                                        <FormLabel>Cidade que trabalha</FormLabel>
                                         <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
@@ -132,6 +146,7 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                 name="brand"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
+                                        <FormLabel>Brand</FormLabel>
                                         <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
@@ -158,6 +173,7 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                 name="jobTitle"
                                 render={({ field }) => (
                                     <FormItem>
+                                        <FormLabel>Cargo / Área de Atuação</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Cargo / Área de atuação"
@@ -192,6 +208,7 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                                 name="cidadeEstacionamento"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
+                                        <FormLabel>Cidade do Estacionamento</FormLabel>
                                         <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
@@ -212,7 +229,10 @@ export default function WorkerEditForm({ defaultValues, onSubmit }: WorkerEditFo
                             <DialogClose asChild>
                                 <Button variant="outline" >Cancelar</Button>
                             </DialogClose>
-                            <Button type="submit">Salvar</Button>
+                            <Button type="submit" className="flex items-center gap-2">
+                                <ClipboardCheckIcon size={16} />
+                                <span>Salvar</span>
+                            </Button>
                         </div>
                     </form>
                 </Form>

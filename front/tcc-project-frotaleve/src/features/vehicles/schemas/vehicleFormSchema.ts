@@ -28,9 +28,13 @@ export const vehicleFormSchema = z.object({
 
     cliente: z.string().nonempty('Cliente é obrigatório'),
 
+    perfil: z.string().nonempty('Perfil é obrigatório'),
+
     centroCusto: z.string().nonempty('Centro de custo é obrigatório'),
 
-    franquiaKM: z.string().nonempty('Franquia KM é obrigatório'),
+    franquiaKM: z.preprocess(
+        (val) => (typeof val === "string" ? parseInt(val, 10) : val),
+        z.number({ required_error: 'Franqui KM é obrigatório' })),
 
     carroReserva: z.boolean().optional(),
 
@@ -38,19 +42,29 @@ export const vehicleFormSchema = z.object({
         if (typeof arg === 'string' || arg instanceof Date) return new Date(arg);
     }, z.date({ required_error: 'Data de disponibilização é obrigatória' })),
 
-    mesesContratados: z.number({ required_error: 'Meses contratados é obrigatório' }),
+    mesesContratados: z.preprocess(
+        (val) => (typeof val === "string" ? parseInt(val, 10) : val),
+        z.number({ required_error: 'Meses contratados é obrigatório' })),
 
     previsaoDevolucao: z.preprocess((arg) => {
         if (typeof arg === 'string' || arg instanceof Date) return new Date(arg);
     }, z.date({ required_error: 'Previsão de devolução é obrigatória' })),
 
-    mesesFaltantes: z.number({ required_error: 'Meses faltantes é obrigatório' }),
+    mesesFaltantes: z.preprocess(
+        (val) => (typeof val === "string" ? parseInt(val, 10) : val),
+        z.number({ required_error: 'Meses faltantes é obrigatório' })),
 
-    mensalidade: z.number({ required_error: 'Mensalidade é obrigatória' }),
+    mensalidade: z.preprocess(
+        (val) => (typeof val === "string" ? parseInt(val, 10) : val),
+        z.number({ required_error: 'Mensalidade é obrigatório' })),
 
-    budget: z.number({ required_error: 'Budget é obrigatório' }),
+    budget: z.preprocess(
+        (val) => (typeof val === "string" ? parseInt(val, 10) : val),
+        z.number({ required_error: 'Budget é obrigatório' })),
 
-    multa: z.number().optional(),
+    multa: z.preprocess(
+        (val) => (typeof val === "string" ? parseInt(val, 10) : val),
+        z.number().optional()),
 
     proximaRevisao: z.preprocess((arg) => {
         if (typeof arg === 'string' || arg instanceof Date) return new Date(arg);

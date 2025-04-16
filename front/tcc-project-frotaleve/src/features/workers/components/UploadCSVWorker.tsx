@@ -5,17 +5,19 @@ import { FileUpIcon, SendIcon, XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-export default function UploadCSVWorker() {
+interface UploadCSVWorkerProps {
+    onUploadSuccess?: () => void;
+}
+
+export default function UploadCSVWorker({ onUploadSuccess }: UploadCSVWorkerProps) {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadError, setUploadError] = useState<string | null>(null);
-    const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files?.[0]) {
             setSelectedFile(e.target.files[0]);
             setUploadError(null);
-            setUploadSuccess(null);
         }
     };
 
@@ -39,8 +41,9 @@ export default function UploadCSVWorker() {
                 const result = await response.json();
                 throw new Error(result.error || "Falha no upload do arquivo.");
             }
-            setUploadSuccess("Arquivo carregado com sucesso!");
             toast.success(`Arquivo carregado com sucesso! (às ${new Date().toLocaleTimeString()})`);
+
+            if (onUploadSuccess) onUploadSuccess();
         } catch (error: any) {
             setUploadError(error.message);
             toast.error(
@@ -88,15 +91,6 @@ export default function UploadCSVWorker() {
                 <div className="bg-destructive/10 border border-destructive/30 text-destructive rounded-md p-3 text-sm flex items-start gap-2">
                     <XIcon className="h-5 w-5 flex-shrink-0 mt-0.5" />
                     <span>{uploadError}</span>
-                </div>
-            )}
-
-            {uploadSuccess && (
-                <div className="bg-green-50 border border-green-200 text-green-700 rounded-md p-3 text-sm flex items-center gap-2">
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    <span>{uploadSuccess}</span>
                 </div>
             )}
 

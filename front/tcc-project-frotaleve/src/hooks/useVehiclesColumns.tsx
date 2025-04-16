@@ -33,7 +33,7 @@ export interface Veiculo {
     cliente: string;
     perfil: string;
     centroCusto: string;
-    franquiaKM: string;
+    franquiaKM: number;
     carroReserva: boolean;
     dataDisponibilizacao: Date;
     mesesContratados: number;
@@ -442,12 +442,13 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                 const [open, setOpen] = useState(false);
 
                 async function handleSave(values: Partial<Veiculo>) {
-                    const updatedWorker: Veiculo = { ...vehicle, ...values };
-                    const res = await fetch(`http://localhost:3000/colaborador/${vehicle.id}`, {
+                    const updatedVehicle: Veiculo = { ...vehicle, ...values };
+                    const res = await fetch(`http://localhost:3000/veiculo/${vehicle.id}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(updatedWorker),
+                        body: JSON.stringify(updatedVehicle),
                     });
+                    console.log(updatedVehicle)
                     if (res.ok) {
                         setOpen(false);
                     } else {

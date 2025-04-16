@@ -34,7 +34,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import { CarFront, Calendar, DollarSign, ChevronLeft, ChevronRight, Check, AlertCircle } from "lucide-react";
+import { CarFront, Calendar, DollarSign, ChevronLeft, ChevronRight, Check, AlertCircle, SendIcon } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -57,7 +57,7 @@ const steps = [
         id: "utilizacao",
         name: "Utilização",
         icon: <CarFront size={18} />,
-        fields: ["status", "cliente", "centroCusto", "franquiaKM", "carroReserva"]
+        fields: ["status", "cliente", "centroCusto", "perfil", "franquiaKM", "carroReserva"]
     },
     {
         id: "contrato",
@@ -92,17 +92,18 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
             cor: "",
             status: "",
             cliente: "",
+            perfil: "",
             centroCusto: "",
-            franquiaKM: "",
+            franquiaKM: 0,
             carroReserva: false,
-            dataDisponibilizacao: undefined,
+            dataDisponibilizacao: new Date(),
             mesesContratados: 0,
-            previsaoDevolucao: undefined,
+            previsaoDevolucao: new Date(),
             mesesFaltantes: 0,
             mensalidade: 0,
             budget: 0,
             multa: 0,
-            proximaRevisao: undefined,
+            proximaRevisao: new Date(),
         },
         mode: "onChange",
     });
@@ -151,31 +152,18 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
         }
     }
 
-    const validateCurrentStep = () => {
+    const nextStep = async () => {
         const currentFields = steps[currentStep].fields;
-        let isValid = true;
-        let errorMessage = "";
+        const isValid = await form.trigger(currentFields as any);
 
-        for (const field of currentFields) {
-            const value = form.getValues(field as any);
-
-            if (field !== "carroReserva" && (!value || value === "")) {
-                isValid = false;
-                errorMessage = "Preencha todos os campos obrigatórios antes de continuar.";
-                form.trigger(field as any);
-            }
+        if (!isValid) {
+            setValidationError("Preencha todos os campos obrigatórios antes de continuar.");
+            return;
         }
-
-        setValidationError(errorMessage);
-        return isValid;
-    };
-
-    const nextStep = () => {
-        if (validateCurrentStep() && currentStep < steps.length - 1) {
-            setCurrentStep(currentStep + 1);
-            setProgress(((currentStep + 1) / (steps.length - 1)) * 100);
-            setValidationError("");
-        }
+        const next = currentStep + 1;
+        setCurrentStep(next);
+        setProgress((next / (steps.length - 1)) * 100);
+        setValidationError("");
     };
 
     const prevStep = () => {
@@ -184,6 +172,16 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
             setProgress(((currentStep - 1) / (steps.length - 1)) * 100);
             setValidationError("");
         }
+    };
+
+    const handleFinalSubmit = async () => {
+        const isValid = await form.trigger();
+        if (!isValid) {
+            setValidationError("Existem campos inválidos. Revise o formulário.");
+            return;
+        }
+
+        form.handleSubmit(onSubmit)();
     };
 
     const isLastStep = currentStep === steps.length - 1;
@@ -409,6 +407,25 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
                                 </FormItem>
                             )}
                         />
+                        {currentFields.includes("perfil") && (
+                            <FormField
+                                control={form.control}
+                                name="perfil"
+                                render={({ field }) => (
+                                    <FormItem className="flex-1">
+                                        <FormLabel>Perfil</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Perfil"
+                                                {...field}
+                                                className="border-primary rounded-md shadow-sm"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
                     </div>
                 )}
 
@@ -694,7 +711,14 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
     return (
         <div className="w-full max-w-[90%] mx-auto">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    onKeyDown={(e) => {
+                        if ((e.key === "Enter" || e.key === "NumpadEnter") && !isLastStep) {
+                            e.preventDefault();
+                        }
+                    }}
+                    className="space-y-6">
                     <div className="mb-8">
                         <div className="flex justify-between items-center mb-4">
                             {steps.map((step, index) => (
@@ -751,11 +775,12 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
 
                                 {isLastStep ? (
                                     <Button
-                                        type="submit"
+                                        type="button"
+                                        onClick={handleFinalSubmit}
                                         className="flex items-center gap-1"
-                                        disabled={!validateCurrentStep()}
                                     >
-                                        Salvar <Check size={16} />
+                                        <SendIcon size={16} />
+                                        <span>Enviar</span>
                                     </Button>
                                 ) : (
                                     <Button

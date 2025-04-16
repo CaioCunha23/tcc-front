@@ -33,7 +33,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useTokenStore } from "@/hooks/useTokenStore";
 import { useState } from "react";
 import { workerFormSchema } from "../schemas/workerFormSchema"
-import { ClipboardCheckIcon, RefreshCcwIcon } from "lucide-react";
+import { RefreshCcwIcon, SendIcon } from "lucide-react";
 
 interface WorkerFormDialogProps {
   onWorkerAdded: () => void;
@@ -98,7 +98,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
       setAlertOpen(false);
       onCloseDialog();
       onWorkerAdded();
-      toast.success(`Colaborador adicionado! (às ${new Date().toLocaleTimeString()})`);
+      toast.success(`Colaborador adicionado (às ${new Date().toLocaleTimeString()})`);
     }
   }
 
@@ -356,8 +356,8 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
                   <span>Limpar</span>
                 </Button>
                 <Button type="submit" className="flex items-center gap-2">
-                  <ClipboardCheckIcon size={16} />
-                  <span>Salvar</span>
+                  <SendIcon size={16} />
+                  <span>Enviar</span>
                 </Button>
               </div>
             </form>

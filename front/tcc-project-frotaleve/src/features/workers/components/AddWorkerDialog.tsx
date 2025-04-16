@@ -94,7 +94,12 @@ export default function AddWorkerDialog({ onWorkerAdded }: AddWorkerDialogProps)
 
                 {mode === "upload" && (
                     <div className="py-4">
-                        <UploadCSVWorker />
+                        <UploadCSVWorker
+                            onUploadSuccess={() => {
+                                onWorkerAdded();
+                                setOpen(false);
+                            }}
+                        />
                     </div>
                 )}
 

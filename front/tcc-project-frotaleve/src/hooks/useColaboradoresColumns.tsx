@@ -27,6 +27,16 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { useTokenStore } from "./useTokenStore";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+  AlertDialogHeader
+} from "@/components/ui/alert-dialog";
 
 export interface Infracao {
   valor: string;
@@ -49,7 +59,11 @@ export interface Colaborador {
   infracaos: Infracao[];
 }
 
-export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
+interface UseColaboradoresColumnsOptions {
+  onWorkerUpdated: () => void;
+}
+
+export function useColaboradoresColumns({ onWorkerUpdated }: UseColaboradoresColumnsOptions): ColumnDef<Colaborador>[] {
   const navigate = useNavigate();
   const { token } = useTokenStore();
 
@@ -360,6 +374,7 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
       cell: ({ row }) => {
         const worker = row.original;
         const [open, setOpen] = useState(false);
+        const [alertOpen, setAlertOpen] = useState(false);
 
         async function handleSave(values: Partial<Colaborador>) {
           const updatedWorker: Colaborador = { ...worker, ...values };
@@ -373,6 +388,8 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
           });
           if (res.ok) {
             setOpen(false);
+            toast.success(`Colaborador atualizado (às ${new Date().toLocaleTimeString()})`);
+            onWorkerUpdated && onWorkerUpdated();
           } else {
             console.error("Erro ao atualizar");
           }
@@ -382,6 +399,31 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
           event.stopPropagation();
           setOpen(true);
         };
+
+        const handleDeactivateClick = (event: React.MouseEvent) => {
+          event.stopPropagation();
+          setAlertOpen(true);
+        };
+
+        async function handleDeactivate() {
+          const updatedWorker: Colaborador = { ...worker, status: false };
+          const res = await fetch(`http://localhost:3000/colaborador/${worker.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify(updatedWorker),
+          });
+          if (res.ok) {
+            setAlertOpen(false);
+            toast.success(`Colaborador desativado com sucesso!`);
+            onWorkerUpdated && onWorkerUpdated();
+          } else {
+            console.error("Erro ao desativar colaborador");
+            toast.error(`Erro ao tentar desativa colaborador!`);
+          }
+        }
 
         return (
           <>
@@ -405,7 +447,9 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
                 <DropdownMenuItem onClick={handleEditClick}>
                   Editar Colaborador
                 </DropdownMenuItem>
-                <DropdownMenuItem>Desativar Colaborador</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDeactivateClick}>
+                  Desativar Colaborador
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -418,9 +462,28 @@ export function useColaboradoresColumns(): ColumnDef<Colaborador>[] {
                   </DialogDescription>
                 </DialogHeader>
 
-                <WorkerEditForm defaultValues={worker} onSubmit={handleSave} />
+                <WorkerEditForm
+                  defaultValues={worker}
+                  onSubmit={handleSave}
+                  onWorkerUpdated={onWorkerUpdated}
+                />
               </DialogContent>
             </Dialog>
+
+            <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+              <AlertDialogContent className="max-w-sm">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Desativar Colaborador</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Tem certeza de que deseja desativar esse colaborador?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="flex justify-end space-x-2 mt-4">
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeactivate}>Confirmar</AlertDialogAction>
+                </div>
+              </AlertDialogContent>
+            </AlertDialog>
           </>
         )
       },
