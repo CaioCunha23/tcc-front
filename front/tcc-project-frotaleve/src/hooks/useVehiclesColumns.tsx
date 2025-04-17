@@ -496,7 +496,6 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
                                 <DropdownMenuItem onClick={handleEditClick}>
                                     Editar Veículo
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>Desativar Veículo</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
 

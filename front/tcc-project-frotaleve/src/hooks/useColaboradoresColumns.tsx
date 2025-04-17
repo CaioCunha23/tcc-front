@@ -392,6 +392,7 @@ export function useColaboradoresColumns({ onWorkerUpdated }: UseColaboradoresCol
             onWorkerUpdated && onWorkerUpdated();
           } else {
             console.error("Erro ao atualizar");
+            toast.error(`Erro ao atualizar colaborador.`);
           }
         }
 

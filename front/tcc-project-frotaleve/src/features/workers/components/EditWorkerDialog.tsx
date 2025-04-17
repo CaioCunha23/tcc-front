@@ -46,7 +46,10 @@ export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdate
         <Card className="shadow-lg rounded-lg border overflow-hidden">
             <CardContent className="p-6">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+                    <form
+                        onSubmit={form.handleSubmit(handleFormSubmit)}
+                        className="space-y-6"
+                    >
                         <div className="flex flex-col md:flex-row gap-4">
                             <FormField
                                 control={form.control}

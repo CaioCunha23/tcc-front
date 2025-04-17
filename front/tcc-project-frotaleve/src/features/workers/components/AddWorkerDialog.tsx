@@ -88,7 +88,10 @@ export default function AddWorkerDialog({ onWorkerAdded }: AddWorkerDialogProps)
 
                 {mode === "manual" && (
                     <div className="py-4">
-                        <WorkerFormDialog onWorkerAdded={onWorkerAdded} onCloseDialog={() => setOpen(false)} />
+                        <WorkerFormDialog
+                            onWorkerAdded={onWorkerAdded}
+                            onCloseDialog={() => setOpen(false)}
+                        />
                     </div>
                 )}
 

@@ -35,7 +35,7 @@ export function InfractionsTable() {
     const [rowSelection, setRowSelection] = useState({});
     const { token } = useTokenStore();
 
-    async function fetchData() {
+    const fetchData = async () => {
         try {
             const response = await fetch("http://localhost:3000/infracoes", {
                 method: "GET",
@@ -62,7 +62,7 @@ export function InfractionsTable() {
         0
     );
 
-    const columns = useInfractionsColumns();
+    const columns = useInfractionsColumns({ onInfractionUpdated: fetchData });
 
     const table = useReactTable({
         data,
@@ -76,7 +76,6 @@ export function InfractionsTable() {
             columnFilters,
             columnVisibility,
             rowSelection,
-            pagination: { pageIndex: 0, pageSize: 20 }
         },
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -100,7 +99,7 @@ export function InfractionsTable() {
                         className="max-w-sm mb-4 sm:mb-0"
                     />
 
-                    <AddInfractionDialog />
+                    <AddInfractionDialog onInfractionAdded={fetchData} />
                 </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -201,6 +200,10 @@ export function InfractionsTable() {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-end space-y-2 sm:space-y-0 sm:space-x-2 py-4 px-4 sm:px-6">
+                <div className="flex-1 text-sm text-muted-foreground">
+                    {table.getFilteredSelectedRowModel().rows.length} de{" "}
+                    {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
+                </div>
                 <div className="flex space-x-2">
                     <Button
                         variant="outline"

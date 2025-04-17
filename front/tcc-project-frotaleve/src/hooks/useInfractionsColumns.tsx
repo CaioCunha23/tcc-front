@@ -20,6 +20,7 @@ import {
 import InfractionEditForm from "@/features/infractions/components/EditInfractionDialog";
 import { useTokenStore } from "./useTokenStore";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 export interface Infracao {
     id: number,
@@ -28,7 +29,7 @@ export interface Infracao {
     colaboradorUid: string;
     veiculoId: number;
     costCenter: string;
-    dataInfracao: string;
+    dataInfracao: Date;
     tag: string;
     hora: string;
     valor: number;
@@ -38,16 +39,20 @@ export interface Infracao {
     rodovia: string;
     praca: string;
     nome: string;
-    dataEnvio: string;
+    dataEnvio: Date;
     valorMulta: number;
     codigoMulta: string;
-    indicacaoLimite: string;
+    indicacaoLimite: Date;
     statusResposta: string;
     reconhecimento: boolean;
     enviadoParaRH: boolean;
 }
 
-export function useInfractionsColumns(): ColumnDef<Infracao>[] {
+interface UseInfractionsColumnsOptions {
+    onInfractionUpdated: () => void;
+}
+
+export function useInfractionsColumns({ onInfractionUpdated }: UseInfractionsColumnsOptions): ColumnDef<Infracao>[] {
     const navigate = useNavigate();
     const { token } = useTokenStore();
 
@@ -298,8 +303,11 @@ export function useInfractionsColumns(): ColumnDef<Infracao>[] {
                     });
                     if (res.ok) {
                         setOpen(false);
+                        toast.success(`Infração atualizada (às ${new Date().toLocaleTimeString()})`);
+                        onInfractionUpdated && onInfractionUpdated();
                     } else {
                         console.error("Erro ao atualizar");
+                        toast.error(`Erro ao atualizar infração.`);
                     }
                 }
 
@@ -342,7 +350,11 @@ export function useInfractionsColumns(): ColumnDef<Infracao>[] {
                                     </DialogDescription>
                                 </DialogHeader>
 
-                                <InfractionEditForm defaultValues={infraction} onSubmit={handleSave} />
+                                <InfractionEditForm
+                                    defaultValues={infraction}
+                                    onSubmit={handleSave}
+                                    onInfractionUpdated={onInfractionUpdated}
+                                />
                             </DialogContent>
                         </Dialog>
                     </>

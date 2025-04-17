@@ -44,6 +44,7 @@ export default function UploadCSVWorker({ onUploadSuccess }: UploadCSVWorkerProp
             toast.success(`Arquivo carregado com sucesso! (às ${new Date().toLocaleTimeString()})`);
 
             if (onUploadSuccess) onUploadSuccess();
+
         } catch (error: any) {
             setUploadError(error.message);
             toast.error(
