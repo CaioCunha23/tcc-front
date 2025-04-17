@@ -61,7 +61,7 @@ export function DataTableVehicles() {
     fetchData();
   }, [token]);
 
-  const columns = useVehiclesColumns();
+  const columns = useVehiclesColumns({ onVehicleUpdated: fetchData });
 
   const table = useReactTable({
     data,

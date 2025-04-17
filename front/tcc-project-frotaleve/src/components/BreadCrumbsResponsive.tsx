@@ -11,11 +11,9 @@ import {
 const items = [
     { href: "/home", label: "Home" },
     { href: "/colaboradores", label: "Colaboradores" },
-    { href: "/colaborador/adicionar", label: "Adicionar Colaborador" },
-    { href: `/colaborador/:id`, label: "Editar Colaborador" },
+    { href: "/colaboradores/multas", label: "Multas" },
     { href: "/veiculos", label: "Automóveis" },
-    { href: "/veiculo/adicionar", label: "Adicionar Automóvel" },
-    { href: `/veiculo/:id`, label: "Editar Colaborador" },
+    { href: `/veiculo_colaborador`, label: "Histórico de Veículos" },
 ]
 
 export function BreadcrumbResponsive() {

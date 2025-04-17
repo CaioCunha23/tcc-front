@@ -375,6 +375,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
               Se optar por não inserir, o pop-up será fechado e a tabela será atualizada.
             </AlertDialogDescription>
           </AlertDialogHeader>
+
           <div className="flex justify-end space-x-3 mt-4">
             <AlertDialogAction
               onClick={() => handleDialogResponse(true)}

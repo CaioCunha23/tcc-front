@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/dialog";
 import { useNavigate } from "react-router";
 import VehicleEditFormDialog from "@/features/vehicles/components/EditVehicleDialog";
+import { useTokenStore } from "./useTokenStore";
+import { toast } from "sonner";
 
 export interface Veiculo {
     id: number;
@@ -45,8 +47,13 @@ export interface Veiculo {
     proximaRevisao: Date;
 }
 
-export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
+interface UseVehiclesColumnsOptions {
+    onVehicleUpdated: () => void;
+}
+
+export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptions): ColumnDef<Veiculo>[] {
     const navigate = useNavigate();
+    const { token } = useTokenStore();
 
     return useMemo(() => [
         {
@@ -445,14 +452,20 @@ export function useVehiclesColumns(): ColumnDef<Veiculo>[] {
                     const updatedVehicle: Veiculo = { ...vehicle, ...values };
                     const res = await fetch(`http://localhost:3000/veiculo/${vehicle.id}`, {
                         method: "PUT",
-                        headers: { "Content-Type": "application/json" },
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`,
+                        },
                         body: JSON.stringify(updatedVehicle),
                     });
                     console.log(updatedVehicle)
                     if (res.ok) {
                         setOpen(false);
+                        toast.success(`Veículo atualizado (às ${new Date().toLocaleTimeString()})`);
+                        onVehicleUpdated && onVehicleUpdated();
                     } else {
                         console.error("Erro ao atualizar");
+                        toast.error(`Erro ao atualizar veículo.`);
                     }
                 }
 

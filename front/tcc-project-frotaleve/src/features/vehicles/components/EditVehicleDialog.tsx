@@ -33,10 +33,12 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Veiculo } from "@/hooks/useVehiclesColumns";
 
 interface VehicleEditFormProps {
-    defaultValues: z.infer<typeof vehicleFormSchema>;
-    onSubmit: (values: z.infer<typeof vehicleFormSchema>) => Promise<void>;
+    defaultValues: Veiculo;
+    onSubmit: (values: Partial<Veiculo>) => Promise<void>;
+    onVehicleUpdated?: () => void;
 }
 
 const steps = [
@@ -66,7 +68,7 @@ const steps = [
     },
 ];
 
-export default function VehicleEditFormDialog({ defaultValues, onSubmit }: VehicleEditFormProps) {
+export default function VehicleEditFormDialog({ defaultValues, onSubmit, onVehicleUpdated }: VehicleEditFormProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [validationError, setValidationError] = useState("");
     const [progress, setProgress] = useState((currentStep / (steps.length - 1)) * 100);
@@ -76,6 +78,11 @@ export default function VehicleEditFormDialog({ defaultValues, onSubmit }: Vehic
         defaultValues,
         mode: "onChange",
     });
+
+    const handleFormSubmit = async (values: Partial<Veiculo>) => {
+        await onSubmit(values);
+        onVehicleUpdated && onVehicleUpdated();
+    };
 
     const nextStep = async () => {
         const currentFields = steps[currentStep].fields;
@@ -558,7 +565,7 @@ export default function VehicleEditFormDialog({ defaultValues, onSubmit }: Vehic
                     <CardContent className="p-6">
                         <Form {...form}>
                             <form
-                                onSubmit={form.handleSubmit(onSubmit)}
+                                onSubmit={form.handleSubmit(handleFormSubmit)}
                                 onKeyDown={(e) => {
                                     if ((e.key === "Enter" || e.key === "NumpadEnter") && !isLastStep) {
                                         e.preventDefault();
