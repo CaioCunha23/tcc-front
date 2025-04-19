@@ -55,7 +55,7 @@ export function InfractionFormDialog({ onInfractionAdded, onCloseDialog }: Infra
             colaboradorUid: "",
             placaVeiculo: "",
             costCenter: "",
-            dataInfracao: new Date(),
+            dataInfracao: undefined,
             tag: "",
             hora: "",
             valor: undefined,
@@ -65,9 +65,9 @@ export function InfractionFormDialog({ onInfractionAdded, onCloseDialog }: Infra
             rodovia: "",
             praca: "",
             nome: "",
-            dataEnvio: new Date(),
+            dataEnvio: undefined,
             codigoMulta: "",
-            indicacaoLimite: new Date(),
+            indicacaoLimite: undefined,
             statusResposta: "",
             reconhecimento: false,
             enviadoParaRH: false,
@@ -231,7 +231,9 @@ export function InfractionFormDialog({ onInfractionAdded, onCloseDialog }: Infra
                                                     <CalendarComponent
                                                         mode="single"
                                                         selected={field.value ? new Date(field.value) : undefined}
-                                                        onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")}
+                                                        onSelect={(date) => {
+                                                            field.onChange(date ?? undefined);
+                                                        }}
                                                         initialFocus
                                                     />
                                                 </PopoverContent>
@@ -336,7 +338,9 @@ export function InfractionFormDialog({ onInfractionAdded, onCloseDialog }: Infra
                                                     <CalendarComponent
                                                         mode="single"
                                                         selected={field.value ? new Date(field.value) : undefined}
-                                                        onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")}
+                                                        onSelect={(date) => {
+                                                            field.onChange(date ?? undefined);
+                                                        }}
                                                         initialFocus
                                                     />
                                                 </PopoverContent>
@@ -445,7 +449,9 @@ export function InfractionFormDialog({ onInfractionAdded, onCloseDialog }: Infra
                                                     <CalendarComponent
                                                         mode="single"
                                                         selected={field.value ? new Date(field.value) : undefined}
-                                                        onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")}
+                                                        onSelect={(date) => {
+                                                            field.onChange(date ?? undefined);
+                                                        }}
                                                         initialFocus
                                                     />
                                                 </PopoverContent>

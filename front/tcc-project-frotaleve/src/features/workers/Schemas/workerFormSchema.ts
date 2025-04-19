@@ -10,13 +10,13 @@ export const workerFormSchema = z.object({
         message: "CPF deve ter 11 caracteres.",
 
     }),
-    email: z.string().refine(
+    email: z.string().optional() /* z.string().refine(
         (val) => /@(lns\.maersk\.com|maersk\.com|alianca\.com\.br)$/.test(val),
         {
             message:
                 "O e-mail deve ser corporativo (terminar com @lns.maersk.com, @maersk.com ou @alianca.com.br).",
         }
-    ),
+    )*/,
 
     uidMSK: z.string().regex(/^[A-Za-z]{3}\d{3}$/, {
         message:

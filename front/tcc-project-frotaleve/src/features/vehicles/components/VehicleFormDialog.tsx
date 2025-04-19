@@ -96,14 +96,14 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
             centroCusto: "",
             franquiaKM: 0,
             carroReserva: false,
-            dataDisponibilizacao: new Date(),
+            dataDisponibilizacao: undefined,
             mesesContratados: 0,
-            previsaoDevolucao: new Date(),
+            previsaoDevolucao: undefined,
             mesesFaltantes: 0,
             mensalidade: 0,
             budget: 0,
             multa: 0,
-            proximaRevisao: new Date(),
+            proximaRevisao: undefined,
         },
         mode: "onChange",
     });
@@ -501,7 +501,9 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
                                             <CalendarComponent
                                                 mode="single"
                                                 selected={field.value ? new Date(field.value) : undefined}
-                                                onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")}
+                                                onSelect={(date) => {
+                                                    field.onChange(date ?? undefined);
+                                                }}
                                                 initialFocus
                                             />
                                         </PopoverContent>
@@ -564,7 +566,9 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
                                             <CalendarComponent
                                                 mode="single"
                                                 selected={field.value ? new Date(field.value) : undefined}
-                                                onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")}
+                                                onSelect={(date) => {
+                                                    field.onChange(date ?? undefined);
+                                                }}
                                                 initialFocus
                                             />
                                         </PopoverContent>
@@ -627,7 +631,9 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
                                             <CalendarComponent
                                                 mode="single"
                                                 selected={field.value ? new Date(field.value) : undefined}
-                                                onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")}
+                                                onSelect={(date) => {
+                                                    field.onChange(date ?? undefined);
+                                                }}
                                                 initialFocus
                                             />
                                         </PopoverContent>
