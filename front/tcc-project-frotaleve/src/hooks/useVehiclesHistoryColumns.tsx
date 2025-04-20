@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,16 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router";
+import { useTokenStore } from "./useTokenStore";
+import { toast } from "sonner";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog";
+import VehicleHistoryEditFormDialog from "@/features/vehicles/components/Vehicles History/EditVehicleHistoryDialog";
 
 export interface Colaborador {
     nome: string;
@@ -31,12 +41,18 @@ export interface VehiclesHistory {
     colaboradorUid: string;
     colaborador: Colaborador;
     veiculo: Veiculo;
-    dataInicio: string;
-    dataFim: string;
+    tipoUso: string;
+    dataInicio: Date;
+    dataFim: Date;
 }
 
-export function useVehiclesHistoryColumns(): ColumnDef<VehiclesHistory>[] {
+interface UseVehiclesHistoryColumnsOptions {
+    onVehicleHistoryUpdated: () => void;
+}
+
+export function useVehiclesHistoryColumns({ onVehicleHistoryUpdated }: UseVehiclesHistoryColumnsOptions): ColumnDef<VehiclesHistory>[] {
     const navigate = useNavigate();
+    const { token } = useTokenStore();
 
     return useMemo(() => [
         {
@@ -212,6 +228,22 @@ export function useVehiclesHistoryColumns(): ColumnDef<VehiclesHistory>[] {
             ),
         },
         {
+            accessorKey: "tipoUso",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                        className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                        Tipo de Uso
+                        <ArrowUpDown />
+                    </Button>
+                )
+            },
+            cell: ({ row }) => <div className="flex justify-center">{row.getValue("tipoUso")}</div>,
+        },
+        {
             accessorKey: "dataInicio",
             header: ({ column }) => (
                 <Button
@@ -248,27 +280,74 @@ export function useVehiclesHistoryColumns(): ColumnDef<VehiclesHistory>[] {
             enableHiding: false,
             cell: ({ row }) => {
                 const historico = row.original;
+                const [open, setOpen] = useState(false);
+
+                async function handleSave(values: Partial<VehiclesHistory>) {
+                    const updatedVehicleHistory: VehiclesHistory = { ...historico, ...values };
+                    const res = await fetch(`http://localhost:3000/historico/${historico.id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`,
+                        },
+                        body: JSON.stringify(updatedVehicleHistory),
+                    });
+                    console.log(updatedVehicleHistory)
+                    if (res.ok) {
+                        setOpen(false);
+                        toast.success(`Histórico atualizado (às ${new Date().toLocaleTimeString()})`);
+                        onVehicleHistoryUpdated && onVehicleHistoryUpdated();
+                    } else {
+                        console.error("Erro ao atualizar");
+                        toast.error(`Erro ao atualizar histórico.`);
+                    }
+                }
+
+                const handleEditClick = (event: React.MouseEvent) => {
+                    event.stopPropagation();
+                    setOpen(true);
+                };
+
+
                 return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Abrir Menu</span>
-                                <MoreHorizontal />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() =>
-                                    navigator.clipboard.writeText(String(historico.id))
-                                }
-                            >
-                                Copiar ID
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>Detalhes do Histórico</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <>
+                        <DropdownMenu modal={false}>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                    <span className="sr-only">Abrir Menu</span>
+                                    <MoreHorizontal />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        navigator.clipboard.writeText(String(historico.id));
+                                    }}
+                                >
+                                    Copiar ID
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={handleEditClick}>
+                                    Atualizar Histórico
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        <Dialog open={open} onOpenChange={setOpen}>
+                            <DialogContent className="max-w-2xl">
+                                <DialogHeader>
+                                    <DialogTitle>Editar Histórico</DialogTitle>
+                                    <DialogDescription>
+                                        Altere os dados do Histórico e salve.
+                                    </DialogDescription>
+                                </DialogHeader>
+
+                                <VehicleHistoryEditFormDialog defaultValues={historico} onSubmit={handleSave} />
+                            </DialogContent>
+                        </Dialog>
+                    </>
                 );
             },
         },

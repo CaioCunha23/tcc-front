@@ -8,6 +8,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -18,7 +19,7 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog";
 import { useNavigate } from "react-router";
-import VehicleEditFormDialog from "@/features/vehicles/components/EditVehicleDialog";
+import VehicleEditFormDialog from "@/features/vehicles/components/Vehicles/EditVehicleDialog"
 import { useTokenStore } from "./useTokenStore";
 import { toast } from "sonner";
 
@@ -485,6 +486,7 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                     onClick={(event) => {
                                         event.stopPropagation();
@@ -512,7 +514,7 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
                             </DialogContent>
                         </Dialog>
                     </>
-                )
+                );
             },
         },
     ], [navigate]);

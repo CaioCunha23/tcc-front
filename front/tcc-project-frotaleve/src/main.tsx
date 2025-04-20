@@ -10,6 +10,7 @@ import { VehiclesPage } from './features/vehicles/pages/VehiclesPage.tsx';
 import { VehiclesHistoryPage } from './features/vehicles/pages/VehiclesHistoryPage.tsx';
 import { InfractionsPage } from './features/infractions/pages/InfractionsPage.tsx';
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { TemporaryVehiclePage } from './features/vehicles/pages/TemporaryVehiclePage.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -44,6 +45,11 @@ createRoot(document.getElementById('root')!).render(
             <Route
               path="/veiculo_colaborador"
               element={<VehiclesHistoryPage />}
+            />
+
+            <Route
+              path="/solicitar_veiculo"
+              element={<TemporaryVehiclePage />}
             />
           </Route>
         </Routes>

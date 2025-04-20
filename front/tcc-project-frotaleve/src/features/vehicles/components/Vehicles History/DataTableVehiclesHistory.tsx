@@ -28,30 +28,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import { useVehiclesHistoryColumns } from "@/hooks/useVehiclesHistoryColumns";
+import { useVehiclesHistoryColumns, VehiclesHistory } from "@/hooks/useVehiclesHistoryColumns";
 import { useTokenStore } from "@/hooks/useTokenStore";
-
-export interface Colaborador {
-  nome: string;
-  brand: string;
-}
-
-export interface Veiculo {
-  placa: string;
-  modelo: string;
-  renavam: string;
-  chassi: string;
-  status: string;
-}
-
-export interface VehiclesHistory {
-  id: number;
-  colaboradorUid: string;
-  colaborador: Colaborador;
-  veiculo: Veiculo;
-  dataInicio: string;
-  dataFim: string;
-}
+import AddVehicleHistoryDialog from "./AddVehicleHistoryDialog";
 
 export function DataTableVehiclesHistory() {
   const [data, setData] = useState<VehiclesHistory[]>([]);
@@ -61,28 +40,28 @@ export function DataTableVehiclesHistory() {
   const [rowSelection, setRowSelection] = useState({});
   const { token } = useTokenStore();
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("http://localhost:3000/historicos", {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (!response.ok) throw new Error("Erro ao buscar dados");
-        const data = await response.json();
-        console.log("Dados recebidos:", data);
-        setData(data);
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-      }
+  async function fetchData() {
+    try {
+      const response = await fetch("http://localhost:3000/historicos", {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error("Erro ao buscar dados");
+      const data = await response.json();
+      console.log("Dados recebidos:", data);
+      setData(data);
+    } catch (error) {
+      console.error("Erro no fetch:", error);
     }
+  }
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
 
-  const columns = useVehiclesHistoryColumns();
+  const columns = useVehiclesHistoryColumns({ onVehicleHistoryUpdated: fetchData });
 
   const table = useReactTable({
     data,
@@ -106,17 +85,22 @@ export function DataTableVehiclesHistory() {
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row items-center justify-between py-4">
-        <Input
-          placeholder="Pesquisar placa..."
-          value={
-            (table.getColumn("veiculoPlaca")?.getFilterValue() as string) ??
-            ""
-          }
-          onChange={(event) =>
-            table.getColumn("veiculoPlaca")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm mb-4 sm:mb-0"
-        />
+        <div className="flex gap-2">
+          <Input
+            placeholder="Pesquisar placa..."
+            value={
+              (table.getColumn("veiculoPlaca")?.getFilterValue() as string) ??
+              ""
+            }
+            onChange={(event) =>
+              table.getColumn("veiculoPlaca")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm mb-4 sm:mb-0"
+          />
+
+          <AddVehicleHistoryDialog onVehicleHistoryAdded={fetchData} />
+        </div>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">

@@ -8,6 +8,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -327,6 +328,7 @@ export function useInfractionsColumns({ onInfractionUpdated }: UseInfractionsCol
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                     onClick={(event) => {
                                         event.stopPropagation();

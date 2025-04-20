@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DialogClose } from "@/components/ui/dialog";
-import { vehicleFormSchema } from "../schemas/vehicleFormSchema";
+import { vehicleFormSchema } from "../../schemas/vehicleFormSchema";
 import { useState } from "react";
 import {
     CarFront,

@@ -36,8 +36,8 @@ export const InfractionFormSchema = z.object({
     prefixo: z.string().optional(),
 
     marca: z.string({
-        required_error: "Informe a marca do veículo",
-    }).min(1, "Informe a marca do veículo"),
+        required_error: "Informe a brand",
+    }).min(1, "Informe a brand"),
 
     categoria: z.string().optional(),
 

@@ -56,6 +56,10 @@ const data = {
           title: "Histórico de Utilização",
           url: "/veiculo_colaborador",
         },
+        {
+          title: "Solicitar Veículo",
+          url: "/solicitar_veiculo",
+        },
       ],
     },
   ],

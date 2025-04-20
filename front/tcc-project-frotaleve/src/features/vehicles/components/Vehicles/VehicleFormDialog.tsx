@@ -22,7 +22,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { useTokenStore } from "@/hooks/useTokenStore";
-import { vehicleFormSchema } from "../schemas/vehicleFormSchema";
+import { vehicleFormSchema } from "../../schemas/vehicleFormSchema";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
