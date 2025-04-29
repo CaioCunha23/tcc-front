@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,7 +54,7 @@ export function HomePage() {
       }
     }
     fetchMetrics();
-  }, []);
+  }, [token]);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">

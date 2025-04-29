@@ -11,9 +11,11 @@ import { VehiclesHistoryPage } from './features/vehicles/pages/VehiclesHistoryPa
 import { InfractionsPage } from './features/infractions/pages/InfractionsPage.tsx';
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { TemporaryVehiclePage } from './features/vehicles/pages/TemporaryVehiclePage.tsx';
+import { Toaster } from 'sonner';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <Toaster position="top-center" />
     <BrowserRouter>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <Routes>
