@@ -42,7 +42,7 @@ export function DataTableVehiclesHistory() {
 
   async function fetchData() {
     try {
-      const response = await fetch("http://localhost:3000/historicos", {
+      const response = await fetch("http://10.21.120.176:3000/historicos", {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

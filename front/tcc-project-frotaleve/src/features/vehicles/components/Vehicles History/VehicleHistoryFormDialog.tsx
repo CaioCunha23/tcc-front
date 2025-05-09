@@ -60,7 +60,7 @@ export function VehicleHistoryFormDialog({ onVehicleHistoryAdded, onCloseDialog 
 
     async function onSubmit(values: z.infer<typeof vehicleHistoryFormSchema>) {
         try {
-            const response = await fetch("http://localhost:3000/historico", {
+            const response = await fetch("http://10.21.120.176:3000/historico", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

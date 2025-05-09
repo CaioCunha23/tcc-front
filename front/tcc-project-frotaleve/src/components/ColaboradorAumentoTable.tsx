@@ -19,7 +19,7 @@ export default function ColaboradorAumentoTable() {
 
   useEffect(() => {
     setLoading(true);
-    fetch('http://localhost:3000/dashboard-metrics-colaborador-maior-aumento', {
+    fetch('http://10.21.120.176:3000/dashboard-metrics-colaborador-maior-aumento', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

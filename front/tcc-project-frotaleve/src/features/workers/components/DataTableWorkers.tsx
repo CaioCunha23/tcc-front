@@ -41,7 +41,7 @@ export function DataTableWorker() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:3000/colaboradores", {
+      const response = await fetch("http://10.21.120.176:3000/colaboradores", {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

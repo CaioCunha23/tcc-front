@@ -294,7 +294,7 @@ export function useInfractionsColumns({ onInfractionUpdated }: UseInfractionsCol
 
                 async function handleSave(values: Partial<Infracao>) {
                     const updatedInfraction: Infracao = { ...infraction, ...values };
-                    const res = await fetch(`http://localhost:3000/infracao/${infraction.id}`, {
+                    const res = await fetch(`http://10.21.120.176:3000/infracao/${infraction.id}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",

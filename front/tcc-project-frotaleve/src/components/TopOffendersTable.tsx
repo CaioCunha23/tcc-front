@@ -18,7 +18,7 @@ export default function TopOffendersTable() {
 
     useEffect(() => {
         setLoading(true);
-        fetch('http://localhost:3000/top-offenders', {
+        fetch('http://10.21.120.176:3000/top-offenders', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

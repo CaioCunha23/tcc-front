@@ -30,7 +30,7 @@ export default function UploadCSVVehicle() {
         formData.append("file", selectedFile);
 
         try {
-            const response = await fetch("http://localhost:3000/veiculos/import", {
+            const response = await fetch("http://10.21.120.176:3000/veiculos/import", {
                 method: "POST",
                 body: formData,
             });

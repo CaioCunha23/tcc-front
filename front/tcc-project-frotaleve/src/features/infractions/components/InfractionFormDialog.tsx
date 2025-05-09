@@ -76,7 +76,7 @@ export function InfractionFormDialog({ onInfractionAdded, onCloseDialog }: Infra
 
     async function onSubmit(values: z.infer<typeof InfractionFormSchema>) {
         try {
-            const response = await fetch("http://localhost:3000/infracao", {
+            const response = await fetch("http://10.21.120.176:3000/infracao", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

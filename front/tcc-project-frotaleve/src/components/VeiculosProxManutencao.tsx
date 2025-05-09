@@ -16,7 +16,7 @@ export default function VeiculosProxManutencao() {
 
     useEffect(() => {
         setLoading(true);
-        fetch('http://localhost:3000/veiculos-manutencao', {
+        fetch('http://10.21.120.176:3000/veiculos-manutencao', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
