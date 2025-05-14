@@ -12,50 +12,55 @@ import { InfractionsPage } from './features/infractions/pages/InfractionsPage.ts
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { TemporaryVehiclePage } from './features/vehicles/pages/TemporaryVehiclePage.tsx';
 import { Toaster } from 'sonner';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Toaster position="top-center" />
-    <BrowserRouter>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <Routes>
-          <Route path='/'
-            element={<App />}
-          />
-
-          <Route element={<Layout />}>
-            <Route
-              path='/home'
-              element={<HomePage />}
+    <QueryClientProvider client={queryClient}>
+      <Toaster position="top-center" />
+      <BrowserRouter>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <Routes>
+            <Route path='/'
+              element={<App />}
             />
 
-            <Route
-              path='/colaboradores'
-              element={<UsersPage />}
-            />
+            <Route element={<Layout />}>
+              <Route
+                path='/home'
+                element={<HomePage />}
+              />
 
-            <Route
-              path="/colaboradores/multas"
-              element={<InfractionsPage />}
-            />
+              <Route
+                path='/colaboradores'
+                element={<UsersPage />}
+              />
 
-            <Route
-              path='/veiculos'
-              element={<VehiclesPage />}
-            />
+              <Route
+                path="/colaboradores/multas"
+                element={<InfractionsPage />}
+              />
 
-            <Route
-              path="/veiculo_colaborador"
-              element={<VehiclesHistoryPage />}
-            />
+              <Route
+                path='/veiculos'
+                element={<VehiclesPage />}
+              />
 
-            <Route
-              path="/solicitar_veiculo"
-              element={<TemporaryVehiclePage />}
-            />
-          </Route>
-        </Routes>
-      </ThemeProvider>
-    </BrowserRouter>
+              <Route
+                path="/veiculo_colaborador"
+                element={<VehiclesHistoryPage />}
+              />
+
+              <Route
+                path="/solicitar_veiculo"
+                element={<TemporaryVehiclePage />}
+              />
+            </Route>
+          </Routes>
+        </ThemeProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
   </StrictMode>,
 )

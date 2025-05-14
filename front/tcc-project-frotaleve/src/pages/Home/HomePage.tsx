@@ -1,7 +1,4 @@
-import { useEffect, useState, Suspense } from "react";
-import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Suspense } from "react";
 import { ChartInfracoes } from "@/components/ChartInfractions";
 import ColaboradorAumentoTable from "@/components/ColaboradorAumentoTable";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -13,6 +10,8 @@ import { CardTotalInfracoes } from "@/components/CardTotalInfracoes";
 import { CardGrowthMultas } from "@/components/CardGrowthMultas";
 import { CardGrowthSemParar } from "@/components/CardGrowthSemParar";
 import { CardVehiclesMetrics } from "@/components/CardVehiclesMetrics";
+import { ErrorBoundary } from "react-error-boundary";
+import { useQueryErrorResetBoundary } from "@tanstack/react-query";
 
 export interface DashboardMetrics {
   totalInfractionsValue: number;
@@ -37,62 +36,67 @@ function Carregando() {
   )
 }
 
-async function fetchMetrics(token) {
-  try {
-    const response = await fetch("http://10.21.120.176:3000/dashboard-metrics", {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    if (!response.ok) throw new Error("Erro ao buscar métricas");
-    const data: DashboardMetrics = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Erro ao buscar métricas:", error);
-  }
+export async function fetchMetrics(token) {
+  const response = await fetch("http://10.21.120.176:3000/dashboard-metrics", {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!response.ok) throw new Error("Erro ao buscar métricas");
+  const data: DashboardMetrics = await response.json();
+  return data;
 }
 
 export function HomePage() {
   const { token } = useTokenStore();
-  /*const [metrics, setMetrics] = useState<DashboardMetrics>({
-    totalInfractionsValue: 0,
-    growthMultas: 0,
-    growthMultasPercent: 0,
-    growthSemParar: 0,
-    growthSemPararPercent: 0,
-    availableCars: 0,
-    vehiclesInUse: 0,
-    vehiclesInMaintenance: 0,
-    vehiclesAvailable: 0,
-  });*/
+  const { reset } = useQueryErrorResetBoundary();
 
   return (
-
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-4">
-        <Suspense fallback={<Carregando />}>
-          <CardTotalInfracoes totalInfractionsPromise={fetchMetrics(token)} propriedadePraPegar="totalInfractionsValue" />
-        </Suspense>
+        <ErrorBoundary onReset={reset} fallbackRender={({ resetErrorBoundary }) => {
+          return (
+            <div>
+              <h2>Erro ao carregar os dados</h2>
+              <p>Tente novamente mais tarde.</p>
+              <button onClick={resetErrorBoundary}>
+                Tente novamente
+              </button>
+            </div>
+          )
+        }}>
+          <Suspense fallback={<Carregando />}>
+            <CardTotalInfracoes propriedadePraPegar="totalInfractionsValue" />
+          </Suspense>
+        </ErrorBoundary>
 
-        <Suspense fallback={<Carregando />}>
-          <CardGrowthMultas growthMultasPromise={fetchMetrics(token)} />
-        </Suspense>
+        <ErrorBoundary fallback={<p>Se loco deu erro</p>}>
+          <Suspense fallback={<Carregando />}>
+            <CardGrowthMultas growthMultasPromise={fetchMetrics(token)} />
+          </Suspense>
+        </ErrorBoundary>
 
-        <Suspense fallback={<Carregando />}>
-          <CardGrowthSemParar growthSemPararPromise={fetchMetrics(token)} />
-        </Suspense>
+        <ErrorBoundary fallback={<p>Se loco deu erro</p>}>
+          <Suspense fallback={<Carregando />}>
+            <CardGrowthSemParar growthSemPararPromise={fetchMetrics(token)} />
+          </Suspense>
+        </ErrorBoundary>
 
-        <Suspense fallback={<Carregando />}>
-          <CardVehiclesMetrics vehicleMetricsPromise={fetchMetrics(token)} />
-        </Suspense>
+        <ErrorBoundary fallback={<p>Se loco deu erro</p>}>
+          <Suspense fallback={<Carregando />}>
+            <CardVehiclesMetrics vehicleMetricsPromise={fetchMetrics(token)} />
+          </Suspense>
+        </ErrorBoundary>
       </div>
 
       <div className="mt-8">
-        <Suspense>
-          <ChartInfracoes />
-        </Suspense>
+        <ErrorBoundary fallback={<p>Se loco deu erro</p>}>
+          <Suspense fallback={<Carregando />}>
+            <ChartInfracoes />
+          </Suspense>
+        </ErrorBoundary>
       </div>
 
       <Tabs defaultValue="colaborador-aumento" className="flex w-full flex-col gap-6">

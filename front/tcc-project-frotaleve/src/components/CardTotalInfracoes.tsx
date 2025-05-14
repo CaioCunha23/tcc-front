@@ -1,11 +1,16 @@
-import { Usable, use } from "react";
 import { Card, CardHeader, CardDescription, CardTitle, CardFooter } from "./ui/card";
-import { DashboardMetrics } from "@/pages/Home/HomePage";
+import { DashboardMetrics, fetchMetrics } from "@/pages/Home/HomePage";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useTokenStore } from "@/hooks/useTokenStore";
 
-
-
-export function CardTotalInfracoes({ totalInfractionsPromise, propriedadePraPegar }: { totalInfractionsPromise: Usable<DashboardMetrics | undefined>; propriedadePraPegar: keyof DashboardMetrics }) {
-    const totalInfracoes = use(totalInfractionsPromise);
+export function CardTotalInfracoes({ propriedadePraPegar }: { propriedadePraPegar: keyof DashboardMetrics }) {
+    const { token } = useTokenStore();
+    const { data: totalInfracoes } = useSuspenseQuery({
+        queryKey: ['card', 'dashboard', 'infracoes'],
+        queryFn: () => {
+            return fetchMetrics(token);
+        }
+    })
     const valor = totalInfracoes?.[propriedadePraPegar];
 
     return (
