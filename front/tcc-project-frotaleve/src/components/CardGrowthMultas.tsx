@@ -1,13 +1,20 @@
-import { Usable, use } from "react";
 import { Card, CardHeader, CardDescription, CardTitle, CardFooter } from "./ui/card";
-import { DashboardMetrics } from "@/pages/Home/HomePage";
+import { fetchMetrics } from "@/pages/Home/HomePage";
 import { Badge } from "./ui/badge";
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
+import { useTokenStore } from "@/hooks/useTokenStore";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
-export function CardGrowthMultas({ growthMultasPromise }: { growthMultasPromise: Usable<DashboardMetrics | undefined> }) {
-    const metrics = use(growthMultasPromise);
-    const growthMultas = metrics?.growthMultas;
-    const growthMultasPercent = metrics?.growthMultasPercent ?? 0;
+export function CardGrowthMultas() {
+    const { token } = useTokenStore();
+    const { data: metrics } = useSuspenseQuery({
+        queryKey: ['card', 'dashboard', 'multas'],
+        queryFn: () => {
+            return fetchMetrics(token!)
+        }
+    })
+    const growthMultas = metrics.growthMultas;
+    const growthMultasPercent = metrics.growthMultasPercent;
 
     return (
         <Card>

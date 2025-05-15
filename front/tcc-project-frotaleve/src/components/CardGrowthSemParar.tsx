@@ -1,11 +1,18 @@
-import { Usable, use } from "react";
 import { Card, CardHeader, CardDescription, CardTitle, CardFooter } from "./ui/card";
-import { DashboardMetrics } from "@/pages/Home/HomePage";
+import { fetchMetrics } from "@/pages/Home/HomePage";
 import { Badge } from "./ui/badge";
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
+import { useTokenStore } from "@/hooks/useTokenStore";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
-export function CardGrowthSemParar({ growthSemPararPromise }: { growthSemPararPromise: Usable<DashboardMetrics | undefined>; }) {
-    const metrics = use(growthSemPararPromise);
+export function CardGrowthSemParar() {
+    const { token } = useTokenStore();
+    const { data: metrics } = useSuspenseQuery({
+        queryKey: ['card', 'dashboard', 'Sem Parar'],
+        queryFn: () => {
+            return fetchMetrics(token!)
+        }
+    })
     const growthSemParar = metrics?.growthSemParar;
     const growthSemPararPercent = metrics?.growthMultasPercent ?? 0;
 

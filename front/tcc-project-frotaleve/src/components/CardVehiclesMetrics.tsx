@@ -1,9 +1,17 @@
-import { Usable, use } from "react";
-import { Card, CardHeader, CardDescription, CardTitle, CardFooter } from "./ui/card";
-import { DashboardMetrics } from "@/pages/Home/HomePage";
 
-export function CardVehiclesMetrics({ vehicleMetricsPromise }: { vehicleMetricsPromise: Usable<DashboardMetrics | undefined> }) {
-    const metrics = use(vehicleMetricsPromise);
+import { Card, CardHeader, CardDescription, CardTitle, CardFooter } from "./ui/card";
+import { fetchMetrics } from "@/pages/Home/HomePage";
+import { useTokenStore } from "@/hooks/useTokenStore";
+import { useSuspenseQuery } from "@tanstack/react-query";
+
+export function CardVehiclesMetrics() {
+    const { token } = useTokenStore();
+    const { data: metrics } = useSuspenseQuery({
+        queryKey: ['card', 'dashboard', 'veiculos'],
+        queryFn: () => {
+            return fetchMetrics(token!)
+        }
+    })
     const vehiclesInUse = metrics?.vehiclesInUse;
     const vehiclesAvailable = metrics?.vehiclesAvailable;
     const vehiclesInMaintenance = metrics?.vehiclesInMaintenance;

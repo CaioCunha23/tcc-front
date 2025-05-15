@@ -8,7 +8,7 @@ export function CardTotalInfracoes({ propriedadePraPegar }: { propriedadePraPega
     const { data: totalInfracoes } = useSuspenseQuery({
         queryKey: ['card', 'dashboard', 'infracoes'],
         queryFn: () => {
-            return fetchMetrics(token);
+            return fetchMetrics(token!);
         }
     })
     const valor = totalInfracoes?.[propriedadePraPegar];

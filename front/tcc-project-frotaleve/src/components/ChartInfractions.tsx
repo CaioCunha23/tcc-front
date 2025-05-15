@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { useTokenStore } from "@/hooks/useTokenStore"
+import { useSuspenseQuery } from "@tanstack/react-query"
 
 const chartConfig = {
     multa: {
@@ -15,31 +15,29 @@ const chartConfig = {
     }
 }
 
-export function ChartInfracoes() {
-    const [chartData, setChartData] = useState([]);
-    const { token } = useTokenStore();
-
-    useEffect(() => {
-        async function fetchChartData() {
-            try {
-                const response = await fetch("http://10.21.120.176:3000/infracoes-chart-data", {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    }
-                })
-                if (!response.ok) {
-                    throw new Error("Erro ao buscar dados do gráfico")
-                }
-                const data = await response.json()
-                setChartData(data)
-            } catch (error) {
-                console.error(error)
-            }
+async function fetchChartData(token: string) {
+    const response = await fetch("http://10.21.120.176:3000/infracoes-chart-data", {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
         }
-        fetchChartData()
-    }, [])
+    })
+    if (!response.ok) {
+        throw new Error("Erro ao buscar dados do gráfico")
+    }
+    const data = await response.json()
+    return data;
+}
+
+export function ChartInfracoes() {
+    const { token } = useTokenStore();
+    const { data: chartData } = useSuspenseQuery({
+        queryKey: ['graphic', 'dashboard'],
+        queryFn: () => {
+            return fetchChartData(token!);
+        }
+    })
 
     return (
         <Card>
