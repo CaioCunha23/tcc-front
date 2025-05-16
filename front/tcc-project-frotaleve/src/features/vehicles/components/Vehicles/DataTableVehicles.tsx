@@ -41,7 +41,7 @@ export function DataTableVehicles() {
 
   async function fetchData() {
     try {
-      const response = await fetch("http://10.21.120.176:3000/veiculos", {
+      const response = await fetch("http://localhost:3000/veiculos", {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

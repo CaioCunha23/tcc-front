@@ -110,7 +110,7 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
 
     async function onSubmit(values: z.infer<typeof vehicleFormSchema>) {
         try {
-            const response = await fetch("http://10.21.120.176:3000/veiculo", {
+            const response = await fetch("http://localhost:3000/veiculo", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

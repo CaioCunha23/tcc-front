@@ -27,7 +27,7 @@ export interface DashboardMetrics {
 }
 
 export async function fetchMetrics(token: string) {
-  const response = await fetch("http://10.21.120.176:3000/dashboard-metrics", {
+  const response = await fetch("http://localhost:3000/dashboard-metrics", {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -103,23 +103,29 @@ export function HomePage() {
           <TabsTrigger value="multas-a-vencer">Multas Próximas do Vencimento</TabsTrigger>
         </TabsList>
 
-        <Suspense>
-          <TabsContent value="colaborador-aumento">
-            <ColaboradorAumentoTable />
-          </TabsContent>
 
-          <TabsContent value="top-offenders">
-            <TopOffendersTable />
-          </TabsContent>
 
-          <TabsContent value="veiculos-manutencao">
-            <VeiculosProxManutencao />
-          </TabsContent>
+        <TabsContent value="colaborador-aumento">
+          <ErrorBoundary fallbackRender={({ resetErrorBoundary }) => (
+            <ChartInfracoesErrorFallback resetErrorBoundary={resetErrorBoundary} />
+          )}>
+            <Suspense fallback={<ChartInfracoesSkeleton />}>
+              <ColaboradorAumentoTable />
+            </Suspense>
+          </ErrorBoundary>
+        </TabsContent>
 
-          <TabsContent value="multas-a-vencer">
-            <InfractionsDueDate />
-          </TabsContent>
-        </Suspense>
+        <TabsContent value="top-offenders">
+          <TopOffendersTable />
+        </TabsContent>
+
+        <TabsContent value="veiculos-manutencao">
+          <VeiculosProxManutencao />
+        </TabsContent>
+
+        <TabsContent value="multas-a-vencer">
+          <InfractionsDueDate />
+        </TabsContent>
       </Tabs>
     </div >
   );
