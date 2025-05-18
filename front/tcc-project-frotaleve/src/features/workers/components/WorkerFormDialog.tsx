@@ -63,7 +63,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
 
   async function onSubmit(values: z.infer<typeof workerFormSchema>) {
     try {
-      const response = await fetch("http://localhost:3000/colaborador", {
+      const response = await fetch("http://https://slimy-knives-tickle.loca.lt:3000/colaborador", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

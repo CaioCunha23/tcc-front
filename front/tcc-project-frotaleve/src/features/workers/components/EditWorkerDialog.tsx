@@ -21,7 +21,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { DialogClose } from "@/components/ui/dialog";
-import { workerFormSchema } from "../Schemas/workerFormSchema";
+import { workerFormSchema } from "../schemas/workerFormSchema"
 import { ClipboardCheckIcon } from "lucide-react";
 import { Colaborador } from "@/hooks/useColaboradoresColumns";
 
@@ -230,7 +230,7 @@ export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdate
                         </div>
                         <div className="flex justify-end gap-2 mt-4">
                             <DialogClose asChild>
-                                <Button variant="outline" >Cancelar</Button>
+                                <Button variant="outline">Cancelar</Button>
                             </DialogClose>
                             <Button type="submit" className="flex items-center gap-2">
                                 <ClipboardCheckIcon size={16} />

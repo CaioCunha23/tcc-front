@@ -49,7 +49,7 @@ export function NavUser({ user }: {
 
         const updatedWorker = { ...colaborador, ...values };
 
-        const res = await fetch(`http://localhost:3000/colaborador/${colaborador.uidMSK}`, {
+        const res = await fetch(`/api/colaborador/${colaborador.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

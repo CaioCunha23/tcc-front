@@ -24,7 +24,7 @@ export default function VeiculosProxManutencao() {
     const { token } = useTokenStore();
 
     useEffect(() => {
-        fetch('http://localhost:3000/vencimento-multas', {
+        fetch('/api/vencimento-multas', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

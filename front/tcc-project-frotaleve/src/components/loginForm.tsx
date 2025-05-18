@@ -42,7 +42,7 @@ export function LoginForm({
         setServerError(null);
 
         try {
-            const response = await fetch("http://localhost:3000/login", {
+            const response = await fetch("/api/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -57,7 +57,7 @@ export function LoginForm({
 
             const json = await response.json();
 
-            const responseEu = await fetch("http://localhost:3000/eu", {
+            const responseEu = await fetch("/api/eu", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

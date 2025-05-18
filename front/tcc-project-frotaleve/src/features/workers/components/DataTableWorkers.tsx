@@ -41,7 +41,7 @@ export function DataTableWorker() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:3000/colaboradores", {
+      const response = await fetch("/api/colaboradores", {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ export function DataTableWorker() {
         </DropdownMenu>
       </div>
 
-      <div className="flex max-w-460 rounded border">
+      <div className="max-w-lvw size-auto overflow-x-auto rounded border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -37,7 +37,7 @@ export function InfractionsTable() {
 
     const fetchData = async () => {
         try {
-            const response = await fetch("http://localhost:3000/infracoes", {
+            const response = await fetch("/api/infracoes", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -127,8 +127,8 @@ export function InfractionsTable() {
                 </DropdownMenu>
             </div>
 
-            <div className="flex rounded border mx-4">
-                <Table className="min-w-full">
+            <div className="max-w-lvw size-auto overflow-x-auto rounded border">
+                <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow

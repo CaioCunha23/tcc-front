@@ -27,7 +27,7 @@ export interface DashboardMetrics {
 }
 
 export async function fetchMetrics(token: string) {
-  const response = await fetch("http://localhost:3000/dashboard-metrics", {
+  const response = await fetch("/api/dashboard-metrics", {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -45,8 +45,9 @@ export function HomePage() {
   const { reset } = useQueryErrorResetBoundary();
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-4">
+    <div className="flex flex-1 flex-col gap-4 p-3 sm:p-4 pt-0">
+
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-4">
         <ErrorBoundary onReset={reset}
           fallbackRender={({ resetErrorBoundary }) => (
             <CardErrorFallback resetErrorBoundary={resetErrorBoundary} />
@@ -84,7 +85,7 @@ export function HomePage() {
         </ErrorBoundary>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-6 sm:mt-8">
         <ErrorBoundary fallbackRender={({ resetErrorBoundary }) => (
           <ChartInfracoesErrorFallback resetErrorBoundary={resetErrorBoundary} />
         )}>
@@ -94,39 +95,47 @@ export function HomePage() {
         </ErrorBoundary>
       </div>
 
-      <Tabs defaultValue="colaborador-aumento" className="flex w-full flex-col gap-6">
+      <Tabs defaultValue="colaborador-aumento" className="flex w-full flex-col gap-4 sm:gap-6 mt-4">
 
-        <TabsList>
-          <TabsTrigger value="colaborador-aumento">Aumento Multas</TabsTrigger>
-          <TabsTrigger value="top-offenders">Top Offenders</TabsTrigger>
-          <TabsTrigger value="veiculos-manutencao">Veículos Próximos de Manutenção</TabsTrigger>
-          <TabsTrigger value="multas-a-vencer">Multas Próximas do Vencimento</TabsTrigger>
-        </TabsList>
-
-
+        <div className="overflow-x-auto pb-1">
+          <TabsList className="w-max">
+            <TabsTrigger value="colaborador-aumento">Aumento Multas</TabsTrigger>
+            <TabsTrigger value="top-offenders">Top Offenders</TabsTrigger>
+            <TabsTrigger value="veiculos-manutencao">Próx. Manutenção</TabsTrigger>
+            <TabsTrigger value="multas-a-vencer">Multas a Vencer</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="colaborador-aumento">
           <ErrorBoundary fallbackRender={({ resetErrorBoundary }) => (
             <ChartInfracoesErrorFallback resetErrorBoundary={resetErrorBoundary} />
           )}>
             <Suspense fallback={<ChartInfracoesSkeleton />}>
-              <ColaboradorAumentoTable />
+              <div className="overflow-x-auto">
+                <ColaboradorAumentoTable />
+              </div>
             </Suspense>
           </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="top-offenders">
-          <TopOffendersTable />
+          <div className="overflow-x-auto">
+            <TopOffendersTable />
+          </div>
         </TabsContent>
 
         <TabsContent value="veiculos-manutencao">
-          <VeiculosProxManutencao />
+          <div className="overflow-x-auto">
+            <VeiculosProxManutencao />
+          </div>
         </TabsContent>
 
         <TabsContent value="multas-a-vencer">
-          <InfractionsDueDate />
+          <div className="overflow-x-auto">
+            <InfractionsDueDate />
+          </div>
         </TabsContent>
       </Tabs>
-    </div >
+    </div>
   );
 }

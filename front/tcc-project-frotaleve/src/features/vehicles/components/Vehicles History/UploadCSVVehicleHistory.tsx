@@ -32,7 +32,7 @@ export default function UploadCSVWorker({ onUploadSuccess }: UploadCSVVehicleHis
         formData.append("file", selectedFile);
 
         try {
-            const response = await fetch("http://localhost:3000/historicos/import", {
+            const response = await fetch("/api/historicos/import", {
                 method: "POST",
                 body: formData,
             });

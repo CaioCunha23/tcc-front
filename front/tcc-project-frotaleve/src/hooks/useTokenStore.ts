@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface Colaborador {
+    id: number;
     nome: string;
     status: boolean;
     email: string;

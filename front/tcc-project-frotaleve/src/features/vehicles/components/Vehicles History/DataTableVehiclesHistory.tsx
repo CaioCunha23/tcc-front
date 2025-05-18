@@ -42,7 +42,7 @@ export function DataTableVehiclesHistory() {
 
   async function fetchData() {
     try {
-      const response = await fetch("http://localhost:3000/historicos", {
+      const response = await fetch("/api/historicos", {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ export function DataTableVehiclesHistory() {
         </DropdownMenu>
       </div>
 
-      <div className="flex max-w-460 rounded border">
+      <div className="max-w-lvw size-auto overflow-x-auto rounded border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

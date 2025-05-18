@@ -43,7 +43,7 @@ export function CardGrowthSemParar() {
                 </div>
             </CardHeader>
             <CardFooter className="text-sm text-muted-foreground">
-                Comparado ao último período
+                Comparado ao mês anterior
             </CardFooter>
         </Card>
     )

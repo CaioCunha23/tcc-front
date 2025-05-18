@@ -451,7 +451,7 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
 
                 async function handleSave(values: Partial<Veiculo>) {
                     const updatedVehicle: Veiculo = { ...vehicle, ...values };
-                    const res = await fetch(`http://localhost:3000/veiculo/${vehicle.id}`, {
+                    const res = await fetch(`/api/veiculo/${vehicle.id}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",

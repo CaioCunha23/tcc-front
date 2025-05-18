@@ -309,7 +309,7 @@ export function useColaboradoresColumns({ onWorkerUpdated }: UseColaboradoresCol
 
         const fetchInfractions = async (workerUidMSK: string) => {
           try {
-            const response = await fetch(`http://localhost:3000/infracoes/${workerUidMSK}?last30=true`);
+            const response = await fetch(`/api/infracoes/${workerUidMSK}?last30=true`);
 
             if (!response.ok) {
               throw new Error("Erro ao buscar infrações");
@@ -379,7 +379,7 @@ export function useColaboradoresColumns({ onWorkerUpdated }: UseColaboradoresCol
 
         async function handleSave(values: Partial<Colaborador>) {
           const updatedWorker: Colaborador = { ...worker, ...values };
-          const res = await fetch(`http://localhost:3000/colaborador/${worker.id}`, {
+          const res = await fetch(`/api/colaborador/${worker.id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -409,7 +409,7 @@ export function useColaboradoresColumns({ onWorkerUpdated }: UseColaboradoresCol
 
         async function handleDeactivate() {
           const updatedWorker: Colaborador = { ...worker, status: false };
-          const res = await fetch(`http://localhost:3000/colaborador/${worker.id}`, {
+          const res = await fetch(`/api/colaborador/${worker.id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
