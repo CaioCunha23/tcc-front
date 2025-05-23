@@ -27,7 +27,7 @@ export interface DashboardMetrics {
 }
 
 export async function fetchMetrics(token: string) {
-  const response = await fetch("/api/dashboard-metrics", {
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard-metrics`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
