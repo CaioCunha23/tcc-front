@@ -1,4 +1,4 @@
-FROM node:24.0 as builder
+FROM node:24.0 AS builder
 
 COPY . .
 
