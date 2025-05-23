@@ -22,31 +22,7 @@ import { useNavigate } from "react-router";
 import VehicleEditFormDialog from "@/features/vehicles/components/Vehicles/EditVehicleDialog"
 import { useTokenStore } from "./useTokenStore";
 import { toast } from "sonner";
-
-export interface Veiculo {
-    id: number;
-    fornecedor: string;
-    contrato: string;
-    placa: string;
-    renavam: string;
-    chassi: string;
-    modelo: string;
-    cor: string;
-    status: string;
-    cliente: string;
-    perfil: string;
-    centroCusto: string;
-    franquiaKM: number;
-    carroReserva: boolean;
-    dataDisponibilizacao: Date;
-    mesesContratados: number;
-    previsaoDevolucao: Date;
-    mesesFaltantes: number;
-    mensalidade: number;
-    budget: number;
-    multa: number;
-    proximaRevisao: Date;
-}
+import { Veiculo } from "@/types/Vehicle";
 
 interface UseVehiclesColumnsOptions {
     onVehicleUpdated: () => void;

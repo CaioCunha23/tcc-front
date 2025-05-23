@@ -27,9 +27,10 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useEffect, useState } from "react"
-import { useVehiclesColumns, Veiculo } from "@/hooks/useVehiclesColumns"
+import { useVehiclesColumns } from "@/hooks/useVehiclesColumns"
 import AddVehicleDialog from "./AddVehicleDialog"
 import { useTokenStore } from "@/hooks/useTokenStore"
+import { Veiculo } from "@/types/Vehicle"
 
 export function DataTableVehicles() {
   const [data, setData] = useState<Veiculo[]>([]);

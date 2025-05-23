@@ -22,13 +22,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { DialogClose } from "@/components/ui/dialog";
 import { InfractionFormSchema } from "../schemas/infractionFormSchema";
-import { Infracao } from "@/hooks/useInfractionsColumns";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Calendar } from "lucide-react";
-
+import { Infracao } from "@/types/Infraction";
 
 interface InfractionEditFormProps {
     defaultValues: Infracao;

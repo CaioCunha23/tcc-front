@@ -33,7 +33,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Veiculo } from "@/hooks/useVehiclesColumns";
+import { Veiculo } from "@/types/Vehicle";
 
 interface VehicleEditFormProps {
     defaultValues: Veiculo;

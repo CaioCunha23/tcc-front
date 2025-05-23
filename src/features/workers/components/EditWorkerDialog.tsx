@@ -21,9 +21,9 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { DialogClose } from "@/components/ui/dialog";
-import { workerFormSchema } from "../schemas/workerFormSchema"
+import { workerFormSchema } from "../Schemas/workerFormSchema"
 import { ClipboardCheckIcon } from "lucide-react";
-import { Colaborador } from "@/hooks/useColaboradoresColumns";
+import { Colaborador } from "@/types/Worker";
 
 interface WorkerEditFormProps {
     defaultValues: Colaborador;

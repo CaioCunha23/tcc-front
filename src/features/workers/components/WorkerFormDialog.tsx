@@ -32,7 +32,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useTokenStore } from "@/hooks/useTokenStore";
 import { useState } from "react";
-import { workerFormSchema } from "../schemas/workerFormSchema"
+import { workerFormSchema } from "../Schemas/workerFormSchema"
 import { RefreshCcwIcon, SendIcon } from "lucide-react";
 
 interface WorkerFormDialogProps {

@@ -1,24 +1,6 @@
+import { Colaborador } from '@/types/Worker';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-interface Colaborador {
-    id: number;
-    nome: string;
-    status: boolean;
-    email: string;
-    uidMSK: string;
-    password: string;
-    type: string;
-    localidade: string;
-    brand: string;
-    jobTitle: string;
-    cpf: string;
-    usaEstacionamento: boolean;
-    cnh: string;
-    tipoCNH: string;
-    createdAt: string;
-    updatedAt: string;
-}
 
 interface TokenStore {
     token: string | undefined;

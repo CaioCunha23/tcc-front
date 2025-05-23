@@ -27,9 +27,10 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useState, useEffect } from "react"
-import { Colaborador, useColaboradoresColumns } from "@/hooks/useColaboradoresColumns"
+import { useColaboradoresColumns } from "@/hooks/useColaboradoresColumns"
 import AddWorkerDialog from "./AddWorkerDialog"
 import { useTokenStore } from "@/hooks/useTokenStore"
+import { Colaborador } from "@/types/Worker"
 
 export function DataTableWorker() {
   const [data, setData] = useState<Colaborador[]>([]);

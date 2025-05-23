@@ -24,8 +24,9 @@ import {
     TableFooter,
 } from "@/components/ui/table";
 import { useTokenStore } from "@/hooks/useTokenStore";
-import { Infracao, useInfractionsColumns } from "@/hooks/useInfractionsColumns";
+import { useInfractionsColumns } from "@/hooks/useInfractionsColumns";
 import AddInfractionDialog from "./AddInfractionDialog";
+import { Infracao } from "@/types/Infraction";
 
 export function InfractionsTable() {
     const [data, setData] = useState<Infracao[]>([]);

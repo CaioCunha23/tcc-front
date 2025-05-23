@@ -23,12 +23,12 @@ import {
 } from "@/components/ui/dialog";
 import VehicleHistoryEditFormDialog from "@/features/vehicles/components/Vehicles History/EditVehicleHistoryDialog";
 
-export interface Colaborador {
+export interface VehicleHistoryColaborador {
     nome: string;
     brand: string;
 }
 
-export interface Veiculo {
+export interface VehicleHistoryVeiculo {
     placa: string;
     modelo: string;
     renavam: string;
@@ -39,8 +39,8 @@ export interface Veiculo {
 export interface VehiclesHistory {
     id: number;
     colaboradorUid: string;
-    colaborador: Colaborador;
-    veiculo: Veiculo;
+    colaborador: VehicleHistoryColaborador;
+    veiculo: VehicleHistoryVeiculo;
     tipoUso: string;
     dataInicio: Date;
     dataFim: Date;
