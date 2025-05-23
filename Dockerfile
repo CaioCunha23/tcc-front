@@ -4,4 +4,4 @@ COPY . .
 
 RUN npm i
 
-CMD ["npm", "run", "build"]
+RUN npm run build
