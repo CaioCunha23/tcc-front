@@ -2,7 +2,7 @@ FROM node:24.0 AS builder
 
 COPY . .
 
-RUN npm i
+RUN npm i --force
 
 RUN npm run build
 
