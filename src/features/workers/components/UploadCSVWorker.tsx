@@ -32,7 +32,7 @@ export default function UploadCSVWorker({ onUploadSuccess }: UploadCSVWorkerProp
         formData.append("file", selectedFile);
 
         try {
-            const response = await fetch("/api/colaboradores/import", {
+            const response = await fetch(`http://localhost:3000/colaboradores/import`, {
                 method: "POST",
                 body: formData,
             });

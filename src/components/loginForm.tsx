@@ -6,8 +6,9 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useTokenStore } from "@/hooks/useTokenStore";
+import { Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
     login: z.string().nonempty("Email ou UID é obrigatório"),
@@ -29,6 +30,7 @@ export function LoginForm({
     const [serverError, setServerError] = useState<string | null>(null);
     const navigate = useNavigate();
     const { setToken, setColaborador } = useTokenStore();
+    const [showPassword, setShowPassword] = useState(false);
 
     const {
         register,
@@ -42,7 +44,7 @@ export function LoginForm({
         setServerError(null);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
+            const response = await fetch(`http://localhost:3000/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -57,7 +59,7 @@ export function LoginForm({
 
             const json = await response.json();
 
-            const responseEu = await fetch(`${import.meta.env.VITE_BACKEND_URL}/eu`, {
+            const responseEu = await fetch(`http://localhost:3000/eu`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -117,40 +119,57 @@ export function LoginForm({
                 </div>
 
                 <div className="grid gap-2">
-                    <div className="flex items-center">
-                        <Label htmlFor="password">Senha</Label>
-                        <a
-                            href="#"
-                            className="ml-auto text-sm underline-offset-4 hover:underline"
-                        >
-                            Esqueceu sua senha?
-                        </a>
+                    <div>
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                type={showPassword ? 'text' : 'password'}
+                                placeholder="Sua senha"
+                                {...register("password")}
+                                className="pr-10"
+                            />
+
+                            <button
+                                type="button"
+                                className="absolute inset-y-0 right-2 flex items-center"
+                                onMouseDown={() => setShowPassword(true)}
+                                onMouseUp={() => setShowPassword(false)}
+                                onMouseLeave={() => setShowPassword(false)}
+                                onTouchStart={() => setShowPassword(true)}
+                                onTouchEnd={() => setShowPassword(false)}
+                                onClick={e => e.preventDefault()}
+                            >
+                                {showPassword
+                                    ? <EyeOff className="h-5 w-5 text-muted-foreground" />
+                                    : <Eye className="h-5 w-5 text-muted-foreground" />
+                                }
+                            </button>
+                        </div>
+
+                         <div className="text-sm mt-1 hover:underline">
+                                <Link to="/forgot-password">
+                                    Esqueceu sua senha?
+                                </Link>
+                            </div>
+                        {errors.password && (
+                            <p className="text-red-500 text-sm">{errors.password.message}</p>
+                        )}
                     </div>
-                    <Input
-                        id="password"
-                        type="password"
-                        placeholder="Sua senha"
-                        {...register("password")}
-                    />
-                    {errors.password && (
-                        <p className="text-red-500 text-sm">{errors.password.message}</p>
-                    )}
                 </div>
 
                 {serverError && (
                     <p className="text-red-500 text-center">{serverError}</p>
                 )}
 
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full cursor-pointer">
                     Entrar
                 </Button>
             </div>
 
-            <div className="text-center text-sm">
-                Não possui uma conta?{" "}
-                <a href="#" className="underline underline-offset-4">
-                    Cadastre-se
-                </a>
+            <div className="text-center text-sm hover:underline">
+                <Link to="/primeiro-acesso">
+                    Primeiro acesso
+                </Link>
             </div>
         </form>
     );

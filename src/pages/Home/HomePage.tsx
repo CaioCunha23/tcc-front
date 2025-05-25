@@ -3,7 +3,7 @@ import { ChartInfracoes } from "@/components/ChartInfractions";
 import ColaboradorAumentoTable from "@/components/ColaboradorAumentoTable";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import TopOffendersTable from "@/components/TopOffendersTable";
-import VeiculosProxManutencao from "@/components/VeiculosProxManutencao";
+import VeiculosProxManutencao from "@/components/VeiculosProxDevolucao";
 import InfractionsDueDate from "@/components/MultasAVencer";
 import { CardTotalInfracoes } from "@/components/CardTotalInfracoes";
 import { CardGrowthMultas } from "@/components/CardGrowthMultas";
@@ -27,7 +27,7 @@ export interface DashboardMetrics {
 }
 
 export async function fetchMetrics(token: string) {
-  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard-metrics`, {
+  const response = await fetch(`http://localhost:3000/dashboard-metrics`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ export function HomePage() {
           <TabsList className="w-max">
             <TabsTrigger value="colaborador-aumento">Aumento Multas</TabsTrigger>
             <TabsTrigger value="top-offenders">Top Offenders</TabsTrigger>
-            <TabsTrigger value="veiculos-manutencao">Próx. Manutenção</TabsTrigger>
+            <TabsTrigger value="veiculos-manutencao">Veículos a Vencer</TabsTrigger>
             <TabsTrigger value="multas-a-vencer">Multas a Vencer</TabsTrigger>
           </TabsList>
         </div>

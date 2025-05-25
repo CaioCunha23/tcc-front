@@ -8,6 +8,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  FilterFn
 } from "@tanstack/react-table"
 import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -31,6 +32,7 @@ import { useVehiclesColumns } from "@/hooks/useVehiclesColumns"
 import AddVehicleDialog from "./AddVehicleDialog"
 import { useTokenStore } from "@/hooks/useTokenStore"
 import { Veiculo } from "@/types/Vehicle"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function DataTableVehicles() {
   const [data, setData] = useState<Veiculo[]>([]);
@@ -38,11 +40,23 @@ export function DataTableVehicles() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+  const [dateFilterField, setDateFilterField] = useState<"dataDisponibilizacao" | "previsaoDevolucao" | "proximaRevisao">("dataDisponibilizacao");
+  const [dateFrom, setDateFrom] = useState<string>("");
+  const [dateTo, setDateTo] = useState<string>("");
   const { token } = useTokenStore();
+
+  const betweenDatesFn: FilterFn<Veiculo> = (row, columnId, filterValue) => {
+    const rowVal = row.getValue<string>(columnId)
+    if (!filterValue || typeof filterValue !== 'object') return true
+
+    const { from, to } = filterValue as { from: string; to: string }
+    const d = new Date(rowVal)
+    return (!from || d >= new Date(from)) && (!to || d <= new Date(to))
+  }
 
   async function fetchData() {
     try {
-      const response = await fetch("/api/veiculos", {
+      const response = await fetch(`http://localhost:3000/veiculos`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -75,6 +89,9 @@ export function DataTableVehicles() {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    filterFns: {
+      between: betweenDatesFn,
+    },
     state: {
       sorting,
       columnFilters,
@@ -82,6 +99,11 @@ export function DataTableVehicles() {
       rowSelection,
     },
   })
+
+  function applyDateFilter() {
+        table.getColumn(dateFilterField)
+            ?.setFilterValue(dateFrom && dateTo ? { from: dateFrom, to: dateTo } : "")
+    }
 
   return (
     <div className="w-full">
@@ -97,6 +119,50 @@ export function DataTableVehicles() {
           />
 
           <AddVehicleDialog onVehicleAdded={fetchData} />
+
+          <div className="flex items-center gap-2">
+                        <Select
+                            onValueChange={(v) => setDateFilterField(v as any)}
+                            value={dateFilterField}
+                        >
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Selecione coluna" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Coluna de Data</SelectLabel>
+                                    <SelectItem value="dataDisponibilizacao">Disponibilização</SelectItem>
+                                    <SelectItem value="previsaoDevolucao">Previsão Devolução</SelectItem>
+                                    <SelectItem value="proximaRevisao">Próxima Revisão</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+
+                        <Input
+                            type="date"
+                            placeholder="De"
+                            value={dateFrom}
+                            onChange={(e) => setDateFrom(e.target.value)}
+                        />
+                        <Input
+                            type="date"
+                            placeholder="Até"
+                            value={dateTo}
+                            onChange={(e) => setDateTo(e.target.value)}
+                        />
+
+                        <Button onClick={applyDateFilter}>Filtrar</Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setDateFrom(""); setDateTo("");
+                                table.getColumn(dateFilterField)?.setFilterValue("");
+                            }}
+                        >
+                            Limpar
+                        </Button>
+                    </div>
+
         </div>
 
         <DropdownMenu>

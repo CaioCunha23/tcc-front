@@ -9,6 +9,7 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
+    FilterFn
 } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ import { useTokenStore } from "@/hooks/useTokenStore";
 import { useInfractionsColumns } from "@/hooks/useInfractionsColumns";
 import AddInfractionDialog from "./AddInfractionDialog";
 import { Infracao } from "@/types/Infraction";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function InfractionsTable() {
     const [data, setData] = useState<Infracao[]>([]);
@@ -34,11 +36,23 @@ export function InfractionsTable() {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = useState({});
+    const [dateFilterField, setDateFilterField] = useState<"dataInfracao" | "dataEnvio" | "indicacaoLimite">("dataInfracao");
+    const [dateFrom, setDateFrom] = useState<string>("");
+    const [dateTo, setDateTo] = useState<string>("");
     const { token } = useTokenStore();
+
+    const betweenDatesFn: FilterFn<Infracao> = (row, columnId, filterValue) => {
+        const rowVal = row.getValue<string>(columnId)
+        if (!filterValue || typeof filterValue !== 'object') return true
+
+        const { from, to } = filterValue as { from: string; to: string }
+        const d = new Date(rowVal)
+        return (!from || d >= new Date(from)) && (!to || d <= new Date(to))
+    }
 
     const fetchData = async () => {
         try {
-            const response = await fetch("/api/infracoes", {
+            const response = await fetch(`http://localhost:3000/infracoes`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -72,6 +86,9 @@ export function InfractionsTable() {
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
+        filterFns: {
+            between: betweenDatesFn,
+        },
         state: {
             sorting,
             columnFilters,
@@ -84,9 +101,14 @@ export function InfractionsTable() {
         getPaginationRowModel: getPaginationRowModel(),
     });
 
+    function applyDateFilter() {
+        table.getColumn(dateFilterField)
+            ?.setFilterValue(dateFrom && dateTo ? { from: dateFrom, to: dateTo } : "")
+    }
+
     return (
         <div className="w-full">
-            <div className="flex flex-col sm:flex-row items-center justify-between py-4 px-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between py-4">
                 <div className="flex gap-2">
                     <Input
                         placeholder="Pesquisar UID..."
@@ -101,6 +123,50 @@ export function InfractionsTable() {
                     />
 
                     <AddInfractionDialog onInfractionAdded={fetchData} />
+
+                    <div className="flex items-center gap-2">
+                        <Select
+                            onValueChange={(v) => setDateFilterField(v as any)}
+                            value={dateFilterField}
+                        >
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Selecione coluna" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Coluna de Data</SelectLabel>
+                                    <SelectItem value="dataInfracao">Data Infração</SelectItem>
+                                    <SelectItem value="dataEnvio">Data Envio</SelectItem>
+                                    <SelectItem value="indicacaoLimite">Indicação Limite</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+
+                        <Input
+                            type="date"
+                            placeholder="De"
+                            value={dateFrom}
+                            onChange={(e) => setDateFrom(e.target.value)}
+                        />
+                        <Input
+                            type="date"
+                            placeholder="Até"
+                            value={dateTo}
+                            onChange={(e) => setDateTo(e.target.value)}
+                        />
+
+                        <Button onClick={applyDateFilter}>Filtrar</Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setDateFrom(""); setDateTo("");
+                                table.getColumn(dateFilterField)?.setFilterValue("");
+                            }}
+                        >
+                            Limpar
+                        </Button>
+                    </div>
+
                 </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>

@@ -255,9 +255,14 @@ export function useVehiclesHistoryColumns({ onVehicleHistoryUpdated }: UseVehicl
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             ),
-            cell: ({ row }) => (
-                <div className="flex justify-center">{row.getValue("dataInicio")}</div>
-            ),
+            filterFn: "between",
+            cell: ({ row }) => {
+                const rawDate = row.getValue("dataInicio");
+                const dateValue = rawDate
+                    ? new Date(rawDate as string | number | Date).toLocaleString("pt-BR", { timeZone: "UTC" })
+                    : "N/A";
+                return <div className="flex justify-center">{dateValue}</div>;
+            },
         },
         {
             accessorKey: "dataFim",
@@ -271,9 +276,14 @@ export function useVehiclesHistoryColumns({ onVehicleHistoryUpdated }: UseVehicl
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             ),
-            cell: ({ row }) => (
-                <div className="flex justify-center">{row.getValue("dataFim")}</div>
-            ),
+            filterFn: "between",
+            cell: ({ row }) => {
+                const rawDate = row.getValue("dataFim");
+                const dateValue = rawDate
+                    ? new Date(rawDate as string | number | Date).toLocaleString("pt-BR", { timeZone: "UTC" })
+                    : "N/A";
+                return <div className="flex justify-center">{dateValue}</div>;
+            },
         },
         {
             id: "actions",
@@ -284,7 +294,7 @@ export function useVehiclesHistoryColumns({ onVehicleHistoryUpdated }: UseVehicl
 
                 async function handleSave(values: Partial<VehiclesHistory>) {
                     const updatedVehicleHistory: VehiclesHistory = { ...historico, ...values };
-                    const res = await fetch(`/api/historico/${historico.id}`, {
+                    const res = await fetch(`http://localhost:3000/historico/${historico.id}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",

@@ -149,9 +149,14 @@ export function useInfractionsColumns({ onInfractionUpdated }: UseInfractionsCol
                     <ArrowUpDown />
                 </Button>
             ),
-            cell: ({ row }) => (
-                <div className="flex justify-center">{row.getValue("dataInfracao")}</div>
-            ),
+            filterFn: "between",
+            cell: ({ row }) => {
+                const rawDate = row.getValue("dataInfracao");
+                const dateValue = rawDate
+                    ? new Date(rawDate as string | number | Date).toLocaleString("pt-BR", { timeZone: "UTC" })
+                    : "N/A";
+                return <div className="flex justify-center">{dateValue}</div>;
+            },
         },
         {
             accessorKey: "dataEnvio",
@@ -165,9 +170,14 @@ export function useInfractionsColumns({ onInfractionUpdated }: UseInfractionsCol
                     <ArrowUpDown />
                 </Button>
             ),
-            cell: ({ row }) => (
-                <div className="flex justify-center">{row.getValue("dataEnvio")}</div>
-            ),
+            filterFn: "between",
+            cell: ({ row }) => {
+                const rawDate = row.getValue("dataEnvio");
+                const dateValue = rawDate
+                    ? new Date(rawDate as string | number | Date).toLocaleString("pt-BR", { timeZone: "UTC" })
+                    : "N/A";
+                return <div className="flex justify-center">{dateValue}</div>;
+            },
         },
         {
             accessorKey: "indicacaoLimite",
@@ -181,9 +191,14 @@ export function useInfractionsColumns({ onInfractionUpdated }: UseInfractionsCol
                     <ArrowUpDown />
                 </Button>
             ),
-            cell: ({ row }) => (
-                <div className="flex justify-center">{row.getValue("indicacaoLimite")}</div>
-            ),
+            filterFn: "between",
+            cell: ({ row }) => {
+                const rawDate = row.getValue("indicacaoLimite");
+                const dateValue = rawDate
+                    ? new Date(rawDate as string | number | Date).toLocaleString("pt-BR", { timeZone: "UTC" })
+                    : "N/A";
+                return <div className="flex justify-center">{dateValue}</div>;
+            },
         },
         {
             accessorKey: "statusResposta",
@@ -269,7 +284,7 @@ export function useInfractionsColumns({ onInfractionUpdated }: UseInfractionsCol
 
                 async function handleSave(values: Partial<Infracao>) {
                     const updatedInfraction: Infracao = { ...infraction, ...values };
-                    const res = await fetch(`/api/infracao/${infraction.id}`, {
+                    const res = await fetch(`http://localhost:3000/infracao/${infraction.id}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",

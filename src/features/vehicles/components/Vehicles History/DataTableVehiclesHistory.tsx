@@ -8,6 +8,7 @@ import {
   SortingState,
   ColumnFiltersState,
   VisibilityState,
+  FilterFn
 } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
 
@@ -31,6 +32,7 @@ import { useEffect, useState } from "react";
 import { useVehiclesHistoryColumns, VehiclesHistory } from "@/hooks/useVehiclesHistoryColumns";
 import { useTokenStore } from "@/hooks/useTokenStore";
 import AddVehicleHistoryDialog from "./AddVehicleHistoryDialog";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function DataTableVehiclesHistory() {
   const [data, setData] = useState<VehiclesHistory[]>([]);
@@ -38,11 +40,23 @@ export function DataTableVehiclesHistory() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+  const [dateFilterField, setDateFilterField] = useState<"dataInicio" | "dataFim">("dataInicio");
+  const [dateFrom, setDateFrom] = useState<string>("");
+  const [dateTo, setDateTo] = useState<string>("");
   const { token } = useTokenStore();
+
+  const betweenDatesFn: FilterFn<VehiclesHistory> = (row, columnId, filterValue) => {
+    const rowVal = row.getValue<string>(columnId)
+    if (!filterValue || typeof filterValue !== 'object') return true
+
+    const { from, to } = filterValue as { from: string; to: string }
+    const d = new Date(rowVal)
+    return (!from || d >= new Date(from)) && (!to || d <= new Date(to))
+  }
 
   async function fetchData() {
     try {
-      const response = await fetch("/api/historicos", {
+      const response = await fetch(`http://localhost:3000/historicos`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -74,6 +88,9 @@ export function DataTableVehiclesHistory() {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    filterFns: {
+      between: betweenDatesFn,
+    },
     state: {
       sorting,
       columnFilters,
@@ -81,6 +98,11 @@ export function DataTableVehiclesHistory() {
       rowSelection,
     },
   });
+
+  function applyDateFilter() {
+    table.getColumn(dateFilterField)
+      ?.setFilterValue(dateFrom && dateTo ? { from: dateFrom, to: dateTo } : "")
+  }
 
   return (
     <div className="w-full">
@@ -99,6 +121,48 @@ export function DataTableVehiclesHistory() {
           />
 
           <AddVehicleHistoryDialog onVehicleHistoryAdded={fetchData} />
+
+          <div className="flex items-center gap-2">
+            <Select
+              onValueChange={(v) => setDateFilterField(v as any)}
+              value={dateFilterField}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Selecione coluna" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Coluna de Data</SelectLabel>
+                  <SelectItem value="dataInicio">Data Início</SelectItem>
+                  <SelectItem value="dataFim">Data Finalização</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            <Input
+              type="date"
+              placeholder="De"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+            />
+            <Input
+              type="date"
+              placeholder="Até"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+            />
+
+            <Button onClick={applyDateFilter}>Filtrar</Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDateFrom(""); setDateTo("");
+                table.getColumn(dateFilterField)?.setFilterValue("");
+              }}
+            >
+              Limpar
+            </Button>
+          </div>
         </div>
 
         <DropdownMenu>

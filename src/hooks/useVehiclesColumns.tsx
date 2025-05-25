@@ -279,10 +279,11 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
                     <ArrowUpDown />
                 </Button>
             ),
+            filterFn: "between",
             cell: ({ row }) => {
                 const rawDate = row.getValue("dataDisponibilizacao");
                 const dateValue = rawDate
-                    ? new Date(rawDate as string | number | Date).toLocaleDateString()
+                    ? new Date(rawDate as string | number | Date).toLocaleDateString("pt-BR", { timeZone: "UTC" })
                     : "N/A";
                 return <div className="flex justify-center">{dateValue}</div>;
             },
@@ -315,10 +316,11 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
                     <ArrowUpDown />
                 </Button>
             ),
+            filterFn: "between",
             cell: ({ row }) => {
                 const rawDate = row.getValue("previsaoDevolucao");
                 const dateValue = rawDate
-                    ? new Date(rawDate as string | number | Date).toLocaleDateString()
+                    ? new Date(rawDate as string | number | Date).toLocaleDateString("pt-BR", { timeZone: "UTC" })
                     : "N/A";
                 return <div className="flex justify-center">{dateValue}</div>;
             },
@@ -414,9 +416,14 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
                     <ArrowUpDown />
                 </Button>
             ),
-            cell: ({ row }) => (
-                <div className="flex justify-center">{row.getValue("proximaRevisao")}</div>
-            ),
+            filterFn: "between",
+            cell: ({ row }) => {
+                const rawDate = row.getValue("proximaRevisao");
+                const dateValue = rawDate
+                    ? new Date(rawDate as string | number | Date).toLocaleDateString("pt-BR", { timeZone: "UTC" })
+                    : "N/A";
+                return <div className="flex justify-center">{dateValue}</div>;
+            },
         },
         {
             id: "actions",
@@ -427,7 +434,7 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
 
                 async function handleSave(values: Partial<Veiculo>) {
                     const updatedVehicle: Veiculo = { ...vehicle, ...values };
-                    const res = await fetch(`/api/veiculo/${vehicle.id}`, {
+                    const res = await fetch(`http://localhost:3000/veiculo/${vehicle.id}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",

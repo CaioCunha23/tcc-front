@@ -42,7 +42,7 @@ export function DataTableWorker() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("/api/colaboradores", {
+      const response = await fetch(`http://localhost:3000/colaboradores`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -75,6 +75,7 @@ export function DataTableWorker() {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    filterFns: {},
     state: {
       sorting,
       columnFilters,
