@@ -60,7 +60,7 @@ export function VehicleHistoryFormDialog({ onVehicleHistoryAdded, onCloseDialog 
 
     async function onSubmit(values: z.infer<typeof vehicleHistoryFormSchema>) {
         try {
-            const response = await fetch(`${process.env.VITE_BACKEND_URL}historico`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}historico`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

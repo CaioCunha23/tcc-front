@@ -44,7 +44,7 @@ export function LoginForm({
         setServerError(null);
 
         try {
-            const response = await fetch(`${process.env.VITE_BACKEND_URL}/login`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -59,7 +59,7 @@ export function LoginForm({
 
             const json = await response.json();
 
-            const responseEu = await fetch(`${process.env.VITE_BACKEND_URL}/eu`, {
+            const responseEu = await fetch(`${import.meta.env.VITE_BACKEND_URL}/eu`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

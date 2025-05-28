@@ -42,7 +42,7 @@ export function DataTableWorker() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${process.env.VITE_BACKEND_URL}colaboradores`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}colaboradores`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

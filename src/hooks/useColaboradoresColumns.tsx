@@ -289,7 +289,7 @@ export function useColaboradoresColumns({ onWorkerUpdated }: UseColaboradoresCol
 
         const fetchInfractions = async (workerUidMSK: string) => {
           try {
-            const response = await fetch(`${process.env.VITE_BACKEND_URL}infracoes/${workerUidMSK}?last30=true`);
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}infracoes/${workerUidMSK}?last30=true`);
 
             if (!response.ok) {
               throw new Error("Erro ao buscar infrações");
@@ -359,7 +359,7 @@ export function useColaboradoresColumns({ onWorkerUpdated }: UseColaboradoresCol
 
         async function handleSave(values: Partial<Colaborador>) {
           const updatedWorker: Colaborador = { ...worker, ...values };
-          const res = await fetch(`${process.env.VITE_BACKEND_URL}colaborador/${worker.id}`, {
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}colaborador/${worker.id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -389,7 +389,7 @@ export function useColaboradoresColumns({ onWorkerUpdated }: UseColaboradoresCol
 
         async function handleDeactivate() {
           const updatedWorker: Colaborador = { ...worker, status: false };
-          const res = await fetch(`${process.env.VITE_BACKEND_URL}colaborador/${worker.id}`, {
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}colaborador/${worker.id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",

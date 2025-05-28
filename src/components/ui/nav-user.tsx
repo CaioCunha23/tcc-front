@@ -49,7 +49,7 @@ export function NavUser({ user }: {
 
         const updatedWorker = { ...colaborador, ...values };
 
-        const res = await fetch(`${process.env.VITE_BACKEND_URL}colaborador/${colaborador.id}`, {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}colaborador/${colaborador.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

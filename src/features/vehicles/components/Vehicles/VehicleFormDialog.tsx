@@ -110,7 +110,7 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
 
     async function onSubmit(values: z.infer<typeof vehicleFormSchema>) {
         try {
-            const response = await fetch(`${process.env.VITE_BACKEND_URL}veiculo`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}veiculo`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
