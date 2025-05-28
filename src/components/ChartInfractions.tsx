@@ -16,7 +16,7 @@ const chartConfig = {
 }
 
 async function fetchChartData(token: string) {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}infracoes-chart-data`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/infracoes-chart-data`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

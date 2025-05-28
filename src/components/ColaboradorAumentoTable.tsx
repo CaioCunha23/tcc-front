@@ -13,7 +13,7 @@ interface ColaboradorAumento {
 }
 
 async function fetchColaboradorAumento(token: string) {
-  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}dashboard-metrics-colaborador-maior-aumento`, {
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard-metrics-colaborador-maior-aumento`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

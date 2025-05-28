@@ -63,7 +63,7 @@ export function WorkerFormDialog({ onWorkerAdded, onCloseDialog }: WorkerFormDia
 
   async function onSubmit(values: z.infer<typeof workerFormSchema>) {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}colaborador`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/colaborador`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -284,7 +284,7 @@ export function useInfractionsColumns({ onInfractionUpdated }: UseInfractionsCol
 
                 async function handleSave(values: Partial<Infracao>) {
                     const updatedInfraction: Infracao = { ...infraction, ...values };
-                    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}infracao/${infraction.id}`, {
+                    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/infracao/${infraction.id}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
