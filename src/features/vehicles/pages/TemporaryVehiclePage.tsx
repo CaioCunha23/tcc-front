@@ -29,7 +29,7 @@ export function TemporaryVehiclePage() {
     async function fetchStatus() {
       try {
         const res = await fetch(
-          `http://localhost:3000/veiculos/${placa}/status`
+          `${process.env.VITE_BACKEND_URL}veiculos/${placa}/status`
         )
         if (!res.ok) throw new Error('Falha ao buscar status')
 
@@ -51,7 +51,7 @@ export function TemporaryVehiclePage() {
     setSuccess(null)
 
     const endpoint = status.inUse ? 'end' : 'start'
-    const url = `http://localhost:3000/veiculos/${placa}/uso/${endpoint}`
+    const url = `${process.env.VITE_BACKEND_URL}veiculos/${placa}/uso/${endpoint}`
     const bodyPayload = !status.inUse && !Boolean(uid)
       ? null
       : JSON.stringify(uid ? { uid } : {})

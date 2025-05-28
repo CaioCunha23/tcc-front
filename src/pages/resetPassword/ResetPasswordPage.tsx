@@ -41,7 +41,7 @@ export function ResetPasswordPage() {
     async function onSubmit(values: ResetFormValues) {
         setLoading(true)
         try {
-            const res = await fetch(`http://localhost:3000/reset-password/${token}`, {
+            const res = await fetch(`${process.env.VITE_BACKEND_URL}reset-password/${token}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ password: values.password }),

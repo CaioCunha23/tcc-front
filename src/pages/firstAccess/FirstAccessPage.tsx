@@ -59,7 +59,7 @@ export function FirstAccessPage() {
         setServerError(null)
         try {
             const res = await fetch(
-                `http://localhost:3000/first-access`,
+                `${process.env.VITE_BACKEND_URL}first-access`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -79,7 +79,7 @@ export function FirstAccessPage() {
         setServerError(null)
         try {
             const res = await fetch(
-                `http://localhost:3000/colaborador/${uid}/password`,
+                `${process.env.VITE_BACKEND_URL}colaborador/${uid}/password`,
                 {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },

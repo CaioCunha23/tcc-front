@@ -18,7 +18,7 @@ export default function TopOffendersTable() {
 
     useEffect(() => {
         setLoading(true);
-        fetch('http://localhost:3000/top-offenders', {
+        fetch('${process.env.VITE_BACKEND_URL}top-offenders', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

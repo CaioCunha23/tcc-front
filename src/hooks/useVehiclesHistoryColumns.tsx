@@ -294,7 +294,7 @@ export function useVehiclesHistoryColumns({ onVehicleHistoryUpdated }: UseVehicl
 
                 async function handleSave(values: Partial<VehiclesHistory>) {
                     const updatedVehicleHistory: VehiclesHistory = { ...historico, ...values };
-                    const res = await fetch(`http://localhost:3000/historico/${historico.id}`, {
+                    const res = await fetch(`${process.env.VITE_BACKEND_URL}historico/${historico.id}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",

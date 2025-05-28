@@ -52,7 +52,7 @@ export function InfractionsTable() {
 
     const fetchData = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/infracoes`, {
+            const response = await fetch(`${process.env.VITE_BACKEND_URL}infracoes`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

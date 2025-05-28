@@ -16,7 +16,7 @@ const chartConfig = {
 }
 
 async function fetchChartData(token: string) {
-    const response = await fetch(`http://localhost:3000/infracoes-chart-data`, {
+    const response = await fetch(`${process.env.VITE_BACKEND_URL}infracoes-chart-data`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

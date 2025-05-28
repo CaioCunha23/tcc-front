@@ -56,7 +56,7 @@ export function DataTableVehiclesHistory() {
 
   async function fetchData() {
     try {
-      const response = await fetch(`http://localhost:3000/historicos`, {
+      const response = await fetch(`${process.env.VITE_BACKEND_URL}historicos`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

@@ -16,7 +16,7 @@ export default function VeiculosContratoProximo() {
 
     useEffect(() => {
         setLoading(true)
-        fetch('http://localhost:3000/veiculos-devolucao', {
+        fetch('${process.env.VITE_BACKEND_URL}veiculos-devolucao', {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,

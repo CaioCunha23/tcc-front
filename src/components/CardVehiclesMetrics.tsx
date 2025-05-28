@@ -1,6 +1,6 @@
 
 import { Card, CardHeader, CardDescription, CardTitle, CardFooter } from "./ui/card";
-import { fetchMetrics } from "@/pages/home/HomePage";
+import { fetchMetrics } from "src/pages/home/HomePage";
 import { useTokenStore } from "@/hooks/useTokenStore";
 import { useSuspenseQuery } from "@tanstack/react-query";
 

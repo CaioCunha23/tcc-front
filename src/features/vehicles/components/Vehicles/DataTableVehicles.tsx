@@ -56,7 +56,7 @@ export function DataTableVehicles() {
 
   async function fetchData() {
     try {
-      const response = await fetch(`http://localhost:3000/veiculos`, {
+      const response = await fetch(`${process.env.VITE_BACKEND_URL}veiculos`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

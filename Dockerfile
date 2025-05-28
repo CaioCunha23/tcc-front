@@ -1,7 +1,5 @@
 FROM node:24.0 AS builder
 
-ARG VITE_BACKEND_URL
-
 COPY . .
 
 RUN npm i --force

@@ -32,7 +32,7 @@ export default function UploadCSVInfraction({ onUploadSuccess }: UploadCSVInfrac
         formData.append("file", selectedFile);
 
         try {
-            const response = await fetch(`http://localhost:3000/infracoes/import`, {
+            const response = await fetch(`${process.env.VITE_BACKEND_URL}infracoes/import`, {
                 method: "POST",
                 body: formData,
             });
