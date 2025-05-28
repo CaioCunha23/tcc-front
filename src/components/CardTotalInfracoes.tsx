@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardDescription, CardTitle, CardFooter } from "./ui/card";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTokenStore } from "@/hooks/useTokenStore";
-import { DashboardMetrics, fetchMetrics } from "@/pages/home/HomePage";
+import { DashboardMetrics, fetchMetrics } from "../pages/home/HomePage.tsx"
 
 export function CardTotalInfracoes({ propriedadePraPegar }: { propriedadePraPegar: keyof DashboardMetrics }) {
     const { token } = useTokenStore();

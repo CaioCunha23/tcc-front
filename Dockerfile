@@ -8,7 +8,7 @@ RUN npm i --force
 
 RUN npm run build
 
-FROM  nginx:stable-alpine
+FROM nginx:stable-alpine
 
 COPY --from=builder /dist /usr/share/nginx/html
 
