@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardDescription, CardTitle, CardFooter } from "./ui/card";
-import { fetchMetrics } from "@/pages/home/HomePage.tsx";
+import { fetchMetrics } from "@/pages/home/HomePage";
 import { Badge } from "./ui/badge";
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import { useTokenStore } from "@/hooks/useTokenStore";
