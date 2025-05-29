@@ -16,7 +16,7 @@ const resetSchema = z
         confirm: z.string(),
     })
     .refine(data => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,}$/.test(data.password), {
-        message: 'Senha precisa ter ≥8 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 especial',
+        message: 'Senha precisa ter pelo menos 8 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 especial',
         path: ['password'],
     })
     .refine(data => data.password === data.confirm, {
