@@ -59,7 +59,7 @@ export function FirstAccessPage() {
         setServerError(null)
         try {
             const res = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}first-access`,
+                `${import.meta.env.VITE_BACKEND_URL}/first-access`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -79,7 +79,7 @@ export function FirstAccessPage() {
         setServerError(null)
         try {
             const res = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}colaborador/${uid}/password`,
+                `${import.meta.env.VITE_BACKEND_URL}/colaborador/${uid}/password`,
                 {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
