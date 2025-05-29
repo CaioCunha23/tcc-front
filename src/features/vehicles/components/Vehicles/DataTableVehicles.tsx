@@ -101,9 +101,9 @@ export function DataTableVehicles() {
   })
 
   function applyDateFilter() {
-        table.getColumn(dateFilterField)
-            ?.setFilterValue(dateFrom && dateTo ? { from: dateFrom, to: dateTo } : "")
-    }
+    table.getColumn(dateFilterField)
+      ?.setFilterValue(dateFrom && dateTo ? { from: dateFrom, to: dateTo } : "")
+  }
 
   return (
     <div className="w-full">
@@ -121,47 +121,47 @@ export function DataTableVehicles() {
           <AddVehicleDialog onVehicleAdded={fetchData} />
 
           <div className="flex items-center gap-2">
-                        <Select
-                            onValueChange={(v) => setDateFilterField(v as any)}
-                            value={dateFilterField}
-                        >
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Selecione coluna" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Coluna de Data</SelectLabel>
-                                    <SelectItem value="dataDisponibilizacao">Disponibilização</SelectItem>
-                                    <SelectItem value="previsaoDevolucao">Previsão Devolução</SelectItem>
-                                    <SelectItem value="proximaRevisao">Próxima Revisão</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+            <Select
+              onValueChange={(v) => setDateFilterField(v as any)}
+              value={dateFilterField}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Selecione coluna" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Coluna de Data</SelectLabel>
+                  <SelectItem value="dataDisponibilizacao">Disponibilização</SelectItem>
+                  <SelectItem value="previsaoDevolucao">Previsão Devolução</SelectItem>
+                  <SelectItem value="proximaRevisao">Próxima Revisão</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
 
-                        <Input
-                            type="date"
-                            placeholder="De"
-                            value={dateFrom}
-                            onChange={(e) => setDateFrom(e.target.value)}
-                        />
-                        <Input
-                            type="date"
-                            placeholder="Até"
-                            value={dateTo}
-                            onChange={(e) => setDateTo(e.target.value)}
-                        />
+            <Input
+              type="date"
+              placeholder="De"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+            />
+            <Input
+              type="date"
+              placeholder="Até"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+            />
 
-                        <Button onClick={applyDateFilter}>Filtrar</Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => {
-                                setDateFrom(""); setDateTo("");
-                                table.getColumn(dateFilterField)?.setFilterValue("");
-                            }}
-                        >
-                            Limpar
-                        </Button>
-                    </div>
+            <Button onClick={applyDateFilter}>Filtrar</Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDateFrom(""); setDateTo("");
+                table.getColumn(dateFilterField)?.setFilterValue("");
+              }}
+            >
+              Limpar
+            </Button>
+          </div>
 
         </div>
 
