@@ -14,7 +14,7 @@ const items = [
     { href: "/colaboradores/multas", label: "Multas" },
     { href: "/veiculos", label: "Automóveis" },
     { href: `/veiculo_colaborador`, label: "Histórico de Veículos" },
-    { href: `/solicitar_veiculo`, label: "Solicitar Veículo"}
+    { href: `/temporary-vehicle`, label: "Solicitar Veículo"}
 ]
 
 export function BreadcrumbResponsive() {

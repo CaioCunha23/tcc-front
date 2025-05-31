@@ -19,20 +19,21 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog";
 import { useNavigate } from "react-router";
-import VehicleEditFormDialog from "@/features/vehicles/components/Vehicles/EditVehicleDialog"
+import VehicleEditFormDialog from "@/features/vehicles/components/Vehicles/EditVehicleDialog";
 import { useTokenStore } from "./useTokenStore";
 import { toast } from "sonner";
 import { Veiculo } from "@/types/Vehicle";
 
 interface UseVehiclesColumnsOptions {
     onVehicleUpdated: () => void;
+    onGenerateQR: (veiculo: Veiculo) => void;
 }
 
-export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptions): ColumnDef<Veiculo>[] {
+export function useVehiclesColumns({ onVehicleUpdated, onGenerateQR }: UseVehiclesColumnsOptions): ColumnDef<Veiculo>[] {
     const navigate = useNavigate();
     const { token } = useTokenStore();
 
-    return useMemo(() => [
+    return useMemo<ColumnDef<Veiculo>[]>(() => [
         {
             id: "select",
             header: ({ table }) => (
@@ -381,7 +382,7 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
                         {budget > 0 ? `R$ ${(budget / 100).toFixed(2)}` : "Sem budget"}
                     </div>
                 );
-            }
+            },
         },
         {
             accessorKey: "multa",
@@ -402,7 +403,7 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
                         {multa > 0 ? `R$ ${(multa / 100).toFixed(2)}` : "Sem multa"}
                     </div>
                 );
-            }
+            },
         },
         {
             accessorKey: "proximaRevisao",
@@ -425,6 +426,22 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
                 return <div className="flex justify-center">{dateValue}</div>;
             },
         },
+
+        {
+            id: "qr",
+            header: "QR",
+            cell: ({ row }) => {
+                const veiculo = row.original;
+                return (
+                    <Button size="sm" onClick={() => onGenerateQR(veiculo)}>
+                        Gerar QR
+                    </Button>
+                );
+            },
+            enableSorting: false,
+            enableHiding: true,
+        },
+
         {
             id: "actions",
             enableHiding: false,
@@ -442,7 +459,7 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
                         },
                         body: JSON.stringify(updatedVehicle),
                     });
-                    console.log(updatedVehicle)
+                    console.log(updatedVehicle);
                     if (res.ok) {
                         setOpen(false);
                         toast.success(`Veículo atualizado (às ${new Date().toLocaleTimeString()})`);
@@ -500,5 +517,5 @@ export function useVehiclesColumns({ onVehicleUpdated }: UseVehiclesColumnsOptio
                 );
             },
         },
-    ], [navigate]);
+    ], [navigate, token, onVehicleUpdated, onGenerateQR]);
 }

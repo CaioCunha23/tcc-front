@@ -33,6 +33,14 @@ import AddVehicleDialog from "./AddVehicleDialog"
 import { useTokenStore } from "@/hooks/useTokenStore"
 import { Veiculo } from "@/types/Vehicle"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import QRCode from "react-qr-code";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export function DataTableVehicles() {
   const [data, setData] = useState<Veiculo[]>([]);
@@ -44,6 +52,8 @@ export function DataTableVehicles() {
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const { token } = useTokenStore();
+  const [selectedVehicle, setSelectedVehicle] = useState<Veiculo | null>(null);
+  const [qrModalOpen, setQrModalOpen] = useState(false);
 
   const betweenDatesFn: FilterFn<Veiculo> = (row, columnId, filterValue) => {
     const rowVal = row.getValue<string>(columnId)
@@ -76,7 +86,20 @@ export function DataTableVehicles() {
     fetchData();
   }, [token]);
 
-  const columns = useVehiclesColumns({ onVehicleUpdated: fetchData });
+  function handleGenerateQR(veiculo: Veiculo) {
+    setSelectedVehicle(veiculo);
+    setQrModalOpen(true);
+  }
+
+  function handleCloseQRModal() {
+    setQrModalOpen(false);
+    setSelectedVehicle(null);
+  }
+
+  const columns = useVehiclesColumns({
+    onVehicleUpdated: fetchData,
+    onGenerateQR: handleGenerateQR
+  });
 
   const table = useReactTable({
     data,
@@ -103,6 +126,10 @@ export function DataTableVehicles() {
   function applyDateFilter() {
     table.getColumn(dateFilterField)
       ?.setFilterValue(dateFrom && dateTo ? { from: dateFrom, to: dateTo } : "")
+  }
+
+  function handlePrint() {
+    window.print();
   }
 
   return (
@@ -260,6 +287,45 @@ export function DataTableVehicles() {
           </Button>
         </div>
       </div>
+
+      <Dialog open={qrModalOpen} onOpenChange={setQrModalOpen}>
+        <DialogContent className="max-w-xs">
+          <DialogHeader>
+            <DialogTitle>QR Code do Veículo</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center space-y-4 mt-2">
+            {selectedVehicle && (
+              <>
+                {(() => {
+                  const qrPayload = {
+                    placa: selectedVehicle.placa,
+                    modelo: selectedVehicle.modelo,
+                    renavam: selectedVehicle.renavam,
+                    chassi: selectedVehicle.chassi,
+                    status: selectedVehicle.status,
+                  };
+                  const qrDataParam = encodeURIComponent(JSON.stringify(qrPayload));
+                  const qrUrl = `${window.location.origin}/temporary-vehicle?data=${qrDataParam}`;
+
+                  return (
+                    <div className="bg-white p-4 print-area">
+                      <QRCode value={qrUrl} size={180} />
+                    </div>
+                  );
+                })()}
+                <p className="text-sm text-gray-600">Veículo: {selectedVehicle.placa}</p>
+                <Button onClick={handlePrint}>Imprimir QR</Button>
+              </>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={handleCloseQRModal}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   )
 }

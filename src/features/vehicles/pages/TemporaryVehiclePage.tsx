@@ -1,115 +1,294 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams, useNavigate } from "react-router";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { useTokenStore } from "@/hooks/useTokenStore";
 
-interface Status {
-  inUse: boolean
-  lastRecord?: {
-    dataInicio: string
-    dataFim?: string
-  }
-}
-
-type Params = {
-  placa: string
+interface QRPayload {
+  placa: string;
+  modelo: string;
+  renavam: string;
+  chassi: string;
+  status: string;
 }
 
 export function TemporaryVehiclePage() {
-  const { placa } = useParams<Params>()
-  const [status, setStatus] = useState<Status>({ inUse: false })
-  const [uid, setUid] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
+  const navigate = useNavigate();
+  const { token } = useTokenStore();
+  const [searchParams] = useSearchParams();
+  const dataParam = searchParams.get("data");
+  const [veiculoInfo, setVeiculoInfo] = useState<QRPayload | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [hasActiveUse, setHasActiveUse] = useState<boolean | null>(null);
+  const [uidDialogOpen, setUidDialogOpen] = useState(false);
+  const [uidInput, setUidInput] = useState("");
+  const [validatedUid, setValidatedUid] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchStatus() {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/veiculos/${placa}/status`
-        )
-        if (!res.ok) throw new Error('Falha ao buscar status')
-
-        const data: Status = await res.json()
-        setStatus(data)
-
-      } catch (err: any) {
-        setError(err.message)
-
-      } finally {
-        setLoading(false)
-      }
+    if (!dataParam) {
+      toast.error("QR Code inválido ou faltando parâmetro “data”.");
+      navigate("/");
+      return;
     }
-    fetchStatus()
-  }, [placa])
-
-  async function handleAction() {
-    setError(null)
-    setSuccess(null)
-
-    const endpoint = status.inUse ? 'end' : 'start'
-    const url = `${import.meta.env.VITE_BACKEND_URL}/veiculos/${placa}/uso/${endpoint}`
-    const bodyPayload = !status.inUse && !Boolean(uid)
-      ? null
-      : JSON.stringify(uid ? { uid } : {})
-
     try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: bodyPayload,
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Erro na requisição')
-
-      if (status.inUse) {
-        setSuccess(`Uso finalizado em ${new Date(data.dataFim).toLocaleString()}`)
+      const payload: QRPayload = JSON.parse(decodeURIComponent(dataParam));
+      if (
+        payload.placa &&
+        payload.modelo &&
+        payload.renavam &&
+        payload.chassi &&
+        payload.status
+      ) {
+        setVeiculoInfo(payload);
       } else {
-        setSuccess(`Uso iniciado em ${new Date(data.dataInicio).toLocaleString()}`)
+        throw new Error("Campos faltando");
+      }
+    } catch {
+      toast.error("Não foi possível decodificar os dados do QR Code.");
+      navigate("/");
+    }
+  }, [dataParam]);
+
+  useEffect(() => {
+    if (!veiculoInfo || isProcessing) return;
+
+    const processar = async () => {
+      setIsProcessing(true);
+
+      const iniciarUso = async (uidToUse: string) => {
+        try {
+          const res = await fetch("/api/historico-utilizacao/iniciar", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify({
+              placa: veiculoInfo.placa,
+              modelo: veiculoInfo.modelo,
+              renavam: veiculoInfo.renavam,
+              chassi: veiculoInfo.chassi,
+              status: veiculoInfo.status,
+              ...(token ? {} : { uidMSK: uidToUse }),
+            }),
+          });
+
+          if (res.status === 201) {
+            toast.success("Início de uso registrado com sucesso!");
+            setHasActiveUse(true);
+          } else if (res.status === 409) {
+            await finalizarUso(uidToUse);
+          } else {
+            const erro = await res.json();
+            toast.error(erro.error || "Erro ao iniciar uso.");
+          }
+        } catch (err) {
+          console.error(err);
+          toast.error("Falha de comunicação com o servidor.");
+        }
+      };
+
+      const finalizarUso = async (uidToUse: string) => {
+        try {
+          const res = await fetch("/api/historico-utilizacao/finalizar", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify({
+              placa: veiculoInfo.placa,
+              ...(token ? {} : { uidMSK: uidToUse }),
+            }),
+          });
+
+          if (res.status === 200) {
+            toast.success("Uso finalizado com sucesso!");
+            setHasActiveUse(false);
+          } else {
+            const erro = await res.json();
+            toast.error(erro.error || "Erro ao finalizar uso.");
+          }
+        } catch (err) {
+          console.error(err);
+          toast.error("Falha de comunicação com o servidor.");
+        }
+      };
+
+      if (token) {
+        await iniciarUso("");
+      } else {
+        if (validatedUid) {
+          await iniciarUso(validatedUid);
+        } else {
+          setUidDialogOpen(true);
+        }
       }
 
-      setStatus(prev => ({ ...prev, inUse: !prev.inUse }))
-    } catch (err: any) {
-      setError(err.message)
+      setIsProcessing(false);
+    };
+
+    processar();
+  }, [veiculoInfo, token, validatedUid]);
+
+  const handleConfirmUid = useCallback(async () => {
+    const uid = uidInput.trim();
+    if (!uid) {
+      toast.error("UID é obrigatório.");
+      return;
     }
+    setIsProcessing(true);
+    try {
+      const res = await fetch(`/api/colaboradores/${uid}`);
+      if (res.status === 200) {
+        setValidatedUid(uid);
+        setUidDialogOpen(false);
+        toast.success("UID validado. Prosseguindo...");
+      } else if (res.status === 404) {
+        toast.error("Colaborador não encontrado.");
+      } else {
+        const err = await res.json();
+        toast.error(err.error || "Erro ao validar UID.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Falha de comunicação ao validar UID.");
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [uidInput]);
+
+  const handleManualFinish = useCallback(async () => {
+    if (!veiculoInfo) return;
+    setIsProcessing(true);
+    try {
+      const res = await fetch("/api/historico-utilizacao/finalizar", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          placa: veiculoInfo.placa,
+          ...(token ? {} : { uidMSK: validatedUid }),
+        }),
+      });
+
+      if (res.status === 200) {
+        toast.success("Uso finalizado com sucesso!");
+        setHasActiveUse(false);
+      } else {
+        const erro = await res.json();
+        toast.error(erro.error || "Erro ao finalizar uso.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Falha de comunicação com o servidor.");
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [veiculoInfo, token, validatedUid]);
+
+  const handleScanAnother = useCallback(() => {
+    navigate("/");
+  }, []);
+
+  if (!veiculoInfo) {
+    return null;
   }
 
-  if (loading) return <p>Carregando...</p>
-
   return (
-    <div className="p-8 flex justify-center">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Veículo: {placa}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {error && <p className="text-red-600">{error}</p>}
-          {success && <p className="text-green-600">{success}</p>}
+    <div className="flex flex-col items-center p-6 space-y-6">
+      <h1 className="text-2xl font-semibold">Uso Temporário de Veículo</h1>
 
-          {!status.inUse && (
-            <div className="space-y-1">
-              <Label htmlFor="uid">Informe seu UID</Label>
-              <Input
-                id="uid"
-                value={uid}
-                onChange={e => setUid(e.target.value)}
-                placeholder="Ex: A12345"
-              />
-            </div>
-          )}
+      <Dialog open>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {isProcessing
+                ? "Aguarde..."
+                : hasActiveUse === null
+                  ? "Processando..."
+                  : hasActiveUse
+                    ? "Veículo em Uso"
+                    : "Uso Finalizado"}
+            </DialogTitle>
+            <DialogDescription>
+              {isProcessing
+                ? "Estamos registrando sua solicitação..."
+                : hasActiveUse === null
+                  ? ""
+                  : hasActiveUse
+                    ? "Uso iniciado! Para finalizar, escaneie o mesmo QR novamente ou clique em “Finalizar Uso”."
+                    : "Uso finalizado! Caso queira, pode escanear outro QR."}
+            </DialogDescription>
+          </DialogHeader>
 
-          <Button
-            className="w-full"
-            onClick={handleAction}
-            disabled={!status.inUse && !uid}
-          >
-            {status.inUse ? 'Finalizar Uso' : 'Iniciar Uso'}
-          </Button>
-        </CardContent>
-      </Card>
+          <div className="space-y-2 mt-4">
+            <p>
+              <strong>Placa:</strong> {veiculoInfo.placa}
+            </p>
+            <p>
+              <strong>Modelo:</strong> {veiculoInfo.modelo}
+            </p>
+            <p>
+              <strong>Renavam:</strong> {veiculoInfo.renavam}
+            </p>
+            <p>
+              <strong>Chassi:</strong> {veiculoInfo.chassi}
+            </p>
+            <p>
+              <strong>Status:</strong> {veiculoInfo.status}
+            </p>
+          </div>
+
+          <DialogFooter className="mt-6 flex justify-between">
+            {!isProcessing && hasActiveUse !== null && (
+              <Button variant="outline" onClick={handleScanAnother}>
+                Escanear outro QR
+              </Button>
+            )}
+            {!isProcessing && hasActiveUse && (
+              <Button onClick={handleManualFinish}>Finalizar Uso</Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={uidDialogOpen} onOpenChange={setUidDialogOpen}>
+        <DialogContent className="max-w-xs">
+          <DialogHeader>
+            <DialogTitle>Informe seu UID</DialogTitle>
+            <DialogDescription>
+              Você não está logado. Para prosseguir, digite seu UIDMSK:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-2">
+            <Input
+              placeholder="UIDMSK"
+              value={uidInput}
+              onChange={(e) => setUidInput(e.target.value)}
+            />
+          </div>
+          <DialogFooter className="mt-4">
+            <Button
+              onClick={handleConfirmUid}
+              disabled={isProcessing || !uidInput.trim()}
+            >
+              {isProcessing ? "Validando..." : "Confirmar UID"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
-  )
+  );
 }

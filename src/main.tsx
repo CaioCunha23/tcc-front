@@ -69,7 +69,7 @@ createRoot(document.getElementById('root')!).render(
               />
 
               <Route
-                path="/solicitar_veiculo"
+                path="/temporary-vehicle"
                 element={<TemporaryVehiclePage />}
               />
             </Route>

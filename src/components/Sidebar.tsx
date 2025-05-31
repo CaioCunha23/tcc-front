@@ -58,7 +58,7 @@ const data = {
         },
         {
           title: "Solicitar Veículo",
-          url: "/solicitar_veiculo",
+          url: "/temporary-vehicle",
         },
       ],
     },
