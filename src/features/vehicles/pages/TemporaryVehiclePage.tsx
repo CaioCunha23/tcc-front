@@ -66,21 +66,24 @@ export function TemporaryVehiclePage() {
 
       const iniciarUso = async (uidToUse: string) => {
         try {
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/iniciar`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify({
-              placa: veiculoInfo.placa,
-              modelo: veiculoInfo.modelo,
-              renavam: veiculoInfo.renavam,
-              chassi: veiculoInfo.chassi,
-              status: veiculoInfo.status,
-              ...(token ? {} : { uidMSK: uidToUse }),
-            }),
-          });
+          const res = await fetch(
+            `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/iniciar`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+              },
+              body: JSON.stringify({
+                placa: veiculoInfo.placa,
+                modelo: veiculoInfo.modelo,
+                renavam: veiculoInfo.renavam,
+                chassi: veiculoInfo.chassi,
+                status: veiculoInfo.status,
+                ...(token ? {} : { uidMSK: uidToUse }),
+              }),
+            }
+          );
 
           if (res.status === 201) {
             toast.success("Início de uso registrado com sucesso!");
@@ -99,17 +102,20 @@ export function TemporaryVehiclePage() {
 
       const finalizarUso = async (uidToUse: string) => {
         try {
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/finalizar`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify({
-              placa: veiculoInfo.placa,
-              ...(token ? {} : { uidMSK: uidToUse }),
-            }),
-          });
+          const res = await fetch(
+            `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/finalizar`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+              },
+              body: JSON.stringify({
+                placa: veiculoInfo.placa,
+                ...(token ? {} : { uidMSK: uidToUse }),
+              }),
+            }
+          );
 
           if (res.status === 200) {
             toast.success("Uso finalizado com sucesso!");
@@ -131,6 +137,8 @@ export function TemporaryVehiclePage() {
           await iniciarUso(validatedUid);
         } else {
           setUidDialogOpen(true);
+          setIsProcessing(false);
+          return;
         }
       }
 
