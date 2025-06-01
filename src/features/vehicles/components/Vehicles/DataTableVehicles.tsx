@@ -304,6 +304,7 @@ export function DataTableVehicles() {
                     chassi: selectedVehicle.chassi,
                     status: selectedVehicle.status,
                   };
+
                   const qrDataParam = encodeURIComponent(JSON.stringify(qrPayload));
                   const qrUrl = `${window.location.origin}/temporary-vehicle?data=${qrDataParam}`;
 
