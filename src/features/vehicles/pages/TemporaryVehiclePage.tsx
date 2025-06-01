@@ -32,6 +32,7 @@ export function TemporaryVehiclePage() {
   const [uidDialogOpen, setUidDialogOpen] = useState(false);
   const [uidInput, setUidInput] = useState("");
   const [validatedUid, setValidatedUid] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (!dataParam) {
@@ -143,6 +144,7 @@ export function TemporaryVehiclePage() {
       }
 
       setIsProcessing(false);
+      setModalOpen(true);
     };
 
     processar();
@@ -181,17 +183,20 @@ export function TemporaryVehiclePage() {
     if (!veiculoInfo) return;
     setIsProcessing(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/finalizar`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          placa: veiculoInfo.placa,
-          ...(token ? {} : { uidMSK: validatedUid }),
-        }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/finalizar`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            placa: veiculoInfo.placa,
+            ...(token ? {} : { uidMSK: validatedUid }),
+          }),
+        }
+      );
 
       if (res.status === 200) {
         toast.success("Uso finalizado com sucesso!");
@@ -209,8 +214,9 @@ export function TemporaryVehiclePage() {
   }, [veiculoInfo, token, validatedUid]);
 
   const handleScanAnother = useCallback(() => {
+    setModalOpen(false);
     navigate("/");
-  }, []);
+  }, [navigate]);
 
   if (!veiculoInfo) {
     return null;
@@ -220,7 +226,7 @@ export function TemporaryVehiclePage() {
     <div className="flex flex-col items-center p-6 space-y-6">
       <h1 className="text-2xl font-semibold">Uso Temporário de Veículo</h1>
 
-      <Dialog open>
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>

@@ -304,8 +304,10 @@ export function DataTableVehicles() {
                     chassi: selectedVehicle.chassi,
                     status: selectedVehicle.status,
                   };
+                  const qrDataParam = encodeURIComponent(
+                    JSON.stringify(qrPayload)
+                  );
 
-                  const qrDataParam = encodeURIComponent(JSON.stringify(qrPayload));
                   const qrUrl = `${window.location.origin}/temporary-vehicle?data=${qrDataParam}`;
 
                   return (
@@ -314,7 +316,9 @@ export function DataTableVehicles() {
                     </div>
                   );
                 })()}
-                <p className="text-sm text-gray-600">Veículo: {selectedVehicle.placa}</p>
+                <p className="text-sm text-gray-600">
+                  Veículo: {selectedVehicle.placa}
+                </p>
                 <Button onClick={handlePrint}>Imprimir QR</Button>
               </>
             )}
@@ -326,7 +330,6 @@ export function DataTableVehicles() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
     </div>
   )
 }
