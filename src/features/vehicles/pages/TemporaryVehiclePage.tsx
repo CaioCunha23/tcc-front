@@ -12,6 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useTokenStore } from "@/hooks/useTokenStore";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2, Car, User, Hash, FileText, Activity } from "lucide-react";
 
 interface QRPayload {
   placa: string;
@@ -21,169 +23,112 @@ interface QRPayload {
   status: string;
 }
 
+type ProcessingState = 'idle' | 'validating' | 'starting' | 'finishing' | 'completed';
+
 export function TemporaryVehiclePage() {
   const navigate = useNavigate();
   const { token } = useTokenStore();
   const [searchParams] = useSearchParams();
   const dataParam = searchParams.get("data");
+
   const [veiculoInfo, setVeiculoInfo] = useState<QRPayload | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingState, setProcessingState] = useState<ProcessingState>('idle');
   const [hasActiveUse, setHasActiveUse] = useState<boolean | null>(null);
   const [uidDialogOpen, setUidDialogOpen] = useState(false);
   const [uidInput, setUidInput] = useState("");
   const [validatedUid, setValidatedUid] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [mainDialogOpen, setMainDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!dataParam) {
-      toast.error("QR Code inválido ou faltando parâmetro “data”.");
+      toast.error("QR Code inválido ou faltando parâmetro 'data'.");
       navigate("/");
       return;
     }
+
     try {
       const payload: QRPayload = JSON.parse(decodeURIComponent(dataParam));
-      if (
-        payload.placa &&
-        payload.modelo &&
-        payload.renavam &&
-        payload.chassi &&
-        payload.status
-      ) {
-        setVeiculoInfo(payload);
-      } else {
-        throw new Error("Campos faltando");
+      const requiredFields = ['placa', 'modelo', 'renavam', 'chassi', 'status'];
+      const missingFields = requiredFields.filter(field => !payload[field as keyof QRPayload]);
+
+      if (missingFields.length > 0) {
+        throw new Error(`Campos obrigatórios faltando: ${missingFields.join(', ')}`);
       }
-    } catch {
+
+      setVeiculoInfo(payload);
+    } catch (error) {
+      console.error('Erro ao decodificar QR:', error);
       toast.error("Não foi possível decodificar os dados do QR Code.");
       navigate("/");
     }
-  }, [dataParam]);
+  }, [dataParam, navigate]);
 
   useEffect(() => {
-    if (!veiculoInfo || isProcessing) return;
+    if (!veiculoInfo || processingState !== 'idle') return;
 
-    const processar = async () => {
-      setIsProcessing(true);
-
-      const iniciarUso = async (uidToUse: string) => {
-        try {
-          const res = await fetch(
-            `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/iniciar`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-              },
-              body: JSON.stringify({
-                placa: veiculoInfo.placa,
-                modelo: veiculoInfo.modelo,
-                renavam: veiculoInfo.renavam,
-                chassi: veiculoInfo.chassi,
-                status: veiculoInfo.status,
-                ...(token ? {} : { uidMSK: uidToUse }),
-              }),
-            }
-          );
-
-          if (res.status === 201) {
-            toast.success("Início de uso registrado com sucesso!");
-            setHasActiveUse(true);
-          } else if (res.status === 409) {
-            await finalizarUso(uidToUse);
-          } else {
-            const erro = await res.json();
-            toast.error(erro.error || "Erro ao iniciar uso.");
-          }
-        } catch (err) {
-          console.error(err);
-          toast.error("Falha de comunicação com o servidor.");
-        }
-      };
-
-      const finalizarUso = async (uidToUse: string) => {
-        try {
-          const res = await fetch(
-            `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/finalizar`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-              },
-              body: JSON.stringify({
-                placa: veiculoInfo.placa,
-                ...(token ? {} : { uidMSK: uidToUse }),
-              }),
-            }
-          );
-
-          if (res.status === 200) {
-            toast.success("Uso finalizado com sucesso!");
-            setHasActiveUse(false);
-          } else {
-            const erro = await res.json();
-            toast.error(erro.error || "Erro ao finalizar uso.");
-          }
-        } catch (err) {
-          console.error(err);
-          toast.error("Falha de comunicação com o servidor.");
-        }
-      };
-
-      if (token) {
-        await iniciarUso("");
-      } else {
-        if (validatedUid) {
-          await iniciarUso(validatedUid);
-        } else {
-          setUidDialogOpen(true);
-          setIsProcessing(false);
-          return;
-        }
+    const processVehicleUse = async () => {
+      if (!token && !validatedUid) {
+        setUidDialogOpen(true);
+        return;
       }
 
-      setIsProcessing(false);
-      setModalOpen(true);
+      setProcessingState('starting');
+      setMainDialogOpen(true);
+
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/iniciar`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify({
+              placa: veiculoInfo.placa,
+              modelo: veiculoInfo.modelo,
+              renavam: veiculoInfo.renavam,
+              chassi: veiculoInfo.chassi,
+              status: veiculoInfo.status,
+              ...(token ? {} : { uidMSK: validatedUid }),
+            }),
+          }
+        );
+
+        const result = await response.json();
+
+        if (response.status === 201) {
+          toast.success("Início de uso registrado com sucesso!");
+          setHasActiveUse(true);
+          setProcessingState('completed');
+        } else if (response.status === 409) {
+          if (result.action === 'finish') {
+            await finalizarUso();
+          } else {
+            toast.error(result.error || "Veículo já está em uso por outro colaborador.");
+            setProcessingState('completed');
+          }
+        } else {
+          toast.error(result.error || "Erro ao iniciar uso do veículo.");
+          setProcessingState('completed');
+        }
+      } catch (error) {
+        console.error("Erro ao processar uso:", error);
+        toast.error("Falha de comunicação com o servidor.");
+        setProcessingState('completed');
+      }
     };
 
-    processar();
-  }, [veiculoInfo, token, validatedUid]);
+    processVehicleUse();
+  }, [veiculoInfo, token, validatedUid, processingState]);
 
-  const handleConfirmUid = useCallback(async () => {
-    const uid = uidInput.trim();
-    if (!uid) {
-      toast.error("UID é obrigatório.");
-      return;
-    }
-    setIsProcessing(true);
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/colaborador/${uid}`
-      );
-      if (res.status === 200) {
-        setValidatedUid(uid);
-        setUidDialogOpen(false);
-        toast.success("UID validado. Prosseguindo...");
-      } else if (res.status === 404) {
-        toast.error("Colaborador não encontrado.");
-      } else {
-        const err = await res.json();
-        toast.error(err.error || "Erro ao validar UID.");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Falha de comunicação ao validar UID.");
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [uidInput]);
-
-  const handleManualFinish = useCallback(async () => {
+  const finalizarUso = async () => {
     if (!veiculoInfo) return;
-    setIsProcessing(true);
+
+    setProcessingState('finishing');
+
     try {
-      const res = await fetch(
+      const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/finalizar`,
         {
           method: "POST",
@@ -198,109 +143,216 @@ export function TemporaryVehiclePage() {
         }
       );
 
-      if (res.status === 200) {
+      const result = await response.json();
+
+      if (response.status === 200) {
         toast.success("Uso finalizado com sucesso!");
         setHasActiveUse(false);
+        setProcessingState('completed');
       } else {
-        const erro = await res.json();
-        toast.error(erro.error || "Erro ao finalizar uso.");
+        toast.error(result.error || "Erro ao finalizar uso do veículo.");
+        setProcessingState('completed');
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("Erro ao finalizar uso:", error);
       toast.error("Falha de comunicação com o servidor.");
-    } finally {
-      setIsProcessing(false);
+      setProcessingState('completed');
     }
-  }, [veiculoInfo, token, validatedUid]);
+  };
+
+  const handleConfirmUid = useCallback(async () => {
+    const uid = uidInput.trim();
+    if (!uid) {
+      toast.error("UID é obrigatório.");
+      return;
+    }
+
+    setProcessingState('validating');
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/colaborador/${uid}`
+      );
+
+      if (response.status === 200) {
+        setValidatedUid(uid);
+        setUidDialogOpen(false);
+        setProcessingState('idle');
+        toast.success("UID validado. Processando uso do veículo...");
+      } else if (response.status === 404) {
+        toast.error("Colaborador não encontrado.");
+        setProcessingState('completed');
+      } else {
+        const error = await response.json();
+        toast.error(error.error || "Erro ao validar UID.");
+        setProcessingState('completed');
+      }
+    } catch (error) {
+      console.error("Erro na validação:", error);
+      toast.error("Falha de comunicação ao validar UID.");
+      setProcessingState('completed');
+    }
+  }, [uidInput]);
 
   const handleScanAnother = useCallback(() => {
-    setModalOpen(false);
+    setMainDialogOpen(false);
     navigate("/");
   }, [navigate]);
 
+  const getDialogTitle = () => {
+    switch (processingState) {
+      case 'validating':
+        return "Validando usuário...";
+      case 'starting':
+        return "Iniciando uso...";
+      case 'finishing':
+        return "Finalizando uso...";
+      case 'completed':
+        return hasActiveUse === null
+          ? "Processado"
+          : hasActiveUse
+            ? "Veículo em Uso"
+            : "Uso Finalizado";
+      default:
+        return "Processando...";
+    }
+  };
+
+  const getDialogDescription = () => {
+    switch (processingState) {
+      case 'validating':
+        return "Verificando se o usuário existe no sistema...";
+      case 'starting':
+        return "Registrando início do uso do veículo...";
+      case 'finishing':
+        return "Registrando finalização do uso do veículo...";
+      case 'completed':
+        if (hasActiveUse === null) return "Processo concluído.";
+        return hasActiveUse
+          ? "Uso iniciado! Para finalizar, escaneie o mesmo QR novamente ou clique em 'Finalizar Uso'."
+          : "Uso finalizado! Você pode escanear outro QR Code.";
+      default:
+        return "Aguarde enquanto processamos sua solicitação...";
+    }
+  };
+
+  const isProcessing = ['validating', 'starting', 'finishing'].includes(processingState);
+
   if (!veiculoInfo) {
-    return null;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col items-center p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">Uso Temporário de Veículo</h1>
+    <div className="container mx-auto p-6 max-w-2xl">
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold mb-2">Uso Temporário de Veículo</h1>
+        <p className="text-muted-foreground">
+          Escaneou o QR Code do veículo? Vamos processar seu uso!
+        </p>
+      </div>
 
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Car className="w-5 h-5" />
+            Informações do Veículo
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-center gap-2">
+              <Hash className="w-4 h-4 text-muted-foreground" />
+              <span className="font-medium">Placa:</span>
+              <span>{veiculoInfo.placa}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Car className="w-4 h-4 text-muted-foreground" />
+              <span className="font-medium">Modelo:</span>
+              <span>{veiculoInfo.modelo}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <FileText className="w-4 h-4 text-muted-foreground" />
+              <span className="font-medium">Renavam:</span>
+              <span>{veiculoInfo.renavam}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Hash className="w-4 h-4 text-muted-foreground" />
+              <span className="font-medium">Chassi:</span>
+              <span className="font-mono text-sm">{veiculoInfo.chassi}</span>
+            </div>
+            <div className="flex items-center gap-2 md:col-span-2">
+              <Activity className="w-4 h-4 text-muted-foreground" />
+              <span className="font-medium">Status:</span>
+              <span className="px-2 py-1 bg-secondary rounded-md text-sm">
+                {veiculoInfo.status}
+              </span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Dialog open={mainDialogOpen} onOpenChange={setMainDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>
-              {isProcessing
-                ? "Aguarde..."
-                : hasActiveUse === null
-                  ? "Processando..."
-                  : hasActiveUse
-                    ? "Veículo em Uso"
-                    : "Uso Finalizado"}
+            <DialogTitle className="flex items-center gap-2">
+              {isProcessing && <Loader2 className="w-4 h-4 animate-spin" />}
+              {getDialogTitle()}
             </DialogTitle>
             <DialogDescription>
-              {isProcessing
-                ? "Estamos registrando sua solicitação..."
-                : hasActiveUse === null
-                  ? ""
-                  : hasActiveUse
-                    ? "Uso iniciado! Para finalizar, escaneie o mesmo QR novamente ou clique em “Finalizar Uso”."
-                    : "Uso finalizado! Caso queira, pode escanear outro QR."}
+              {getDialogDescription()}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-2 mt-4">
-            <p>
-              <strong>Placa:</strong> {veiculoInfo.placa}
-            </p>
-            <p>
-              <strong>Modelo:</strong> {veiculoInfo.modelo}
-            </p>
-            <p>
-              <strong>Renavam:</strong> {veiculoInfo.renavam}
-            </p>
-            <p>
-              <strong>Chassi:</strong> {veiculoInfo.chassi}
-            </p>
-            <p>
-              <strong>Status:</strong> {veiculoInfo.status}
-            </p>
-          </div>
-
-          <DialogFooter className="mt-6 flex justify-between">
-            {!isProcessing && hasActiveUse !== null && (
-              <Button variant="outline" onClick={handleScanAnother}>
-                Escanear outro QR
-              </Button>
-            )}
-            {!isProcessing && hasActiveUse && (
-              <Button onClick={handleManualFinish}>Finalizar Uso</Button>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            {processingState === 'completed' && (
+              <>
+                <Button variant="outline" onClick={handleScanAnother}>
+                  Escanear outro QR
+                </Button>
+                {hasActiveUse && (
+                  <Button onClick={finalizarUso}>
+                    Finalizar Uso
+                  </Button>
+                )}
+              </>
             )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       <Dialog open={uidDialogOpen} onOpenChange={setUidDialogOpen}>
-        <DialogContent className="max-w-xs">
+        <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Informe seu UID</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <User className="w-4 h-4" />
+              Informe seu UID
+            </DialogTitle>
             <DialogDescription>
               Você não está logado. Para prosseguir, digite seu UIDMSK:
             </DialogDescription>
           </DialogHeader>
-          <div className="mt-2">
+
+          <div className="space-y-4">
             <Input
-              placeholder="UIDMSK"
+              placeholder="Digite seu UIDMSK"
               value={uidInput}
               onChange={(e) => setUidInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleConfirmUid()}
             />
           </div>
-          <DialogFooter className="mt-4">
+
+          <DialogFooter>
             <Button
               onClick={handleConfirmUid}
               disabled={isProcessing || !uidInput.trim()}
+              className="w-full"
             >
-              {isProcessing ? "Validando..." : "Confirmar UID"}
+              {processingState === 'validating' && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+              {processingState === 'validating' ? "Validando..." : "Confirmar UID"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -426,7 +426,6 @@ export function useVehiclesColumns({ onVehicleUpdated, onGenerateQR }: UseVehicl
                 return <div className="flex justify-center">{dateValue}</div>;
             },
         },
-
         {
             id: "qr",
             header: "QR",
@@ -441,7 +440,6 @@ export function useVehiclesColumns({ onVehicleUpdated, onGenerateQR }: UseVehicl
             enableSorting: false,
             enableHiding: true,
         },
-
         {
             id: "actions",
             enableHiding: false,
