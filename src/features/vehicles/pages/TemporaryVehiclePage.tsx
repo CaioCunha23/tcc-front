@@ -156,7 +156,9 @@ export function TemporaryVehiclePage() {
     }
     setIsProcessing(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/colaborador/${uid}`);
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/colaborador/${uid}`
+      );
       if (res.status === 200) {
         setValidatedUid(uid);
         setUidDialogOpen(false);
