@@ -66,7 +66,7 @@ export function TemporaryVehiclePage() {
 
       const iniciarUso = async (uidToUse: string) => {
         try {
-          const res = await fetch("/historico-utilizacao/iniciar", {
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/iniciar`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -99,7 +99,7 @@ export function TemporaryVehiclePage() {
 
       const finalizarUso = async (uidToUse: string) => {
         try {
-          const res = await fetch("/historico-utilizacao/finalizar", {
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/finalizar`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -148,7 +148,7 @@ export function TemporaryVehiclePage() {
     }
     setIsProcessing(true);
     try {
-      const res = await fetch(`/colaboradores/${uid}`);
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/colaborador/${uid}`);
       if (res.status === 200) {
         setValidatedUid(uid);
         setUidDialogOpen(false);
@@ -171,7 +171,7 @@ export function TemporaryVehiclePage() {
     if (!veiculoInfo) return;
     setIsProcessing(true);
     try {
-      const res = await fetch("/historico-utilizacao/finalizar", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/finalizar`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
