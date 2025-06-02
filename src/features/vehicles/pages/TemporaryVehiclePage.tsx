@@ -41,27 +41,49 @@ export function TemporaryVehiclePage() {
 
   // Primeiro useEffect: validar e decodificar QR Code
   useEffect(() => {
+    console.log('=== PRIMEIRO USEEFFECT (QR DECODE) ===');
+    console.log('dataParam:', dataParam);
+    console.log('dataParam existe:', !!dataParam);
+
     if (!dataParam) {
+      console.log('❌ Sem dataParam - redirecionando');
       toast.error("QR Code inválido ou faltando parâmetro 'data'.");
       navigate("/");
       return;
     }
 
     try {
-      const payload: QRPayload = JSON.parse(decodeURIComponent(dataParam));
+      console.log('🔍 Tentando decodificar dataParam...');
+      console.log('dataParam raw:', dataParam);
+
+      const decoded = decodeURIComponent(dataParam);
+      console.log('Depois do decodeURIComponent:', decoded);
+
+      const payload = JSON.parse(decoded);
+      console.log('Depois do JSON.parse:', payload);
+      console.log('Tipo do payload:', typeof payload);
+
       const requiredFields = ['placa', 'modelo', 'renavam', 'chassi', 'status'];
-      const missingFields = requiredFields.filter(field => !payload[field as keyof QRPayload]);
+      const missingFields = requiredFields.filter(field => !payload[field]);
+      console.log('Campos obrigatórios:', requiredFields);
+      console.log('Campos que faltam:', missingFields);
 
       if (missingFields.length > 0) {
+        console.log('❌ Campos faltando:', missingFields);
         throw new Error(`Campos obrigatórios faltando: ${missingFields.join(', ')}`);
       }
 
+      console.log('✅ Payload válido, definindo veiculoInfo');
       setVeiculoInfo(payload);
+      console.log('veiculoInfo definido como:', payload);
     } catch (error) {
-      console.error('Erro ao decodificar QR:', error);
+      console.error('❌ Erro ao decodificar QR:', error);
+      console.error('Stack trace:', error);
       toast.error("Não foi possível decodificar os dados do QR Code.");
       navigate("/");
     }
+
+    console.log('=== FIM PRIMEIRO USEEFFECT ===');
   }, [dataParam, navigate]);
 
   // Segundo useEffect: verificar autenticação quando veículoInfo estiver disponível
