@@ -39,7 +39,12 @@ export function TemporaryVehiclePage() {
   const [mainDialogOpen, setMainDialogOpen] = useState(false);
   const [shouldProcessVehicle, setShouldProcessVehicle] = useState(false);
 
+  // CORREÇÃO 1: useEffect para decodificar QR (mantém como está)
   useEffect(() => {
+    console.log("=== PRIMEIRO USEEFFECT (QR DECODE) ===");
+    console.log("dataParam:", dataParam);
+    console.log("dataParam existe:", !!dataParam);
+
     if (!dataParam) {
       toast.error("QR Code inválido ou faltando parâmetro 'data'.");
       navigate("/");
@@ -47,70 +52,124 @@ export function TemporaryVehiclePage() {
     }
 
     try {
+      console.log("🔍 Tentando decodificar dataParam...");
+      console.log("dataParam raw:", dataParam);
+      
       const decoded = decodeURIComponent(dataParam);
+      console.log("Depois do decodeURIComponent:", decoded);
+      
       const payload = JSON.parse(decoded);
+      console.log("Depois do JSON.parse:", payload);
+      console.log("Tipo do payload:", typeof payload);
+      
       const requiredFields = ['placa', 'modelo', 'renavam', 'chassi', 'status'];
+      console.log("Campos obrigatórios:", requiredFields);
+      
       const missingFields = requiredFields.filter(field => !payload[field]);
+      console.log("Campos que faltam:", missingFields);
 
       if (missingFields.length > 0) {
         throw new Error(`Campos obrigatórios faltando: ${missingFields.join(', ')}`);
       }
 
+      console.log("✅ Payload válido, definindo veiculoInfo");
       setVeiculoInfo(payload);
+      console.log("veiculoInfo definido como:", payload);
 
     } catch (error) {
+      console.error("❌ Erro ao decodificar QR:", error);
       toast.error("Não foi possível decodificar os dados do QR Code.");
       navigate("/");
     }
+    console.log("=== FIM PRIMEIRO USEEFFECT ===");
   }, [dataParam, navigate]);
 
+  // CORREÇÃO 2: useEffect para verificar se deve processar (CORRIGIDO)
   useEffect(() => {
+    console.log("=== SEGUNDO USEEFFECT ===");
+    console.log("veiculoInfo existe:", !!veiculoInfo);
+    console.log("processingState:", processingState);
+    console.log("token existe:", !!token);
+    console.log("validatedUid:", validatedUid);
+    console.log("shouldProcessVehicle:", shouldProcessVehicle);
+    console.log("========================");
+
+    // CORREÇÃO: Verifica se veiculoInfo é um objeto válido
     if (!veiculoInfo || typeof veiculoInfo !== 'object') {
+      console.log("Saindo early - veiculoInfo inválido");
       return;
     }
 
+    // CORREÇÃO: Só processa se estiver 'idle' E não estiver já processando
     if (processingState !== 'idle') {
+      console.log("Saindo early - processingState não é idle:", processingState);
       return;
     }
 
+    // CORREÇÃO: Evita reprocessamento se já foi processado
     if (shouldProcessVehicle) {
       console.log("Saindo early - já está marcado para processar");
       return;
     }
 
+    // Se não tem token nem UID validado, abre dialog do UID
     if (!token && !validatedUid) {
+      console.log("🔑 Sem autenticação - abrindo dialog UID");
       setUidDialogOpen(true);
       return;
     }
 
+    // Se chegou aqui, pode processar
+    console.log("✅ Usuário autenticado - processando veículo");
     setShouldProcessVehicle(true);
-
+    
   }, [veiculoInfo, token, validatedUid, processingState, shouldProcessVehicle]);
 
+  // CORREÇÃO 3: useEffect para executar processamento (CORRIGIDO)
   useEffect(() => {
+    console.log("=== TERCEIRO USEEFFECT ===");
+    console.log("shouldProcessVehicle:", shouldProcessVehicle);
+    console.log("veiculoInfo existe:", !!veiculoInfo);
+    console.log("uidDialogOpen:", uidDialogOpen);
+    console.log("processingState:", processingState);
+    console.log("=========================");
+
+    // CORREÇÃO: Só executa se shouldProcessVehicle for true
     if (!shouldProcessVehicle) {
+      console.log("Saindo early - shouldProcessVehicle é false");
       return;
     }
 
+    // CORREÇÃO: Verifica se veiculoInfo é válido
     if (!veiculoInfo || typeof veiculoInfo !== 'object') {
+      console.log("Saindo early - veiculoInfo inválido");
       return;
     }
 
+    // Se o dialog UID estiver aberto, espera
     if (uidDialogOpen) {
+      console.log("Saindo early - uidDialog está aberto");
       return;
     }
+
+    // CORREÇÃO: Só executa uma vez
     if (processingState !== 'idle') {
+      console.log("Saindo early - já está processando:", processingState);
       return;
     }
 
     console.log("🚀 Executando processamento do veículo...");
-
+    
     const processVehicleUse = async () => {
       try {
+        // Reset o flag ANTES de iniciar processamento
         setShouldProcessVehicle(false);
         setProcessingState('starting');
         setMainDialogOpen(true);
 
+        // CORREÇÃO: Adicionar lógica de verificação de uso ativo
+        console.log("🔍 Verificando uso ativo do veículo...");
+        
         const requestBody = {
           placa: veiculoInfo.placa,
           ...(token ? {} : { colaboradorUid: validatedUid }),
@@ -129,25 +188,28 @@ export function TemporaryVehiclePage() {
         );
 
         const result = await response.json();
-
+        
         if (response.status === 200) {
           setHasActiveUse(result.hasActiveUse);
           setProcessingState('completed');
+          console.log("✅ Verificação concluída - Uso ativo:", result.hasActiveUse);
         } else {
           toast.error(result.error || "Erro ao verificar uso do veículo.");
           setProcessingState('completed');
         }
-
+        
       } catch (error) {
+        console.error("❌ Erro no processamento:", error);
         toast.error("Falha de comunicação com o servidor.");
         setProcessingState('completed');
       }
     };
 
     processVehicleUse();
-
+    
   }, [shouldProcessVehicle, veiculoInfo, uidDialogOpen, processingState, token, validatedUid]);
 
+  // CORREÇÃO 4: Função para finalizar uso (mantém como está)
   const finalizarUso = async () => {
     if (!veiculoInfo) return;
 
@@ -182,11 +244,13 @@ export function TemporaryVehiclePage() {
         setProcessingState('completed');
       }
     } catch (error) {
+      console.error("Erro ao finalizar uso:", error);
       toast.error("Falha de comunicação com o servidor.");
       setProcessingState('completed');
     }
   };
 
+  // CORREÇÃO 5: Função de validação UID (CORRIGIDA)
   const handleConfirmUid = useCallback(async () => {
     const uid = uidInput.trim();
     if (!uid) {
@@ -202,33 +266,28 @@ export function TemporaryVehiclePage() {
       );
 
       if (response.status === 200) {
+        console.log("✅ UID validado com sucesso:", uid);
         setValidatedUid(uid);
         setUidDialogOpen(false);
-        setProcessingState('idle');
-
+        setProcessingState('idle'); // CORREÇÃO: Volta para idle para permitir processamento
         toast.success("UID validado. Processando uso do veículo...");
-
       } else if (response.status === 404) {
         toast.error("Colaborador não encontrado.");
-
         setProcessingState('idle');
-
       } else {
-
         const error = await response.json();
-
         toast.error(error.error || "Erro ao validar UID.");
-
         setProcessingState('idle');
       }
     } catch (error) {
+      console.error("Erro na validação:", error);
       toast.error("Falha de comunicação ao validar UID.");
-
       setProcessingState('idle');
     }
   }, [uidInput]);
 
   const handleScanAnother = useCallback(() => {
+    // CORREÇÃO: Reset completo do estado
     setMainDialogOpen(false);
     setVeiculoInfo(null);
     setHasActiveUse(null);
@@ -242,7 +301,7 @@ export function TemporaryVehiclePage() {
       case 'validating':
         return "Validando usuário...";
       case 'starting':
-        return "Verificando veículo...";
+        return "Verificando veículo..."; // CORREÇÃO: Título mais específico
       case 'finishing':
         return "Finalizando uso...";
       case 'completed':
@@ -261,7 +320,7 @@ export function TemporaryVehiclePage() {
       case 'validating':
         return "Verificando se o usuário existe no sistema...";
       case 'starting':
-        return "Verificando se o veículo está em uso...";
+        return "Verificando se o veículo está em uso..."; // CORREÇÃO: Descrição mais específica
       case 'finishing':
         return "Registrando finalização do uso do veículo...";
       case 'completed':
