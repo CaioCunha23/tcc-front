@@ -48,29 +48,29 @@ export function TemporaryVehiclePage() {
 
     try {
       const decoded = decodeURIComponent(dataParam);
-      const payload: QRPayload = JSON.parse(decoded);
-      const requiredFields = ["placa", "modelo", "renavam", "chassi", "status"];
-      const missingFields = requiredFields.filter((f) => !(payload as any)[f]);
+      const payload = JSON.parse(decoded);
+      const requiredFields = ['placa', 'modelo', 'renavam', 'chassi', 'status'];
+      const missingFields = requiredFields.filter(field => !payload[field]);
 
       if (missingFields.length > 0) {
-        throw new Error(`Campos obrigatórios faltando: ${missingFields.join(", ")}`);
+        throw new Error(`Campos obrigatórios faltando: ${missingFields.join(', ')}`);
       }
 
       setVeiculoInfo(payload);
+
     } catch (error) {
       toast.error("Não foi possível decodificar os dados do QR Code.");
       navigate("/");
     }
+
   }, [dataParam, navigate]);
 
   useEffect(() => {
-    if (!veiculoInfo || processingState !== "idle") {
-      console.log("Saindo early - veiculoInfo ou processingState");
+    if (!veiculoInfo || processingState !== 'idle') {
       return;
     }
 
     if (!token && !validatedUid) {
-      console.log("🔍 Não tem token nem validatedUid - abrindo diálogo para UID");
       setUidDialogOpen(true);
       return;
     }
@@ -80,92 +80,21 @@ export function TemporaryVehiclePage() {
 
   useEffect(() => {
     if (!shouldProcessVehicle || !veiculoInfo) {
-      console.log("Saindo early - shouldProcessVehicle ou veiculoInfo");
       return;
     }
+
     if (uidDialogOpen) {
-      console.log("UID dialog está aberto - não processando ainda");
       return;
     }
 
     const processVehicleUse = async () => {
-      setProcessingState("starting");
+      setProcessingState('starting');
       setMainDialogOpen(true);
-
-      const commonHeaders: Record<string, string> = {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      };
-
-      try {
-        // 3.1) Tenta iniciar o uso
-        const bodyStart = {
-          placa: veiculoInfo.placa,
-          modelo: veiculoInfo.modelo,
-          renavam: veiculoInfo.renavam,
-          chassi: veiculoInfo.chassi,
-          status: veiculoInfo.status,
-          ...(token ? {} : { colaboradorUid: validatedUid }),
-        };
-        const resStart = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/iniciar`,
-          {
-            method: "POST",
-            headers: commonHeaders,
-            body: JSON.stringify(bodyStart),
-          }
-        );
-        const jsonStart = await resStart.json();
-
-        if (resStart.status === 201) {
-          // → Não havia uso ativo: backend criou o registro e virou “Em Uso”
-          toast.success("Uso iniciado com sucesso!");
-          // (Opcional) setHasActiveUse(true);
-        }
-        else if (resStart.status === 409 && jsonStart.action === "finish") {
-          // → Já havia uso ativo (dataFim = null). Então devemos finalizar agora:
-          const bodyFinish = {
-            placa: veiculoInfo.placa,
-            ...(token ? {} : { colaboradorUid: validatedUid }),
-          };
-          const resFinish = await fetch(
-            `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/finalizar`,
-            {
-              method: "POST",
-              headers: commonHeaders,
-              body: JSON.stringify(bodyFinish),
-            }
-          );
-          const jsonFinish = await resFinish.json();
-
-          if (resFinish.status === 200) {
-            toast.success("Uso finalizado com sucesso!");
-            // (Opcional) setHasActiveUse(false);
-          } else {
-            throw new Error(jsonFinish.error || "Erro ao finalizar uso");
-          }
-        }
-        else {
-          // Qualquer outro erro ao iniciar
-          throw new Error(jsonStart.error || "Erro ao iniciar uso");
-        }
-      } catch (err: any) {
-        console.error("Erro no processamento de uso:", err);
-        toast.error(err.message || "Falha ao processar uso do veículo.");
-      } finally {
-        setProcessingState("completed");
-      }
     };
 
     processVehicleUse();
     setShouldProcessVehicle(false);
-  }, [
-    shouldProcessVehicle,
-    veiculoInfo,
-    token,
-    validatedUid,
-    uidDialogOpen,
-  ]);
+  }, [shouldProcessVehicle, veiculoInfo, token, validatedUid, uidDialogOpen]);
 
   const finalizarUso = async () => {
     if (!veiculoInfo) return;
