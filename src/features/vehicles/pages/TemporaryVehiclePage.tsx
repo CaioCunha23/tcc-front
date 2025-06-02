@@ -176,7 +176,7 @@ export function TemporaryVehiclePage() {
         };
 
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/verificar-uso-ativo`,
+          `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/iniciar`,
           {
             method: "POST",
             headers: {
