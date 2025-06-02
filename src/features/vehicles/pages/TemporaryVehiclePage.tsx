@@ -14,6 +14,11 @@ import { toast } from "sonner";
 import { useTokenStore } from "@/hooks/useTokenStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Car, User, Hash, FileText, Activity } from "lucide-react";
+import {
+  useValidateCollaborator,
+  useStartVehicleUse,
+  useFinishVehicleUse
+} from "@/hooks/useVehicleOperations";
 
 interface QRPayload {
   placa: string;
@@ -23,7 +28,7 @@ interface QRPayload {
   status: string;
 }
 
-type ProcessingState = 'idle' | 'validating' | 'starting' | 'processing' | 'finishing' | 'completed';
+type VehicleUseStatus = 'not_started' | 'in_use_by_user' | 'in_use_by_other' | 'finished';
 
 export function TemporaryVehiclePage() {
   const navigate = useNavigate();
@@ -31,13 +36,14 @@ export function TemporaryVehiclePage() {
   const [searchParams] = useSearchParams();
   const dataParam = searchParams.get("data");
   const [veiculoInfo, setVeiculoInfo] = useState<QRPayload | null>(null);
-  const [processingState, setProcessingState] = useState<ProcessingState>('idle');
-  const [hasActiveUse, setHasActiveUse] = useState<boolean | null>(null);
   const [uidDialogOpen, setUidDialogOpen] = useState(false);
   const [uidInput, setUidInput] = useState("");
   const [validatedUid, setValidatedUid] = useState<string | null>(null);
   const [mainDialogOpen, setMainDialogOpen] = useState(false);
-  const [shouldProcessVehicle, setShouldProcessVehicle] = useState(false);
+  const [vehicleUseStatus, setVehicleUseStatus] = useState<VehicleUseStatus>('not_started');
+  const validateCollaborator = useValidateCollaborator();
+  const startVehicleUse = useStartVehicleUse(token);
+  const finishVehicleUse = useFinishVehicleUse(token);
 
   useEffect(() => {
     if (!dataParam) {
@@ -58,222 +64,123 @@ export function TemporaryVehiclePage() {
 
       setVeiculoInfo(payload);
 
+      if (!token) {
+        setUidDialogOpen(true);
+      } else {
+        processVehicleUse(payload);
+      }
+
     } catch (error) {
       toast.error("Não foi possível decodificar os dados do QR Code.");
       navigate("/");
     }
-  }, [dataParam, navigate]);
+  }, [dataParam, navigate, token]);
 
-  useEffect(() => {
-    if (!veiculoInfo || typeof veiculoInfo !== 'object') {
-      return;
-    }
+  const processVehicleUse = useCallback((vehicleData: QRPayload, uid?: string) => {
+    setMainDialogOpen(true);
 
-    if (processingState !== 'idle') {
-      return;
-    }
-
-    if (shouldProcessVehicle) {
-      return;
-    }
-
-    if (!token && !validatedUid) {
-      setUidDialogOpen(true);
-      return;
-    }
-
-    setShouldProcessVehicle(true);
-
-  }, [veiculoInfo, token, validatedUid, processingState, shouldProcessVehicle]);
-
-  useEffect(() => {
-    console.log("=== TERCEIRO USEEFFECT ===");
-
-    if (!shouldProcessVehicle || !veiculoInfo || uidDialogOpen || processingState !== 'idle') {
-      console.log("Saindo early - condições não atendidas");
-      return;
-    }
-
-    console.log("🚀 Verificando/Iniciando uso do veículo...");
-
-    const processVehicleUse = async () => {
-      try {
-        setShouldProcessVehicle(false);
-        setProcessingState('starting');
-        setMainDialogOpen(true);
-
-        const requestBody = {
-          placa: veiculoInfo.placa,
-          modelo: veiculoInfo.modelo,
-          renavam: veiculoInfo.renavam,
-          chassi: veiculoInfo.chassi,
-          status: veiculoInfo.status,
-          ...(token ? {} : { colaboradorUid: validatedUid }),
-        };
-
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/iniciar`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify(requestBody),
-          }
-        );
-
-        const result = await response.json();
-
-        if (response.status === 201) {
-          setHasActiveUse(true);
-          setProcessingState('completed');
-          toast.success("Uso do veículo iniciado com sucesso!");
-
-        } else if (response.status === 409 && result.action === "finish") {
-          setHasActiveUse(true);
-          setProcessingState('completed');
-          toast.info("Você já está usando este veículo. Clique em 'Finalizar Uso' se desejar parar.");
-
-        } else if (response.status === 409) {
-          setHasActiveUse(true);
-          setProcessingState('completed');
-          toast.error(result.error || "Veículo já está em uso por outro colaborador.");
-
-        } else {
-          toast.error(result.error || "Erro ao verificar uso do veículo.");
-          setProcessingState('completed');
-        }
-
-      } catch (error) {
-        toast.error("Falha de comunicação com o servidor.");
-        setProcessingState('completed');
-      }
+    const payload = {
+      placa: vehicleData.placa,
+      modelo: vehicleData.modelo,
+      renavam: vehicleData.renavam,
+      chassi: vehicleData.chassi,
+      status: vehicleData.status,
+      ...(uid ? { colaboradorUid: uid } : {})
     };
 
-    processVehicleUse();
-  }, [shouldProcessVehicle, veiculoInfo, uidDialogOpen, processingState, token, validatedUid]);
-
-  const finalizarUso = async () => {
-    if (!veiculoInfo) return;
-
-    setProcessingState('finishing');
-
-    const requestBody = {
-      placa: veiculoInfo.placa,
-      ...(token ? {} : { colaboradorUid: validatedUid }),
-    };
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/finalizar`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify(requestBody),
+    startVehicleUse.mutate(payload, {
+      onSuccess: (result) => {
+        if (result.status === 201) {
+          setVehicleUseStatus('in_use_by_user');
+        } else if (result.status === 409 && result.data.action === "finish") {
+          setVehicleUseStatus('in_use_by_user');
+        } else if (result.status === 409) {
+          setVehicleUseStatus('in_use_by_other');
         }
-      );
-
-      const result = await response.json();
-
-      if (response.status === 200) {
-        toast.success("Uso finalizado com sucesso!");
-        setHasActiveUse(false);
-        setProcessingState('completed');
-      } else {
-        toast.error(result.error || "Erro ao finalizar uso do veículo.");
-        setProcessingState('completed');
       }
-    } catch (error) {
-      console.error("Erro ao finalizar uso:", error);
-      toast.error("Falha de comunicação com o servidor.");
-      setProcessingState('completed');
-    }
-  };
+    });
+  }, [startVehicleUse]);
 
-  const handleConfirmUid = useCallback(async () => {
+  const handleConfirmUid = useCallback(() => {
     const uid = uidInput.trim();
     if (!uid) {
       toast.error("UID é obrigatório.");
       return;
     }
 
-    setProcessingState('validating');
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/colaborador/${uid}`
-      );
-
-      if (response.status === 200) {
-        console.log("✅ UID validado com sucesso:", uid);
+    validateCollaborator.mutate(uid, {
+      onSuccess: () => {
         setValidatedUid(uid);
         setUidDialogOpen(false);
-        setProcessingState('idle');
-        toast.success("UID validado. Processando uso do veículo...");
-      } else if (response.status === 404) {
-        toast.error("Colaborador não encontrado.");
-        setProcessingState('idle');
-      } else {
-        const error = await response.json();
-        toast.error(error.error || "Erro ao validar UID.");
-        setProcessingState('idle');
+
+        if (veiculoInfo) {
+          processVehicleUse(veiculoInfo, uid);
+        }
       }
-    } catch (error) {
-      console.error("Erro na validação:", error);
-      toast.error("Falha de comunicação ao validar UID.");
-      setProcessingState('idle');
-    }
-  }, [uidInput]);
+    });
+  }, [uidInput, validateCollaborator, veiculoInfo, processVehicleUse]);
+
+  const handleFinishUse = useCallback(() => {
+    if (!veiculoInfo) return;
+
+    const payload = {
+      placa: veiculoInfo.placa,
+      ...(validatedUid ? { colaboradorUid: validatedUid } : {})
+    };
+
+    finishVehicleUse.mutate(payload, {
+      onSuccess: () => {
+        setVehicleUseStatus('finished');
+      }
+    });
+  }, [veiculoInfo, validatedUid, finishVehicleUse]);
 
   const handleScanAnother = useCallback(() => {
     setMainDialogOpen(false);
     setVeiculoInfo(null);
-    setHasActiveUse(null);
-    setProcessingState('idle');
-    setShouldProcessVehicle(false);
+    setVehicleUseStatus('not_started');
+    setValidatedUid(null);
+    setUidInput("");
     navigate("/");
   }, [navigate]);
 
+  const isValidatingUid = validateCollaborator.isPending;
+  const isProcessingVehicle = startVehicleUse.isPending;
+  const isFinishingUse = finishVehicleUse.isPending;
+  const isAnyOperationPending = isValidatingUid || isProcessingVehicle || isFinishingUse;
+
   const getDialogTitle = () => {
-    switch (processingState) {
-      case 'validating':
-        return "Validando usuário...";
-      case 'starting':
-        return "Verificando veículo...";
-      case 'finishing':
-        return "Finalizando uso...";
-      case 'completed':
-        return hasActiveUse === null
-          ? "Processado"
-          : hasActiveUse
-            ? "Veículo em Uso"
-            : "Uso Finalizado";
+    if (isValidatingUid) return "Validando usuário...";
+    if (isProcessingVehicle) return "Verificando veículo...";
+    if (isFinishingUse) return "Finalizando uso...";
+
+    switch (vehicleUseStatus) {
+      case 'in_use_by_user':
+        return "Veículo em Uso";
+      case 'in_use_by_other':
+        return "Veículo Ocupado";
+      case 'finished':
+        return "Uso Finalizado";
       default:
         return "Processando...";
     }
   };
 
   const getDialogDescription = () => {
-    switch (processingState) {
-      case 'starting':
-        return "Verificando status do veículo...";
-      case 'finishing':
-        return "Finalizando uso do veículo...";
-      case 'completed':
-        if (hasActiveUse === true) {
-          return "Veículo está em uso. Você pode finalizar se for o usuário atual.";
-        }
-        return "Uso iniciado com sucesso!";
+    if (isProcessingVehicle) return "Verificando status do veículo...";
+    if (isFinishingUse) return "Finalizando uso do veículo...";
+
+    switch (vehicleUseStatus) {
+      case 'in_use_by_user':
+        return "Veículo está em uso por você. Clique em 'Finalizar Uso' quando terminar.";
+      case 'in_use_by_other':
+        return "Veículo já está sendo usado por outro colaborador.";
+      case 'finished':
+        return "Uso finalizado com sucesso!";
       default:
         return "Processando solicitação...";
     }
   };
-
-  const isProcessing = ['validating', 'starting', 'finishing'].includes(processingState);
 
   if (!veiculoInfo) {
     return (
@@ -336,7 +243,7 @@ export function TemporaryVehiclePage() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              {isProcessing && <Loader2 className="w-4 h-4 animate-spin" />}
+              {isAnyOperationPending && <Loader2 className="w-4 h-4 animate-spin" />}
               {getDialogTitle()}
             </DialogTitle>
             <DialogDescription>
@@ -345,13 +252,13 @@ export function TemporaryVehiclePage() {
           </DialogHeader>
 
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            {processingState === 'completed' && (
+            {!isAnyOperationPending && (
               <>
                 <Button variant="outline" onClick={handleScanAnother}>
                   Escanear outro QR
                 </Button>
-                {hasActiveUse && (
-                  <Button onClick={finalizarUso}>
+                {vehicleUseStatus === 'in_use_by_user' && (
+                  <Button onClick={handleFinishUse}>
                     Finalizar Uso
                   </Button>
                 )}
@@ -380,26 +287,23 @@ export function TemporaryVehiclePage() {
               onChange={(e) => setUidInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleConfirmUid()}
               className="w-full"
+              disabled={isValidatingUid}
             />
           </div>
 
           <DialogFooter>
             <Button
               onClick={handleConfirmUid}
-              disabled={isProcessing || !uidInput.trim()}
+              disabled={isValidatingUid || !uidInput.trim()}
               className="w-full"
             >
-              {processingState === 'completed' && (
+              {isValidatingUid ? (
                 <>
-                  <Button variant="outline" onClick={handleScanAnother}>
-                    Escanear outro QR
-                  </Button>
-                  {hasActiveUse && (
-                    <Button onClick={finalizarUso}>
-                      Finalizar Uso
-                    </Button>
-                  )}
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  Validando...
                 </>
+              ) : (
+                "Confirmar"
               )}
             </Button>
           </DialogFooter>
