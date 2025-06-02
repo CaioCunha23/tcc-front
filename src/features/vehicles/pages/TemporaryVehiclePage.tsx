@@ -23,7 +23,7 @@ interface QRPayload {
   status: string;
 }
 
-type ProcessingState = 'idle' | 'validating' | 'starting' | 'finishing' | 'completed';
+type ProcessingState = 'idle' | 'validating' | 'starting' | 'processing' | 'finishing' | 'completed';
 
 export function TemporaryVehiclePage() {
   const navigate = useNavigate();
@@ -62,11 +62,19 @@ export function TemporaryVehiclePage() {
       toast.error("Não foi possível decodificar os dados do QR Code.");
       navigate("/");
     }
-
   }, [dataParam, navigate]);
 
   useEffect(() => {
-    if (!veiculoInfo || processingState !== 'idle') {
+    if (!veiculoInfo || typeof veiculoInfo !== 'object') {
+      return;
+    }
+
+    if (processingState !== 'idle') {
+      return;
+    }
+
+    if (shouldProcessVehicle) {
+      console.log("Saindo early - já está marcado para processar");
       return;
     }
 
@@ -76,25 +84,69 @@ export function TemporaryVehiclePage() {
     }
 
     setShouldProcessVehicle(true);
-  }, [veiculoInfo, token, validatedUid, processingState]);
+
+  }, [veiculoInfo, token, validatedUid, processingState, shouldProcessVehicle]);
 
   useEffect(() => {
-    if (!shouldProcessVehicle || !veiculoInfo) {
+    if (!shouldProcessVehicle) {
+      return;
+    }
+
+    if (!veiculoInfo || typeof veiculoInfo !== 'object') {
       return;
     }
 
     if (uidDialogOpen) {
       return;
     }
+    if (processingState !== 'idle') {
+      return;
+    }
+
+    console.log("🚀 Executando processamento do veículo...");
 
     const processVehicleUse = async () => {
-      setProcessingState('starting');
-      setMainDialogOpen(true);
+      try {
+        setShouldProcessVehicle(false);
+        setProcessingState('starting');
+        setMainDialogOpen(true);
+
+        const requestBody = {
+          placa: veiculoInfo.placa,
+          ...(token ? {} : { colaboradorUid: validatedUid }),
+        };
+
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/verificar-uso-ativo`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify(requestBody),
+          }
+        );
+
+        const result = await response.json();
+
+        if (response.status === 200) {
+          setHasActiveUse(result.hasActiveUse);
+          setProcessingState('completed');
+        } else {
+          toast.error(result.error || "Erro ao verificar uso do veículo.");
+          setProcessingState('completed');
+        }
+
+      } catch (error) {
+        toast.error("Falha de comunicação com o servidor.");
+        setProcessingState('completed');
+      }
     };
 
     processVehicleUse();
-    setShouldProcessVehicle(false);
-  }, [shouldProcessVehicle, veiculoInfo, token, validatedUid, uidDialogOpen]);
+
+  }, [shouldProcessVehicle, veiculoInfo, uidDialogOpen, processingState, token, validatedUid]);
 
   const finalizarUso = async () => {
     if (!veiculoInfo) return;
@@ -130,7 +182,6 @@ export function TemporaryVehiclePage() {
         setProcessingState('completed');
       }
     } catch (error) {
-      console.error("Erro ao finalizar uso:", error);
       toast.error("Falha de comunicação com o servidor.");
       setProcessingState('completed');
     }
@@ -154,24 +205,35 @@ export function TemporaryVehiclePage() {
         setValidatedUid(uid);
         setUidDialogOpen(false);
         setProcessingState('idle');
+
         toast.success("UID validado. Processando uso do veículo...");
+
       } else if (response.status === 404) {
         toast.error("Colaborador não encontrado.");
+
         setProcessingState('idle');
+
       } else {
+
         const error = await response.json();
+
         toast.error(error.error || "Erro ao validar UID.");
+
         setProcessingState('idle');
       }
     } catch (error) {
-      console.error("Erro na validação:", error);
       toast.error("Falha de comunicação ao validar UID.");
+
       setProcessingState('idle');
     }
   }, [uidInput]);
 
   const handleScanAnother = useCallback(() => {
     setMainDialogOpen(false);
+    setVeiculoInfo(null);
+    setHasActiveUse(null);
+    setProcessingState('idle');
+    setShouldProcessVehicle(false);
     navigate("/");
   }, [navigate]);
 
@@ -180,7 +242,7 @@ export function TemporaryVehiclePage() {
       case 'validating':
         return "Validando usuário...";
       case 'starting':
-        return "Iniciando uso...";
+        return "Verificando veículo...";
       case 'finishing':
         return "Finalizando uso...";
       case 'completed':
@@ -199,7 +261,7 @@ export function TemporaryVehiclePage() {
       case 'validating':
         return "Verificando se o usuário existe no sistema...";
       case 'starting':
-        return "Registrando início do uso do veículo...";
+        return "Verificando se o veículo está em uso...";
       case 'finishing':
         return "Registrando finalização do uso do veículo...";
       case 'completed':
