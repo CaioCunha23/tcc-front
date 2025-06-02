@@ -38,7 +38,9 @@ export function TemporaryVehiclePage() {
   const [uidInput, setUidInput] = useState("");
   const [validatedUid, setValidatedUid] = useState<string | null>(null);
   const [mainDialogOpen, setMainDialogOpen] = useState(false);
+  const [shouldProcessVehicle, setShouldProcessVehicle] = useState(false);
 
+  // Primeiro useEffect: validar e decodificar QR Code
   useEffect(() => {
     if (!dataParam) {
       toast.error("QR Code inválido ou faltando parâmetro 'data'.");
@@ -63,17 +65,47 @@ export function TemporaryVehiclePage() {
     }
   }, [dataParam, navigate]);
 
+  // Segundo useEffect: verificar autenticação quando veículoInfo estiver disponível
   useEffect(() => {
     if (!veiculoInfo || processingState !== 'idle') return;
 
-    const processVehicleUse = async () => {
-      if (!token && !validatedUid) {
-        setUidDialogOpen(true);
-        return;
-      }
+    // Se não tem token e não tem UID validado, pedir UID
+    if (!token && !validatedUid) {
+      setUidDialogOpen(true);
+      return;
+    }
 
+    // Se chegou aqui, está autenticado (por token ou UID validado)
+    setShouldProcessVehicle(true);
+  }, [veiculoInfo, token, validatedUid, processingState]);
+
+  // Terceiro useEffect: processar veículo apenas quando autorizado
+  useEffect(() => {
+    if (!shouldProcessVehicle || !veiculoInfo) return;
+
+    const processVehicleUse = async () => {
       setProcessingState('starting');
       setMainDialogOpen(true);
+
+      // DEBUG: Log dos dados que serão enviados
+      const requestBody = {
+        placa: veiculoInfo.placa,
+        modelo: veiculoInfo.modelo,
+        renavam: veiculoInfo.renavam,
+        chassi: veiculoInfo.chassi,
+        status: veiculoInfo.status,
+        ...(token ? {} : { colaboradorUid: validatedUid }),
+      };
+
+      console.log('=== DEBUG FRONTEND ===');
+      console.log('Token existe:', !!token);
+      console.log('ValidatedUid:', validatedUid);
+      console.log('Request body que será enviado:', requestBody);
+      console.log('Headers que serão enviados:', {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      });
+      console.log('=====================');
 
       try {
         const response = await fetch(
@@ -84,18 +116,16 @@ export function TemporaryVehiclePage() {
               "Content-Type": "application/json",
               ...(token ? { Authorization: `Bearer ${token}` } : {}),
             },
-            body: JSON.stringify({
-              placa: veiculoInfo.placa,
-              modelo: veiculoInfo.modelo,
-              renavam: veiculoInfo.renavam,
-              chassi: veiculoInfo.chassi,
-              status: veiculoInfo.status,
-              ...(token ? {} : { uidMSK: validatedUid }),
-            }),
+            body: JSON.stringify(requestBody),
           }
         );
 
         const result = await response.json();
+
+        console.log('=== RESPOSTA DO BACKEND ===');
+        console.log('Status:', response.status);
+        console.log('Resposta:', result);
+        console.log('===========================');
 
         if (response.status === 201) {
           toast.success("Início de uso registrado com sucesso!");
@@ -120,12 +150,25 @@ export function TemporaryVehiclePage() {
     };
 
     processVehicleUse();
-  }, [veiculoInfo, token, validatedUid, processingState]);
+    setShouldProcessVehicle(false); // Evitar reprocessamento
+  }, [shouldProcessVehicle, veiculoInfo, token, validatedUid]);
 
   const finalizarUso = async () => {
     if (!veiculoInfo) return;
 
     setProcessingState('finishing');
+
+    // DEBUG: Log dos dados que serão enviados
+    const requestBody = {
+      placa: veiculoInfo.placa,
+      ...(token ? {} : { colaboradorUid: validatedUid }),
+    };
+
+    console.log('=== DEBUG FINALIZAR USO ===');
+    console.log('Token existe:', !!token);
+    console.log('ValidatedUid:', validatedUid);
+    console.log('Request body finalizar:', requestBody);
+    console.log('===========================');
 
     try {
       const response = await fetch(
@@ -136,10 +179,7 @@ export function TemporaryVehiclePage() {
             "Content-Type": "application/json",
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          body: JSON.stringify({
-            placa: veiculoInfo.placa,
-            ...(token ? {} : { uidMSK: validatedUid }),
-          }),
+          body: JSON.stringify(requestBody),
         }
       );
 
@@ -177,20 +217,20 @@ export function TemporaryVehiclePage() {
       if (response.status === 200) {
         setValidatedUid(uid);
         setUidDialogOpen(false);
-        setProcessingState('idle');
+        setProcessingState('idle'); // Volta para idle para permitir o processamento
         toast.success("UID validado. Processando uso do veículo...");
       } else if (response.status === 404) {
         toast.error("Colaborador não encontrado.");
-        setProcessingState('completed');
+        setProcessingState('idle'); // Volta para idle para permitir nova tentativa
       } else {
         const error = await response.json();
         toast.error(error.error || "Erro ao validar UID.");
-        setProcessingState('completed');
+        setProcessingState('idle'); // Volta para idle para permitir nova tentativa
       }
     } catch (error) {
       console.error("Erro na validação:", error);
       toast.error("Falha de comunicação ao validar UID.");
-      setProcessingState('completed');
+      setProcessingState('idle'); // Volta para idle para permitir nova tentativa
     }
   }, [uidInput]);
 
