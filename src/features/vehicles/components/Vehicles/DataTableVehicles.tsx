@@ -305,19 +305,9 @@ export function DataTableVehicles() {
                     status: selectedVehicle.status,
                   };
 
-                  console.log('=== GERAÇÃO DO QR CODE ===');
-                  console.log('selectedVehicle:', selectedVehicle);
-                  console.log('qrPayload:', qrPayload);
-
                   const qrPayloadString = JSON.stringify(qrPayload);
-                  console.log('qrPayload como string:', qrPayloadString);
-
                   const qrDataParam = encodeURIComponent(qrPayloadString);
-                  console.log('Depois do encodeURIComponent:', qrDataParam);
-
                   const qrUrl = `${window.location.origin}/temporary-vehicle?data=${qrDataParam}`;
-                  console.log('URL final do QR:', qrUrl);
-                  console.log('========================');
 
                   return (
                     <div className="bg-white p-4 print-area">

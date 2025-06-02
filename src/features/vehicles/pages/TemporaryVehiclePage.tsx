@@ -39,126 +39,143 @@ export function TemporaryVehiclePage() {
   const [mainDialogOpen, setMainDialogOpen] = useState(false);
   const [shouldProcessVehicle, setShouldProcessVehicle] = useState(false);
 
-  // Primeiro useEffect: validar e decodificar QR Code
   useEffect(() => {
-    console.log('=== PRIMEIRO USEEFFECT (QR DECODE) ===');
-    console.log('dataParam:', dataParam);
-    console.log('dataParam existe:', !!dataParam);
-
     if (!dataParam) {
-      console.log('❌ Sem dataParam - redirecionando');
       toast.error("QR Code inválido ou faltando parâmetro 'data'.");
       navigate("/");
       return;
     }
 
     try {
-      console.log('🔍 Tentando decodificar dataParam...');
-      console.log('dataParam raw:', dataParam);
-
       const decoded = decodeURIComponent(dataParam);
-      console.log('Depois do decodeURIComponent:', decoded);
-
-      const payload = JSON.parse(decoded);
-      console.log('Depois do JSON.parse:', payload);
-      console.log('Tipo do payload:', typeof payload);
-
-      const requiredFields = ['placa', 'modelo', 'renavam', 'chassi', 'status'];
-      const missingFields = requiredFields.filter(field => !payload[field]);
-      console.log('Campos obrigatórios:', requiredFields);
-      console.log('Campos que faltam:', missingFields);
+      const payload: QRPayload = JSON.parse(decoded);
+      const requiredFields = ["placa", "modelo", "renavam", "chassi", "status"];
+      const missingFields = requiredFields.filter((f) => !(payload as any)[f]);
 
       if (missingFields.length > 0) {
-        console.log('❌ Campos faltando:', missingFields);
-        throw new Error(`Campos obrigatórios faltando: ${missingFields.join(', ')}`);
+        throw new Error(`Campos obrigatórios faltando: ${missingFields.join(", ")}`);
       }
 
-      console.log('✅ Payload válido, definindo veiculoInfo');
       setVeiculoInfo(payload);
-      console.log('veiculoInfo definido como:', payload);
     } catch (error) {
-      console.error('❌ Erro ao decodificar QR:', error);
-      console.error('Stack trace:', error);
       toast.error("Não foi possível decodificar os dados do QR Code.");
       navigate("/");
     }
-
-    console.log('=== FIM PRIMEIRO USEEFFECT ===');
   }, [dataParam, navigate]);
 
-  // Segundo useEffect: verificar autenticação quando veículoInfo estiver disponível
   useEffect(() => {
-    console.log('=== SEGUNDO USEEFFECT ===');
-    console.log('veiculoInfo existe:', !!veiculoInfo);
-    console.log('processingState:', processingState);
-    console.log('token existe:', !!token);
-    console.log('validatedUid:', validatedUid);
-    console.log('========================');
-
-    if (!veiculoInfo || processingState !== 'idle') {
-      console.log('Saindo early - veiculoInfo ou processingState');
+    if (!veiculoInfo || processingState !== "idle") {
+      console.log("Saindo early - veiculoInfo ou processingState");
       return;
     }
 
-    // Se não tem token e não tem UID validado, pedir UID
     if (!token && !validatedUid) {
-      console.log('🔍 Não tem token nem validatedUid - deveria abrir dialog');
-      console.log('Abrindo UID dialog...');
+      console.log("🔍 Não tem token nem validatedUid - abrindo diálogo para UID");
       setUidDialogOpen(true);
       return;
     }
 
-    console.log('✅ Usuário autenticado - processando veículo');
-    // Se chegou aqui, está autenticado (por token ou UID validado)
     setShouldProcessVehicle(true);
   }, [veiculoInfo, token, validatedUid, processingState]);
 
-  // Terceiro useEffect: processar veículo apenas quando autorizado
   useEffect(() => {
-    console.log('=== TERCEIRO USEEFFECT ===');
-    console.log('shouldProcessVehicle:', shouldProcessVehicle);
-    console.log('veiculoInfo existe:', !!veiculoInfo);
-    console.log('uidDialogOpen:', uidDialogOpen);
-    console.log('=========================');
-
     if (!shouldProcessVehicle || !veiculoInfo) {
-      console.log('Saindo early - shouldProcessVehicle ou veiculoInfo');
+      console.log("Saindo early - shouldProcessVehicle ou veiculoInfo");
       return;
     }
-
-    // ✅ Não processar se o dialog de UID estiver aberto
     if (uidDialogOpen) {
-      console.log('UID dialog está aberto - não processando ainda');
+      console.log("UID dialog está aberto - não processando ainda");
       return;
     }
 
     const processVehicleUse = async () => {
-      setProcessingState('starting');
+      setProcessingState("starting");
       setMainDialogOpen(true);
 
-      // resto do código permanece igual...
+      const commonHeaders: Record<string, string> = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      try {
+        // 3.1) Tenta iniciar o uso
+        const bodyStart = {
+          placa: veiculoInfo.placa,
+          modelo: veiculoInfo.modelo,
+          renavam: veiculoInfo.renavam,
+          chassi: veiculoInfo.chassi,
+          status: veiculoInfo.status,
+          ...(token ? {} : { colaboradorUid: validatedUid }),
+        };
+        const resStart = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/iniciar`,
+          {
+            method: "POST",
+            headers: commonHeaders,
+            body: JSON.stringify(bodyStart),
+          }
+        );
+        const jsonStart = await resStart.json();
+
+        if (resStart.status === 201) {
+          // → Não havia uso ativo: backend criou o registro e virou “Em Uso”
+          toast.success("Uso iniciado com sucesso!");
+          // (Opcional) setHasActiveUse(true);
+        }
+        else if (resStart.status === 409 && jsonStart.action === "finish") {
+          // → Já havia uso ativo (dataFim = null). Então devemos finalizar agora:
+          const bodyFinish = {
+            placa: veiculoInfo.placa,
+            ...(token ? {} : { colaboradorUid: validatedUid }),
+          };
+          const resFinish = await fetch(
+            `${import.meta.env.VITE_BACKEND_URL}/historico-utilizacao/finalizar`,
+            {
+              method: "POST",
+              headers: commonHeaders,
+              body: JSON.stringify(bodyFinish),
+            }
+          );
+          const jsonFinish = await resFinish.json();
+
+          if (resFinish.status === 200) {
+            toast.success("Uso finalizado com sucesso!");
+            // (Opcional) setHasActiveUse(false);
+          } else {
+            throw new Error(jsonFinish.error || "Erro ao finalizar uso");
+          }
+        }
+        else {
+          // Qualquer outro erro ao iniciar
+          throw new Error(jsonStart.error || "Erro ao iniciar uso");
+        }
+      } catch (err: any) {
+        console.error("Erro no processamento de uso:", err);
+        toast.error(err.message || "Falha ao processar uso do veículo.");
+      } finally {
+        setProcessingState("completed");
+      }
     };
 
     processVehicleUse();
     setShouldProcessVehicle(false);
-  }, [shouldProcessVehicle, veiculoInfo, token, validatedUid, uidDialogOpen]);
+  }, [
+    shouldProcessVehicle,
+    veiculoInfo,
+    token,
+    validatedUid,
+    uidDialogOpen,
+  ]);
 
   const finalizarUso = async () => {
     if (!veiculoInfo) return;
 
     setProcessingState('finishing');
 
-    // DEBUG: Log dos dados que serão enviados
     const requestBody = {
       placa: veiculoInfo.placa,
       ...(token ? {} : { colaboradorUid: validatedUid }),
     };
-
-    console.log('=== DEBUG FINALIZAR USO ===');
-    console.log('Token existe:', !!token);
-    console.log('ValidatedUid:', validatedUid);
-    console.log('Request body finalizar:', requestBody);
-    console.log('===========================');
 
     try {
       const response = await fetch(
@@ -207,20 +224,20 @@ export function TemporaryVehiclePage() {
       if (response.status === 200) {
         setValidatedUid(uid);
         setUidDialogOpen(false);
-        setProcessingState('idle'); // Volta para idle para permitir o processamento
+        setProcessingState('idle');
         toast.success("UID validado. Processando uso do veículo...");
       } else if (response.status === 404) {
         toast.error("Colaborador não encontrado.");
-        setProcessingState('idle'); // Volta para idle para permitir nova tentativa
+        setProcessingState('idle');
       } else {
         const error = await response.json();
         toast.error(error.error || "Erro ao validar UID.");
-        setProcessingState('idle'); // Volta para idle para permitir nova tentativa
+        setProcessingState('idle');
       }
     } catch (error) {
       console.error("Erro na validação:", error);
       toast.error("Falha de comunicação ao validar UID.");
-      setProcessingState('idle'); // Volta para idle para permitir nova tentativa
+      setProcessingState('idle');
     }
   }, [uidInput]);
 
