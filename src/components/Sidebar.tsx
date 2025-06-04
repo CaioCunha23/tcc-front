@@ -56,10 +56,6 @@ const data = {
           title: "Histórico de Utilização",
           url: "/veiculo_colaborador",
         },
-        {
-          title: "Solicitar Veículo",
-          url: "/temporary-vehicle",
-        },
       ],
     },
   ],

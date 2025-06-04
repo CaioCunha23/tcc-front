@@ -1,8 +1,6 @@
 import {
     UserPen,
-    Bell,
     ChevronsUpDown,
-    CreditCard,
     LogOut,
 } from "lucide-react"
 import {
@@ -118,14 +116,6 @@ export function NavUser({ user }: {
                             <DropdownMenuItem onClick={handleEditClick}>
                                 <UserPen />
                                 Editar Dados
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <CreditCard />
-                                Billing
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Bell />
-                                Notifications
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
