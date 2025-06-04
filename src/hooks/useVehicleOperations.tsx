@@ -18,7 +18,7 @@ interface FinishUsePayload {
 export function useValidateCollaborator() {
   return useMutation({
     mutationFn: async (uid: string) => {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/colaborador/${uid}`);
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/colaborador/uid/${uid}`);
       
       if (response.status === 404) {
         throw new Error('Colaborador não encontrado.');
