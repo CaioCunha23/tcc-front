@@ -45,93 +45,91 @@ export function HomePage() {
   const { reset } = useQueryErrorResetBoundary();
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-3 sm:p-4 pt-0">
-
-      <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <ErrorBoundary onReset={reset}
-          fallbackRender={({ resetErrorBoundary }) => (
-            <CardErrorFallback resetErrorBoundary={resetErrorBoundary} />
-          )}>
+    <div className="flex flex-1 flex-col space-y-4 px-2 sm:px-4 py-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <ErrorBoundary onReset={reset} fallbackRender={({ resetErrorBoundary }) => (
+          <CardErrorFallback resetErrorBoundary={resetErrorBoundary} />
+        )}>
           <Suspense fallback={<CardSkeleton />}>
             <CardTotalInfracoes propriedadePraPegar="totalInfractionsValue" />
           </Suspense>
         </ErrorBoundary>
 
-        <ErrorBoundary onReset={reset}
-          fallbackRender={({ resetErrorBoundary }) => (
-            <CardErrorFallback resetErrorBoundary={resetErrorBoundary} />
-          )}>
+        <ErrorBoundary onReset={reset} fallbackRender={({ resetErrorBoundary }) => (
+          <CardErrorFallback resetErrorBoundary={resetErrorBoundary} />
+        )}>
           <Suspense fallback={<CardSkeleton />}>
             <CardGrowthMultas />
           </Suspense>
         </ErrorBoundary>
 
-        <ErrorBoundary onReset={reset}
-          fallbackRender={({ resetErrorBoundary }) => (
-            <CardErrorFallback resetErrorBoundary={resetErrorBoundary} />
-          )}>
+        <ErrorBoundary onReset={reset} fallbackRender={({ resetErrorBoundary }) => (
+          <CardErrorFallback resetErrorBoundary={resetErrorBoundary} />
+        )}>
           <Suspense fallback={<CardSkeleton />}>
             <CardGrowthSemParar />
           </Suspense>
         </ErrorBoundary>
 
-        <ErrorBoundary onReset={reset}
-          fallbackRender={({ resetErrorBoundary }) => (
-            <CardErrorFallback resetErrorBoundary={resetErrorBoundary} />
-          )}>
+        <ErrorBoundary onReset={reset} fallbackRender={({ resetErrorBoundary }) => (
+          <CardErrorFallback resetErrorBoundary={resetErrorBoundary} />
+        )}>
           <Suspense fallback={<CardSkeleton />}>
             <CardVehiclesMetrics />
           </Suspense>
         </ErrorBoundary>
       </div>
 
-      <div className="mt-6 sm:mt-8">
+      <div className="w-full">
         <ErrorBoundary fallbackRender={({ resetErrorBoundary }) => (
           <ChartInfracoesErrorFallback resetErrorBoundary={resetErrorBoundary} />
         )}>
           <Suspense fallback={<ChartInfracoesSkeleton />}>
-            <ChartInfracoes />
+            <div className="w-full h-auto">
+              <ChartInfracoes />
+            </div>
           </Suspense>
         </ErrorBoundary>
       </div>
 
-      <Tabs defaultValue="colaborador-aumento" className="flex w-full flex-col gap-4 sm:gap-6 mt-4">
-
-        <div className="overflow-x-auto pb-1">
-          <TabsList className="w-max">
-            <TabsTrigger value="colaborador-aumento">Aumento Multas</TabsTrigger>
-            <TabsTrigger value="top-offenders">Top Offenders</TabsTrigger>
-            <TabsTrigger value="veiculos-manutencao">Veículos a Vencer</TabsTrigger>
-            <TabsTrigger value="multas-a-vencer">Multas a Vencer</TabsTrigger>
+      <Tabs defaultValue="colaborador-aumento" className="w-full flex flex-col space-y-4">
+        <div className="overflow-x-auto">
+          <TabsList className="flex flex-wrap gap-2">
+            <TabsTrigger value="colaborador-aumento" className="flex-1 min-w-[120px] text-center">
+              Aumento Multas
+            </TabsTrigger>
+            <TabsTrigger value="top-offenders" className="flex-1 min-w-[120px] text-center">
+              Top Offenders
+            </TabsTrigger>
+            <TabsTrigger value="veiculos-manutencao" className="flex-1 min-w-[120px] text-center">
+              Veículos a Vencer
+            </TabsTrigger>
+            <TabsTrigger value="multas-a-vencer" className="flex-1 min-w-[120px] text-center">
+              Multas a Vencer
+            </TabsTrigger>
           </TabsList>
         </div>
 
         <TabsContent value="colaborador-aumento">
-          <ErrorBoundary fallbackRender={({ resetErrorBoundary }) => (
-            <ChartInfracoesErrorFallback resetErrorBoundary={resetErrorBoundary} />
-          )}>
-            <Suspense fallback={<ChartInfracoesSkeleton />}>
-              <div className="overflow-x-auto">
-                <ColaboradorAumentoTable />
-              </div>
-            </Suspense>
-          </ErrorBoundary>
+          <div className="w-full overflow-x-auto">
+            <ColaboradorAumentoTable />
+          </div>
         </TabsContent>
 
         <TabsContent value="top-offenders">
-          <div className="overflow-x-auto">
+          <div className="w-full overflow-x-auto">
             <TopOffendersTable />
           </div>
         </TabsContent>
 
         <TabsContent value="veiculos-manutencao">
-          <div className="overflow-x-auto">
+          <div className="w-full overflow-x-auto">
             <VeiculosProxManutencao />
           </div>
         </TabsContent>
 
         <TabsContent value="multas-a-vencer">
-          <div className="overflow-x-auto">
+          <div className="w-full overflow-x-auto">
             <InfractionsDueDate />
           </div>
         </TabsContent>

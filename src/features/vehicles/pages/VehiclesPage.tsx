@@ -1,11 +1,19 @@
 import { DataTableVehicles } from "@/features/vehicles/components/Vehicles/DataTableVehicles";
+import { TableSkeleton } from "@/features/workers/components/TableSkeleton";
+import { Suspense } from "react";
 
 export function VehiclesPage() {
     return (
-        <div className="p-8 flex flex-col w-full">
-            <label className="font-bold text-4xl">Automóveis</label>
+        <div className="w-full max-w-screen-xl mx-auto px-4 py-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <label className="font-bold text-2xl sm:text-3xl">Automóveis</label>
+            </div>
 
-            <DataTableVehicles />
+            <div className="w-full overflow-x-hidden">
+                <Suspense fallback={<TableSkeleton />}>
+                    <DataTableVehicles />
+                </Suspense>
+            </div>
         </div>
     )
 }

@@ -1,10 +1,19 @@
 import { InfractionsTable } from "@/features/infractions/components/InfractionsTable"
+import { TableSkeleton } from "@/features/workers/components/TableSkeleton"
+import { Suspense } from "react"
 
 export function InfractionsPage() {
     return (
-        <div className="p-8 flex flex-col w-full gap-3">
-            <label className="font-bold text-4xl">Infrações</label>
-            <InfractionsTable />
+        <div className="w-full max-w-screen-xl mx-auto px-4 py-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <label className="font-bold text-2xl sm:text-3xl">Infrações</label>
+            </div>
+
+            <div className="w-full overflow-x-hidden">
+                <Suspense fallback={<TableSkeleton />}>
+                    <InfractionsTable />
+                </Suspense>
+            </div>
         </div>
     )
 }
