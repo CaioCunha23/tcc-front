@@ -33,6 +33,7 @@ import { useVehiclesHistoryColumns, VehiclesHistory } from "@/hooks/useVehiclesH
 import { useTokenStore } from "@/hooks/useTokenStore";
 import AddVehicleHistoryDialog from "./AddVehicleHistoryDialog";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DateRangePicker } from "@/components/DateRangePicker";
 
 export function DataTableVehiclesHistory() {
   const [data, setData] = useState<VehiclesHistory[]>([]);
@@ -139,29 +140,29 @@ export function DataTableVehiclesHistory() {
               </SelectContent>
             </Select>
 
-            <Input
-              type="date"
-              placeholder="De"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-            />
-            <Input
-              type="date"
-              placeholder="Até"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-            />
+            <div className="w-full sm:w-auto">
+              <DateRangePicker
+                dateFrom={dateFrom}
+                dateTo={dateTo}
+                setDateFrom={setDateFrom}
+                setDateTo={setDateTo}
+              />
+            </div>
 
-            <Button onClick={applyDateFilter}>Filtrar</Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setDateFrom(""); setDateTo("");
-                table.getColumn(dateFilterField)?.setFilterValue("");
-              }}
-            >
-              Limpar
-            </Button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Button onClick={applyDateFilter} className="cursor-pointer">Filtrar</Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setDateFrom("")
+                  setDateTo("")
+                  table.getColumn(dateFilterField)?.setFilterValue("")
+                }}
+                className="cursor-pointer"
+              >
+                Limpar
+              </Button>
+            </div>
           </div>
         </div>
 

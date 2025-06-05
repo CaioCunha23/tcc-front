@@ -41,6 +41,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { DateRangePicker } from "@/components/DateRangePicker"
 
 export function DataTableVehicles() {
   const [data, setData] = useState<Veiculo[]>([]);
@@ -165,29 +166,29 @@ export function DataTableVehicles() {
               </SelectContent>
             </Select>
 
-            <Input
-              type="date"
-              placeholder="De"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-            />
-            <Input
-              type="date"
-              placeholder="Até"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-            />
+            <div className="w-full sm:w-auto">
+              <DateRangePicker
+                dateFrom={dateFrom}
+                dateTo={dateTo}
+                setDateFrom={setDateFrom}
+                setDateTo={setDateTo}
+              />
+            </div>
 
-            <Button onClick={applyDateFilter}>Filtrar</Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setDateFrom(""); setDateTo("");
-                table.getColumn(dateFilterField)?.setFilterValue("");
-              }}
-            >
-              Limpar
-            </Button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Button onClick={applyDateFilter} className="cursor-pointer">Filtrar</Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setDateFrom("")
+                  setDateTo("")
+                  table.getColumn(dateFilterField)?.setFilterValue("")
+                }}
+                className="cursor-pointer"
+              >
+                Limpar
+              </Button>
+            </div>
           </div>
 
         </div>
