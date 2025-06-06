@@ -13,6 +13,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { useQueryErrorResetBoundary } from "@tanstack/react-query";
 import { CardErrorFallback, CardSkeleton } from "@/components/CardsFallbacks";
 import { ChartInfracoesErrorFallback, ChartInfracoesSkeleton } from "@/components/ChartInfractionsFallbacks";
+import { useTokenStore } from "@/hooks/useTokenStore";
 
 export interface DashboardMetrics {
   totalInfractionsValue: number;
@@ -27,6 +28,8 @@ export interface DashboardMetrics {
 }
 
 export async function fetchMetrics(token: string) {
+  const { logout } = useTokenStore();
+
   const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard-metrics`, {
     method: 'GET',
     headers: {
@@ -34,6 +37,12 @@ export async function fetchMetrics(token: string) {
       'Authorization': `Bearer ${token}`
     }
   });
+
+  if (response.status === 403) {
+    logout();
+    return;
+  }
+
   if (!response.ok) {
     throw new Error("Erro ao buscar métricas");
   }
