@@ -27,7 +27,7 @@ export interface DashboardMetrics {
   vehiclesAvailable: number;
 }
 
-export async function fetchMetrics(token: string) {
+export async function fetchMetrics(token: string): Promise<DashboardMetrics> {
   const { logout } = useTokenStore();
 
   const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard-metrics`, {
@@ -40,7 +40,7 @@ export async function fetchMetrics(token: string) {
 
   if (response.status === 403) {
     logout();
-    return;
+    throw new Error("Usuário não autenticado.");
   }
 
   if (!response.ok) {
