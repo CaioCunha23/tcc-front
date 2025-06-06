@@ -62,7 +62,7 @@ export default function ColaboradorAumentoTable() {
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="w-[180px] font-medium">Colaborador</TableHead>
+                <TableHead className="text-center font-medium">Colaborador</TableHead>
                 <TableHead className="text-center font-medium">Mês Atual</TableHead>
                 <TableHead className="text-center font-medium">Mês Anterior</TableHead>
                 <TableHead className="text-right font-medium pr-6">Variação</TableHead>
@@ -71,7 +71,7 @@ export default function ColaboradorAumentoTable() {
             <TableBody>
               {tableData.map((item) => (
                 <TableRow key={item.colaboradorUid}>
-                  <TableCell className="font-medium py-3">
+                  <TableCell className="text-center font-medium py-3">
                     {item.colaboradorUid}
                   </TableCell>
                   <TableCell className="text-center py-3">
