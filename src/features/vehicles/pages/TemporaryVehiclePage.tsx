@@ -195,7 +195,6 @@ export function TemporaryVehiclePage() {
         </CardContent>
       </Card>
 
-      {/* Ações de uso */}
       {isProcessingVehicle && (
         <div className="flex items-center justify-center">
           <Loader2 className="w-6 h-6 animate-spin" />
@@ -220,7 +219,6 @@ export function TemporaryVehiclePage() {
         <p className="text-green-500 text-center mt-4">Uso finalizado com sucesso!</p>
       )}
 
-      {/* Dialog para UID */}
       <Dialog open={uidDialogOpen} onOpenChange={setUidDialogOpen}>
         <DialogContent className="max-w-sm mx-4 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed">
           <DialogHeader>
