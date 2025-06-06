@@ -15,4 +15,5 @@ export interface Colaborador {
   cnh: string;
   tipoCNH: string;
   infracaos: Infracao[];
+  type: string;
 }

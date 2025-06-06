@@ -17,6 +17,7 @@ import { useTokenStore } from "@/hooks/useTokenStore";
 
 export interface DashboardMetrics {
   totalInfractionsValue: number;
+  userTotalInfractionsValue: number;
   growthMultas: number;
   growthMultasPercent: number;
   growthSemParar: number;
@@ -60,7 +61,7 @@ export function HomePage() {
           <CardErrorFallback resetErrorBoundary={resetErrorBoundary} />
         )}>
           <Suspense fallback={<CardSkeleton />}>
-            <CardTotalInfracoes propriedadePraPegar="totalInfractionsValue" />
+            <CardTotalInfracoes />
           </Suspense>
         </ErrorBoundary>
 
