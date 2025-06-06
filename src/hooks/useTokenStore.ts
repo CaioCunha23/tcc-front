@@ -1,4 +1,5 @@
 import { Colaborador } from '@/types/Worker';
+import { QueryClient } from '@tanstack/react-query';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -7,7 +8,7 @@ interface TokenStore {
     setToken: (token: string) => void;
     colaborador: Colaborador | undefined;
     setColaborador: (colaborador: Colaborador) => void;
-    logout: () => void;
+    logout: (queryClient?: QueryClient) => void;
 }
 
 export const useTokenStore = create<TokenStore>()(
@@ -17,7 +18,12 @@ export const useTokenStore = create<TokenStore>()(
             colaborador: undefined,
             setToken: (token) => set({ token }),
             setColaborador: (colaborador) => set({ colaborador }),
-            logout: () => set({ token: undefined, colaborador: undefined }),
+            logout: (queryClient?: QueryClient) => {
+                if (queryClient) {
+                    queryClient.clear();
+                }
+                set({ token: undefined, colaborador: undefined });
+            },
         }),
         {
             name: "token-store",

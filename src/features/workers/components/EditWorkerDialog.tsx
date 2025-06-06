@@ -32,6 +32,8 @@ interface WorkerEditFormProps {
 }
 
 export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdated }: WorkerEditFormProps) {
+    console.log('defaultValues recebidos:', defaultValues);
+    console.log('Tipo do defaultValues:', typeof defaultValues);
     const form = useForm<z.infer<typeof workerFormSchema>>({
         resolver: zodResolver(workerFormSchema),
         defaultValues,
@@ -41,6 +43,8 @@ export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdate
         await onSubmit(values);
         onWorkerUpdated && onWorkerUpdated();
     };
+
+    console.log('Valores do form:', form.getValues());
 
     return (
         <Card className="shadow-lg rounded-lg border overflow-hidden">

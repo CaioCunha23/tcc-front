@@ -10,7 +10,7 @@ export function CardVehiclesMetrics() {
         queryKey: ['card', 'dashboard', 'veiculos'],
         queryFn: () => {
             return fetchMetrics(token!)
-        }
+        },
     })
     const vehiclesInUse = metrics?.vehiclesInUse;
     const vehiclesAvailable = metrics?.vehiclesAvailable;

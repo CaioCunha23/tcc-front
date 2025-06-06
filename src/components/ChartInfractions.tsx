@@ -34,6 +34,7 @@ async function fetchChartData(token: string) {
     if (!response.ok) {
         throw new Error("Erro ao buscar dados do gráfico")
     }
+
     const data = await response.json()
     return data;
 }
@@ -44,14 +45,32 @@ export function ChartInfracoes() {
         queryKey: ['graphic', 'dashboard'],
         queryFn: () => {
             return fetchChartData(token!);
-        }
+        },
     })
+
+    if (!chartData || chartData.length === 0) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Gasto Mensal com Infrações</CardTitle>
+                    <CardDescription>Multa (azul) e Sem Parar (verde)</CardDescription>
+                </CardHeader>
+                <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+                    <div className="flex items-center justify-center h-[250px]">
+                        <p className="text-muted-foreground">Nenhum dado encontrado para o período</p>
+                    </div>
+                </CardContent>
+            </Card>
+        )
+    }
 
     return (
         <Card>
             <CardHeader>
                 <CardTitle>Gasto Mensal com Infrações</CardTitle>
-                <CardDescription>Multa (azul) e Sem Parar (verde)</CardDescription>
+                <CardDescription>
+                    Multa (azul) e Sem Parar (verde)
+                </CardDescription>
             </CardHeader>
             <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
                 <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
@@ -73,14 +92,28 @@ export function ChartInfracoes() {
                             axisLine={false}
                             tickMargin={8}
                             minTickGap={32}
-                            tickFormatter={(value) => value}
+                            tickFormatter={(value) => {
+                                const [year, month] = value.split('-');
+                                const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+                                    'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                                return `${monthNames[parseInt(month) - 1]} ${year}`;
+                            }}
                         />
                         <ChartTooltip
                             cursor={false}
                             content={
                                 <ChartTooltipContent
-                                    labelFormatter={(value) => `Mês: ${value}`}
+                                    labelFormatter={(value) => {
+                                        const [year, month] = value.split('-');
+                                        const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                                            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                                        return `${monthNames[parseInt(month) - 1]} de ${year}`;
+                                    }}
                                     indicator="dot"
+                                    formatter={(value, name) => [
+                                        `R$ ${Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+                                        chartConfig[name as keyof typeof chartConfig]?.label || name
+                                    ]}
                                 />
                             }
                         />
@@ -89,12 +122,14 @@ export function ChartInfracoes() {
                             type="monotone"
                             fill="url(#fillMulta)"
                             stroke={chartConfig.multa.color}
+                            strokeWidth={2}
                         />
                         <Area
                             dataKey="semParar"
                             type="monotone"
                             fill="url(#fillSemParar)"
                             stroke={chartConfig.semParar.color}
+                            strokeWidth={2}
                         />
                     </AreaChart>
                 </ChartContainer>

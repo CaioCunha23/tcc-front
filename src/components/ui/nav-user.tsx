@@ -1,8 +1,6 @@
 import {
     UserPen,
-    Bell,
     ChevronsUpDown,
-    CreditCard,
     LogOut,
 } from "lucide-react"
 import {
@@ -27,10 +25,12 @@ import {
 } from "@/components/ui/sidebar"
 import { useTokenStore } from "@/hooks/useTokenStore"
 import { useNavigate } from "react-router"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import WorkerEditForm from "@/features/workers/components/EditWorkerDialog"
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { DialogHeader } from "./dialog"
+import { useQueryClient } from "@tanstack/react-query"
+import { Colaborador } from "@/types/Worker"
 
 export function NavUser({ user }: {
     user: {
@@ -41,15 +41,48 @@ export function NavUser({ user }: {
 }) {
     const { colaborador, token, logout } = useTokenStore();
     const [open, setOpen] = useState(false);
+    const [fullWorkerData, setFullWorkerData] = useState<Colaborador | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
     const { isMobile } = useSidebar();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
-    async function handleSave(values: Partial<typeof colaborador>) {
-        if (!colaborador) return;
+    useEffect(() => {
+        if (open && colaborador?.uidMSK && !fullWorkerData) {
+            fetchWorkerData();
+        }
+    }, [open, colaborador?.uidMSK]);
 
-        const updatedWorker = { ...colaborador, ...values };
+    const fetchWorkerData = async () => {
+        if (!colaborador?.uidMSK || !token) return;
 
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/colaborador/${colaborador.id}`, {
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/colaborador/uid/${colaborador.uidMSK}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const workerData = await response.json();
+                setFullWorkerData(workerData);
+            } else {
+                console.error("Erro ao buscar dados do colaborador");
+            }
+        } catch (error) {
+            console.error("Erro ao buscar dados do colaborador:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    async function handleSave(values: Partial<Colaborador>) {
+        if (!fullWorkerData) return;
+
+        const updatedWorker = { ...fullWorkerData, ...values };
+
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/colaborador/${fullWorkerData.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -60,6 +93,7 @@ export function NavUser({ user }: {
 
         if (res.ok) {
             setOpen(false);
+            setFullWorkerData(updatedWorker as Colaborador);
         } else {
             console.error("Erro ao atualizar o colaborador");
         }
@@ -71,9 +105,15 @@ export function NavUser({ user }: {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        logout();
+        logout(queryClient);
         navigate("/");
+    };
+
+    const handleDialogClose = (isOpen: boolean) => {
+        setOpen(isOpen);
+        if (!isOpen) {
+            setFullWorkerData(null);
+        }
     };
 
     return (
@@ -119,14 +159,6 @@ export function NavUser({ user }: {
                                 <UserPen />
                                 Editar Dados
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <CreditCard />
-                                Billing
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Bell />
-                                Notifications
-                            </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout}>
@@ -136,7 +168,7 @@ export function NavUser({ user }: {
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                <Dialog open={open} onOpenChange={setOpen}>
+                <Dialog open={open} onOpenChange={handleDialogClose}>
                     <DialogContent className="max-w-2xl">
                         <DialogHeader>
                             <DialogTitle>Editar Colaborador</DialogTitle>
@@ -144,11 +176,17 @@ export function NavUser({ user }: {
                                 Altere os dados do colaborador e salve.
                             </DialogDescription>
                         </DialogHeader>
-                        {
-                            colaborador && (
-                                <WorkerEditForm defaultValues={colaborador} onSubmit={handleSave} />
-                            )
-                        }
+                        {isLoading ? (
+                            <div className="flex justify-center py-8">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                            </div>
+                        ) : fullWorkerData ? (
+                            <WorkerEditForm defaultValues={fullWorkerData} onSubmit={handleSave} />
+                        ) : (
+                            <div className="text-center py-8 text-muted-foreground">
+                                Erro ao carregar dados do colaborador
+                            </div>
+                        )}
                     </DialogContent>
                 </Dialog>
             </SidebarMenuItem>

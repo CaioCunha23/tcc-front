@@ -1,3 +1,4 @@
+
 import { Card, CardHeader, CardDescription, CardTitle, CardFooter } from "./ui/card";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTokenStore } from "@/hooks/useTokenStore";
@@ -11,7 +12,7 @@ export function CardTotalInfracoes() {
         queryKey: ['card', 'dashboard', 'infracoes'],
         queryFn: () => {
             return fetchMetrics(token!);
-        }
+        },
     })
 
     const valorExibido = isAdmin

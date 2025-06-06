@@ -1,3 +1,4 @@
+import { useState, useEffect, useMemo } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -8,7 +9,7 @@ import {
   SortingState,
   ColumnFiltersState,
   VisibilityState,
-  FilterFn
+  FilterFn,
 } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
 
@@ -28,11 +29,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
 import { useVehiclesHistoryColumns, VehiclesHistory } from "@/hooks/useVehiclesHistoryColumns";
 import { useTokenStore } from "@/hooks/useTokenStore";
 import AddVehicleHistoryDialog from "./AddVehicleHistoryDialog";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { DateRangePicker } from "@/components/DateRangePicker";
 
 export function DataTableVehiclesHistory() {
@@ -44,26 +52,28 @@ export function DataTableVehiclesHistory() {
   const [dateFilterField, setDateFilterField] = useState<"dataInicio" | "dataFim">("dataInicio");
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
-  const { token } = useTokenStore();
-  const { logout } = useTokenStore();
+
+  const { token, colaborador, logout } = useTokenStore();
+  const isAdmin = colaborador?.type === "admin";
+  const userUid = colaborador?.uidMSK;
 
   const betweenDatesFn: FilterFn<VehiclesHistory> = (row, columnId, filterValue) => {
-    const rowVal = row.getValue<string>(columnId)
-    if (!filterValue || typeof filterValue !== 'object') return true
+    const rowVal = row.getValue<string>(columnId);
+    if (!filterValue || typeof filterValue !== "object") return true;
 
-    const { from, to } = filterValue as { from: string; to: string }
-    const d = new Date(rowVal)
-    return (!from || d >= new Date(from)) && (!to || d <= new Date(to))
-  }
+    const { from, to } = filterValue as { from: string; to: string };
+    const d = new Date(rowVal);
+    return (!from || d >= new Date(from)) && (!to || d <= new Date(to));
+  };
 
   async function fetchData() {
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/historicos`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.status === 403) {
@@ -72,29 +82,31 @@ export function DataTableVehiclesHistory() {
       }
 
       if (!response.ok) {
-        throw new Error("Erro ao buscar métricas");
+        throw new Error("Erro ao buscar históricos");
       }
-      const data = await response.json();
-      setData(data);
+      const json = await response.json();
+      setData(json);
     } catch (error) {
       console.error("Erro no fetch:", error);
     }
   }
+
   useEffect(() => {
     fetchData();
   }, [token]);
 
+  const filteredData = useMemo(() => {
+    if (isAdmin) return data;
+    return data.filter((item) => item.colaboradorUid === userUid);
+  }, [data, isAdmin, userUid]);
+
   const columns = useVehiclesHistoryColumns({ onVehicleHistoryUpdated: fetchData });
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     filterFns: {
@@ -106,36 +118,37 @@ export function DataTableVehiclesHistory() {
       columnVisibility,
       rowSelection,
     },
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   function applyDateFilter() {
-    table.getColumn(dateFilterField)
-      ?.setFilterValue(dateFrom && dateTo ? { from: dateFrom, to: dateTo } : "")
+    table
+      .getColumn(dateFilterField)
+      ?.setFilterValue(dateFrom && dateTo ? { from: dateFrom, to: dateTo } : "");
   }
 
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row items-center justify-between py-4">
         <div className="flex gap-2">
-          <Input
-            placeholder="Pesquisar placa..."
-            value={
-              (table.getColumn("veiculoPlaca")?.getFilterValue() as string) ??
-              ""
-            }
-            onChange={(event) =>
-              table.getColumn("veiculoPlaca")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm mb-4 sm:mb-0"
-          />
+          {isAdmin && (
+            <Input
+              placeholder="Pesquisar placa..."
+              value={(table.getColumn("veiculoPlaca")?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                table.getColumn("veiculoPlaca")?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm mb-4 sm:mb-0"
+            />
+          )}
 
-          <AddVehicleHistoryDialog onVehicleHistoryAdded={fetchData} />
+          {isAdmin && <AddVehicleHistoryDialog onVehicleHistoryAdded={fetchData} />}
 
           <div className="flex items-center gap-2">
-            <Select
-              onValueChange={(v) => setDateFilterField(v as any)}
-              value={dateFilterField}
-            >
+            <Select onValueChange={(v) => setDateFilterField(v as any)} value={dateFilterField}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Selecione coluna" />
               </SelectTrigger>
@@ -158,13 +171,15 @@ export function DataTableVehiclesHistory() {
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <Button onClick={applyDateFilter} className="cursor-pointer">Filtrar</Button>
+              <Button onClick={applyDateFilter} className="cursor-pointer">
+                Filtrar
+              </Button>
               <Button
                 variant="outline"
                 onClick={() => {
-                  setDateFrom("")
-                  setDateTo("")
-                  table.getColumn(dateFilterField)?.setFilterValue("")
+                  setDateFrom("");
+                  setDateTo("");
+                  table.getColumn(dateFilterField)?.setFilterValue("");
                 }}
                 className="cursor-pointer"
               >
@@ -189,9 +204,7 @@ export function DataTableVehiclesHistory() {
                   key={column.id}
                   className="capitalize"
                   checked={column.getIsVisible()}
-                  onCheckedChange={(value) =>
-                    column.toggleVisibility(!!value)
-                  }
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 >
                   {column.id}
                 </DropdownMenuCheckboxItem>
@@ -204,10 +217,7 @@ export function DataTableVehiclesHistory() {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                key={headerGroup.id}
-                className="bg-gray-100 dark:bg-gray-800"
-              >
+              <TableRow key={headerGroup.id} className="bg-gray-100 dark:bg-gray-800">
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
@@ -215,10 +225,7 @@ export function DataTableVehiclesHistory() {
                   >
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -233,10 +240,7 @@ export function DataTableVehiclesHistory() {
                   className="border-b last:border-0"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="px-4 py-2 text-center text-sm"
-                    >
+                    <TableCell key={cell.id} className="px-4 py-2 text-center text-sm">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -244,10 +248,7 @@ export function DataTableVehiclesHistory() {
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   Sem resultados.
                 </TableCell>
               </TableRow>

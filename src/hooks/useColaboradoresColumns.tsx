@@ -337,6 +337,10 @@ export function useColaboradoresColumns({ onWorkerUpdated }: UseColaboradoresCol
                           <strong>Data:</strong>{" "}
                           {new Date(infraction.dataInfracao).toLocaleDateString()}
                         </div>
+                        <div>
+                          <strong>Tipo de Infração:</strong>{" "}
+                          {(infraction.tipo)}
+                        </div>
                       </div>
                     ))
                   ) : (

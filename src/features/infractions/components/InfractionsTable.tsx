@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
     ColumnFiltersState,
     SortingState,
@@ -9,11 +9,16 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
-    FilterFn
+    FilterFn,
 } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
     Table,
@@ -28,8 +33,16 @@ import { useTokenStore } from "@/hooks/useTokenStore";
 import { useInfractionsColumns } from "@/hooks/useInfractionsColumns";
 import AddInfractionDialog from "./AddInfractionDialog";
 import { Infracao } from "@/types/Infraction";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DateRangePicker } from "@/components/DateRangePicker"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { DateRangePicker } from "@/components/DateRangePicker";
 
 export function InfractionsTable() {
     const [data, setData] = useState<Infracao[]>([]);
@@ -40,17 +53,17 @@ export function InfractionsTable() {
     const [dateFilterField, setDateFilterField] = useState<"dataInfracao" | "dataEnvio" | "indicacaoLimite">("dataInfracao");
     const [dateFrom, setDateFrom] = useState<string>("");
     const [dateTo, setDateTo] = useState<string>("");
-    const { token } = useTokenStore();
-    const { logout } = useTokenStore();
+    const { token, colaborador, logout } = useTokenStore();
+    const isAdmin = colaborador?.type === "admin";
+    const userUid = colaborador?.uidMSK;
 
     const betweenDatesFn: FilterFn<Infracao> = (row, columnId, filterValue) => {
-        const rowVal = row.getValue<string>(columnId)
-        if (!filterValue || typeof filterValue !== 'object') return true
-
-        const { from, to } = filterValue as { from: string; to: string }
-        const d = new Date(rowVal)
-        return (!from || d >= new Date(from)) && (!to || d <= new Date(to))
-    }
+        const rowVal = row.getValue<string>(columnId);
+        if (!filterValue || typeof filterValue !== "object") return true;
+        const { from, to } = filterValue as { from: string; to: string };
+        const d = new Date(rowVal);
+        return (!from || d >= new Date(from)) && (!to || d <= new Date(to));
+    };
 
     const fetchData = async () => {
         try {
@@ -58,7 +71,7 @@ export function InfractionsTable() {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
@@ -68,28 +81,30 @@ export function InfractionsTable() {
             }
 
             if (!response.ok) {
-                throw new Error("Erro ao buscar métricas");
+                throw new Error("Erro ao buscar infrações");
             }
-            const data = await response.json();
-            setData(data);
+            const json = await response.json();
+            setData(json);
         } catch (error) {
             console.error("Erro no fetch:", error);
         }
-    }
+    };
 
     useEffect(() => {
         fetchData();
     }, [token]);
 
-    const totalInfractions = data.reduce(
-        (acc, infracao) => acc + Number(infracao.valor),
-        0
-    );
+    const filteredData = useMemo(() => {
+        if (isAdmin) return data;
+        return data.filter((inf) => inf.colaboradorUid === userUid);
+    }, [data, isAdmin, userUid]);
+
+    const totalInfractions = filteredData.reduce((acc, infracao) => acc + Number(infracao.valor), 0);
 
     const columns = useInfractionsColumns({ onInfractionUpdated: fetchData });
 
     const table = useReactTable({
-        data,
+        data: filteredData,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -111,33 +126,30 @@ export function InfractionsTable() {
     });
 
     function applyDateFilter() {
-        table.getColumn(dateFilterField)
-            ?.setFilterValue(dateFrom && dateTo ? { from: dateFrom, to: dateTo } : "")
+        table
+            .getColumn(dateFilterField)
+            ?.setFilterValue(dateFrom && dateTo ? { from: dateFrom, to: dateTo } : "");
     }
 
     return (
         <div className="w-full">
             <div className="flex flex-col sm:flex-row items-center justify-between py-4">
                 <div className="flex gap-2">
-                    <Input
-                        placeholder="Pesquisar UID..."
-                        value={
-                            (table.getColumn("colaboradorUid")?.getFilterValue() as string) ??
-                            ""
-                        }
-                        onChange={(event) =>
-                            table.getColumn("colaboradorUid")?.setFilterValue(event.target.value)
-                        }
-                        className="max-w-sm mb-4 sm:mb-0"
-                    />
+                    {isAdmin && (
+                        <Input
+                            placeholder="Pesquisar UID..."
+                            value={(table.getColumn("colaboradorUid")?.getFilterValue() as string) ?? ""}
+                            onChange={(event) =>
+                                table.getColumn("colaboradorUid")?.setFilterValue(event.target.value)
+                            }
+                            className="max-w-sm mb-4 sm:mb-0"
+                        />
+                    )}
 
-                    <AddInfractionDialog onInfractionAdded={fetchData} />
+                    {isAdmin && <AddInfractionDialog onInfractionAdded={fetchData} />}
 
                     <div className="flex items-center gap-2">
-                        <Select
-                            onValueChange={(v) => setDateFilterField(v as any)}
-                            value={dateFilterField}
-                        >
+                        <Select onValueChange={(v) => setDateFilterField(v as any)} value={dateFilterField}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Selecione coluna" />
                             </SelectTrigger>
@@ -161,13 +173,15 @@ export function InfractionsTable() {
                         </div>
 
                         <div className="flex items-center gap-2 w-full sm:w-auto">
-                            <Button onClick={applyDateFilter} className="cursor-pointer">Filtrar</Button>
+                            <Button onClick={applyDateFilter} className="cursor-pointer">
+                                Filtrar
+                            </Button>
                             <Button
                                 variant="outline"
                                 onClick={() => {
-                                    setDateFrom("")
-                                    setDateTo("")
-                                    table.getColumn(dateFilterField)?.setFilterValue("")
+                                    setDateFrom("");
+                                    setDateTo("");
+                                    table.getColumn(dateFilterField)?.setFilterValue("");
                                 }}
                                 className="cursor-pointer"
                             >
@@ -175,8 +189,8 @@ export function InfractionsTable() {
                             </Button>
                         </div>
                     </div>
-
                 </div>
+
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline">
@@ -192,9 +206,7 @@ export function InfractionsTable() {
                                     key={column.id}
                                     className="capitalize"
                                     checked={column.getIsVisible()}
-                                    onCheckedChange={(value) =>
-                                        column.toggleVisibility(!!value)
-                                    }
+                                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
                                 >
                                     {column.id}
                                 </DropdownMenuCheckboxItem>
@@ -207,10 +219,7 @@ export function InfractionsTable() {
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow
-                                key={headerGroup.id}
-                                className="bg-gray-100 dark:bg-gray-800"
-                            >
+                            <TableRow key={headerGroup.id} className="bg-gray-100 dark:bg-gray-800">
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
@@ -218,10 +227,7 @@ export function InfractionsTable() {
                                     >
                                         {header.isPlaceholder
                                             ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
+                                            : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -236,14 +242,8 @@ export function InfractionsTable() {
                                     className="border-b last:border-0"
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell
-                                            key={cell.id}
-                                            className="px-4 py-2 text-center text-sm"
-                                        >
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
+                                        <TableCell key={cell.id} className="px-4 py-2 text-center text-sm">
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>

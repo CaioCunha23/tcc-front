@@ -66,11 +66,18 @@ const data = {
       icon: LifeBuoy,
     },
   ],
-}
+};
+
+type NavGroup = {
+  title: string;
+  url: string;
+  items: { title: string; url: string }[];
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
   const { colaborador } = useTokenStore();
+  const isAdmin = colaborador?.type === "admin";
 
   const user = colaborador
     ? {
@@ -79,6 +86,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       avatar: defaultUser.avatar,
     }
     : defaultUser;
+
+  const navMainToRender = React.useMemo<NavGroup[]>(() => {
+    if (isAdmin) return data.navMain;
+
+    const mapped: (NavGroup | null)[] = data.navMain.map((group) => {
+      const filteredItems = group.items.filter((sub) => {
+        return (
+          sub.title === "Verificação de multas" ||
+          sub.title === "Histórico de Utilização"
+        );
+      });
+      return filteredItems.length > 0
+        ? { ...group, items: filteredItems }
+        : null;
+    });
+
+    return mapped.filter(
+      (g): g is NavGroup => g !== null
+    );
+  }, [isAdmin]);
 
   return (
     <Sidebar {...props}>
@@ -99,8 +126,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent className="gap-0">
-        {data.navMain.map((item) => (
+        {navMainToRender.map((item) => (
           <Collapsible
             key={item.title}
             title={item.title}
@@ -142,9 +170,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ))}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
+
       <SidebarFooter>
         <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

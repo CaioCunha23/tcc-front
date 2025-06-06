@@ -1,9 +1,16 @@
-import { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ClockAlert } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { useTokenStore } from '@/hooks/useTokenStore';
+import { useEffect, useState } from "react";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import { ClockAlert } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { useTokenStore } from "@/hooks/useTokenStore";
 
 interface VehicleMaintenance {
     tipo: string;
@@ -12,7 +19,7 @@ interface VehicleMaintenance {
     placaVeiculo: string;
     categoria: string;
     costCenter: string;
-    valor: number;
+    valor: number | string;
     dataInfracao: string;
     statusResposta: string;
     indicacaoLimite: string;
@@ -21,26 +28,31 @@ interface VehicleMaintenance {
 export default function VeiculosProxManutencao() {
     const [data, setData] = useState<VehicleMaintenance[]>([]);
     const [loading, setLoading] = useState(true);
-    const { token } = useTokenStore();
+    const { token, colaborador } = useTokenStore();
+    const isAdmin = colaborador?.type === "admin";
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/vencimento-multas`, {
-            method: 'GET',
+            method: "GET",
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
         })
-            .then(response => response.json())
-            .then(result => {
+            .then((response) => response.json())
+            .then((result: VehicleMaintenance[]) => {
                 setData(result);
                 setLoading(false);
             })
-            .catch(err => {
-                console.error("Erro ao buscar dados de veiculos:", err);
+            .catch((err) => {
+                console.error("Erro ao buscar dados de veículos:", err);
                 setLoading(false);
             });
-    }, []);
+    }, [token]);
+
+    const filteredData = isAdmin
+        ? data
+        : data.filter((item) => item.colaboradorUid === colaborador?.uidMSK);
 
     return (
         <Card>
@@ -69,33 +81,49 @@ export default function VeiculosProxManutencao() {
                                 <TableHead className="text-center font-medium">Valor</TableHead>
                                 <TableHead className="text-center font-medium">Data da Infração</TableHead>
                                 <TableHead className="text-center font-medium">Status Resposta</TableHead>
-                                <TableHead className="text-right font-medium pr-6">Data Indicação Limite</TableHead>
+                                <TableHead className="text-right font-medium pr-6">
+                                    Data Indicação Limite
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {loading ? (
                                 <TableRow>
-                                    <TableCell colSpan={4} className="h-24 text-center">
+                                    <TableCell colSpan={10} className="h-24 text-center">
                                         Carregando dados...
                                     </TableCell>
                                 </TableRow>
-                            ) : data.length === 0 ? (
+                            ) : filteredData.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={4} className="h-24 text-center">
-                                        Nenhum dado encontrado
+                                    <TableCell colSpan={10} className="h-24 text-center">
+                                        Sem multas próximas do vencimento
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                data.map(item => (
+                                filteredData.map((item) => (
                                     <TableRow key={item.codigoMulta}>
                                         <TableCell className="font-medium py-3">{item.tipo}</TableCell>
-                                        <TableCell className="text-center py-3">{item.codigoMulta}</TableCell>
-                                        <TableCell className="text-center py-3">{item.colaboradorUid}</TableCell>
-                                        <TableCell className="text-center py-3">{item.placaVeiculo}</TableCell>
-                                        <TableCell className="text-center py-3">{item.categoria}</TableCell>
-                                        <TableCell className="text-center py-3">{item.costCenter}</TableCell>
-                                        <TableCell className="text-center py-3">{item.valor}</TableCell>
-                                        <TableCell className="text-center py-3">{item.dataInfracao}</TableCell>
+                                        <TableCell className="text-center py-3">
+                                            {item.codigoMulta}
+                                        </TableCell>
+                                        <TableCell className="text-center py-3">
+                                            {item.colaboradorUid}
+                                        </TableCell>
+                                        <TableCell className="text-center py-3">
+                                            {item.placaVeiculo}
+                                        </TableCell>
+                                        <TableCell className="text-center py-3">
+                                            {item.categoria}
+                                        </TableCell>
+                                        <TableCell className="text-center py-3">
+                                            {item.costCenter}
+                                        </TableCell>
+                                        <TableCell className="text-center py-3">
+                                            {Number(item.valor).toFixed(2)}
+                                        </TableCell>
+                                        <TableCell className="text-center py-3">
+                                            {new Date(item.dataInfracao).toLocaleDateString("pt-BR")}
+                                        </TableCell>
                                         <TableCell className="text-center py-3">
                                             <Badge
                                                 variant={
@@ -110,12 +138,14 @@ export default function VeiculosProxManutencao() {
                                                     : item.statusResposta === "Respondida"
                                                         ? "bg-green-100 text-green-800 hover:bg-green-200"
                                                         : "bg-orange-100 text-orange-800 hover:bg-orange-200"
-                                                    }`}
+                                                    } flex justify-center`}
                                             >
                                                 {item.statusResposta}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell className="text-right py-3 pr-6">{item.indicacaoLimite}</TableCell>
+                                        <TableCell className="text-right py-3 pr-6">
+                                            {new Date(item.indicacaoLimite).toLocaleDateString("pt-BR")}
+                                        </TableCell>
                                     </TableRow>
                                 ))
                             )}
