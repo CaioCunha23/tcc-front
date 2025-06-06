@@ -16,13 +16,21 @@ const chartConfig = {
 }
 
 async function fetchChartData(token: string) {
+    const { logout } = useTokenStore();
+
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/infracoes-chart-data`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         }
-    })
+    });
+
+    if (response.status === 403) {
+        logout();
+        throw new Error("Usuário não autenticado.");
+    }
+
     if (!response.ok) {
         throw new Error("Erro ao buscar dados do gráfico")
     }

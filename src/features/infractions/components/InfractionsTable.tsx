@@ -41,6 +41,7 @@ export function InfractionsTable() {
     const [dateFrom, setDateFrom] = useState<string>("");
     const [dateTo, setDateTo] = useState<string>("");
     const { token } = useTokenStore();
+    const { logout } = useTokenStore();
 
     const betweenDatesFn: FilterFn<Infracao> = (row, columnId, filterValue) => {
         const rowVal = row.getValue<string>(columnId)
@@ -60,9 +61,16 @@ export function InfractionsTable() {
                     "Authorization": `Bearer ${token}`,
                 },
             });
-            if (!response.ok) throw new Error("Erro ao buscar dados");
+
+            if (response.status === 403) {
+                logout();
+                throw new Error("Usuário não autenticado.");
+            }
+
+            if (!response.ok) {
+                throw new Error("Erro ao buscar métricas");
+            }
             const data = await response.json();
-            console.log("Dados recebidos:", data);
             setData(data);
         } catch (error) {
             console.error("Erro no fetch:", error);
