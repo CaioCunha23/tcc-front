@@ -12,19 +12,27 @@ interface ColaboradorAumento {
   growth: number;
 }
 
-async function fetchColaboradorAumento(token: string) {
+async function fetchColaboradorAumento(token: string): Promise<ColaboradorAumento[]> {
+  const { logout } = useTokenStore();
+
   const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard-metrics-colaborador-maior-aumento`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     }
-  })
-    if (!response.ok) {
-      throw new Error("Erro ao buscar dados da tabela")
-    }
-    const data: ColaboradorAumento[] = await response.json()
-    return data
+  });
+
+  if (response.status === 403) {
+    logout();
+    throw new Error("Usuário não autenticado.");
+  }
+
+  if (!response.ok) {
+    throw new Error("Erro ao buscar dados da tabela")
+  }
+  const data: ColaboradorAumento[] = await response.json()
+  return data
 }
 
 export default function ColaboradorAumentoTable() {
