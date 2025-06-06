@@ -131,7 +131,7 @@ export function TemporaryVehiclePage() {
 
         setTimeout(() => {
           if (token) {
-            navigate("/dashboard");
+            navigate("/home");
           } else {
             navigate("/");
           }
