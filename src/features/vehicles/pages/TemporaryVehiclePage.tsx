@@ -115,6 +115,7 @@ export function TemporaryVehiclePage() {
     });
   }, [uidInput, validateCollaborator, veiculoInfo, processVehicleUse]);
 
+
   const handleFinishUse = useCallback(() => {
     if (!veiculoInfo) return;
 
@@ -127,12 +128,20 @@ export function TemporaryVehiclePage() {
       onSuccess: () => {
         setVehicleUseStatus('finished');
         toast.success("Uso finalizado com sucesso.");
+
+        setTimeout(() => {
+          if (token) {
+            navigate("/dashboard");
+          } else {
+            navigate("/");
+          }
+        }, 2000);
       },
       onError: () => {
         toast.error("Erro ao finalizar o uso do veículo.");
       }
     });
-  }, [veiculoInfo, validatedUid, finishVehicleUse]);
+  }, [veiculoInfo, validatedUid, finishVehicleUse, token, navigate]);
 
   const isValidatingUid = validateCollaborator.isPending;
   const isProcessingVehicle = startVehicleUse.isPending;
