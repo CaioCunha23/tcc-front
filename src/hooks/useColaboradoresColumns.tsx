@@ -393,21 +393,52 @@ export function useColaboradoresColumns({ onWorkerUpdated }: UseColaboradoresCol
 
         async function handleDeactivate() {
           const updatedWorker: Colaborador = { ...worker, status: false };
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/colaborador/${worker.id}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
-            },
-            body: JSON.stringify(updatedWorker),
-          });
-          if (res.ok) {
-            setAlertOpen(false);
-            toast.success(`Colaborador desativado com sucesso!`);
-            onWorkerUpdated && onWorkerUpdated();
-          } else {
-            console.error("Erro ao desativar colaborador");
-            toast.error(`Erro ao tentar desativa colaborador!`);
+
+          try {
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/colaborador/${worker.id}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+              },
+              body: JSON.stringify(updatedWorker),
+            });
+
+            if (res.ok) {
+              const responseData = await res.json();
+              setAlertOpen(false);
+
+              if (responseData.veiculosLiberados && responseData.veiculosLiberados.finalizados > 0) {
+                const veiculosInfo = responseData.veiculosLiberados.detalhes
+                  .filter((d: any) => d.success)
+                  .map((d: any) => d.veiculoPlaca)
+                  .join(', ');
+
+                toast.success(
+                  `Colaborador desativado com sucesso! ${responseData.veiculosLiberados.finalizados} veículo(s) liberado(s): ${veiculosInfo}`,
+                  { duration: 6000 }
+                );
+              } else {
+                toast.success(`Colaborador desativado com sucesso!`);
+              }
+
+              if (responseData.veiculosLiberados && responseData.veiculosLiberados.erros > 0) {
+                toast.warning(
+                  `Atenção: ${responseData.veiculosLiberados.erros} veículo(s) não puderam ser liberados automaticamente. Verifique manualmente.`,
+                  { duration: 8000 }
+                );
+              }
+
+              onWorkerUpdated && onWorkerUpdated();
+
+            } else {
+              const errorData = await res.json();
+              console.error("Erro ao desativar colaborador:", errorData);
+              toast.error(`Erro ao tentar desativar colaborador: ${errorData.error || 'Erro desconhecido'}`);
+            }
+          } catch (error) {
+            console.error("Erro na requisição:", error);
+            toast.error(`Erro de conexão ao tentar desativar colaborador!`);
           }
         }
 

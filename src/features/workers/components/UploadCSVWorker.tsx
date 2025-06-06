@@ -16,7 +16,8 @@ export default function UploadCSVWorker({ onUploadSuccess }: UploadCSVWorkerProp
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files?.[0]) {
-            setSelectedFile(e.target.files[0]);
+            const file = e.target.files[0];
+            setSelectedFile(file);
             setUploadError(null);
         }
     };
@@ -28,8 +29,14 @@ export default function UploadCSVWorker({ onUploadSuccess }: UploadCSVWorkerProp
         }
 
         setIsUploading(true);
+        setUploadError(null);
+
         const formData = new FormData();
-        formData.append("file", selectedFile);
+        formData.append("workerUpload", selectedFile);
+
+        for (let [key, value] of formData.entries()) {
+            console.log(`  ${key}:`, value);
+        }
 
         try {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/colaboradores/import`, {
@@ -37,10 +44,12 @@ export default function UploadCSVWorker({ onUploadSuccess }: UploadCSVWorkerProp
                 body: formData,
             });
 
+            const result = await response.json();
+
             if (!response.ok) {
-                const result = await response.json();
                 throw new Error(result.error || "Falha no upload do arquivo.");
             }
+
             toast.success(`Arquivo carregado com sucesso! (às ${new Date().toLocaleTimeString()})`);
 
             if (onUploadSuccess) onUploadSuccess();
@@ -91,7 +100,11 @@ export default function UploadCSVWorker({ onUploadSuccess }: UploadCSVWorkerProp
             {uploadError && (
                 <div className="bg-destructive/10 border border-destructive/30 text-destructive rounded-md p-3 text-sm flex items-start gap-2">
                     <XIcon className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                    <span>{uploadError}</span>
+                    <div className="flex-1">
+                        <p className="font-medium">Erro no upload:</p>
+                        <p>{uploadError}</p>
+                        <p className="mt-2 text-xs">Verifique o console do navegador para mais detalhes.</p>
+                    </div>
                 </div>
             )}
 
@@ -101,6 +114,7 @@ export default function UploadCSVWorker({ onUploadSuccess }: UploadCSVWorkerProp
                         Cancelar
                     </Button>
                 </DialogClose>
+
                 <Button
                     onClick={handleUpload}
                     disabled={isUploading || !selectedFile}
