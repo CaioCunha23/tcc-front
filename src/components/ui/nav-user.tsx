@@ -41,6 +41,7 @@ export function NavUser({ user }: {
 }) {
     const { colaborador, token, logout } = useTokenStore();
     const [open, setOpen] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
     const [fullWorkerData, setFullWorkerData] = useState<Colaborador | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const { isMobile } = useSidebar();
@@ -100,11 +101,29 @@ export function NavUser({ user }: {
     }
 
     const handleEditClick = (event: React.MouseEvent) => {
+        event.preventDefault();
         event.stopPropagation();
-        setOpen(true);
+        setDropdownOpen(false); // Fecha o dropdown primeiro
+        setTimeout(() => setOpen(true), 100); // Pequeno delay para evitar conflitos
     };
 
-    const handleLogout = () => {
+    const handleEditSelect = (event: Event) => {
+        event.preventDefault();
+        setDropdownOpen(false);
+        setTimeout(() => setOpen(true), 100);
+    };
+
+    const handleLogout = (event: React.MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setDropdownOpen(false);
+        logout(queryClient);
+        navigate("/");
+    };
+
+    const handleLogoutSelect = (event: Event) => {
+        event.preventDefault();
+        setDropdownOpen(false);
         logout(queryClient);
         navigate("/");
     };
@@ -119,11 +138,16 @@ export function NavUser({ user }: {
     return (
         <SidebarMenu>
             <SidebarMenuItem>
-                <DropdownMenu modal={false}>
+                <DropdownMenu 
+                    open={dropdownOpen} 
+                    onOpenChange={setDropdownOpen}
+                    // Remove modal={false} para melhor comportamento mobile
+                >
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                            onClick={() => setDropdownOpen(!dropdownOpen)} // Controle manual para mobile
                         >
                             <Avatar className="h-8 w-8 rounded-lg">
                                 <AvatarImage src={user.avatar} alt={user.name} />
@@ -138,9 +162,12 @@ export function NavUser({ user }: {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                         className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                        side={isMobile ? "bottom" : "right"}
+                        side={isMobile ? "top" : "right"} // Mudança: top ao invés de bottom para mobile
                         align="end"
                         sideOffset={4}
+                        // Adiciona configurações específicas para mobile
+                        avoidCollisions={true}
+                        collisionPadding={8}
                     >
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
@@ -155,19 +182,26 @@ export function NavUser({ user }: {
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuGroup>
-                            <DropdownMenuItem onClick={handleEditClick}>
+                            <DropdownMenuItem 
+                                onClick={handleEditClick}
+                                onSelect={handleEditSelect}
+                            >
                                 <UserPen />
                                 Editar Dados
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleLogout}>
+                        <DropdownMenuItem 
+                            onClick={handleLogout}
+                            onSelect={handleLogoutSelect}
+                        >
                             <LogOut />
                             Log out
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
 
+                {/* Dialog separado do DropdownMenu para evitar conflitos */}
                 <Dialog open={open} onOpenChange={handleDialogClose}>
                     <DialogContent className="max-w-2xl">
                         <DialogHeader>
