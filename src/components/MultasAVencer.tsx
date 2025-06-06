@@ -55,9 +55,8 @@ export default function VeiculosProxManutencao() {
         : data.filter((item) => item.colaboradorUid === colaborador?.uidMSK);
 
     return (
-        <Card>
+        <Card className="w-full shadow-sm">
             <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
                     <CardTitle className="text-lg font-semibold flex items-center gap-2">
                         <ClockAlert className="h-5 w-5 text-red-500" />
                         Multas próximas do Vencimento
@@ -65,14 +64,13 @@ export default function VeiculosProxManutencao() {
                     <Badge variant="outline" className="text-orange-700 hover:bg-orange-100">
                         Vencimento
                     </Badge>
-                </div>
             </CardHeader>
             <CardContent className="p-2">
                 <div className="rounded-md border">
                     <Table>
                         <TableHeader>
-                            <TableRow className="bg-muted/50 hover:bg-muted/50">
-                                <TableHead className="w-[180px] font-medium">Tipo</TableHead>
+                            <TableRow className="bg-muted/50">
+                                <TableHead className="font-medium">Tipo</TableHead>
                                 <TableHead className="text-center font-medium">Código da Multa</TableHead>
                                 <TableHead className="text-center font-medium">UID MSK</TableHead>
                                 <TableHead className="text-center font-medium">Placa</TableHead>
@@ -102,7 +100,7 @@ export default function VeiculosProxManutencao() {
                             ) : (
                                 filteredData.map((item) => (
                                     <TableRow key={item.codigoMulta}>
-                                        <TableCell className="font-medium py-3">{item.tipo}</TableCell>
+                                        <TableCell className="font-medium">{item.tipo}</TableCell>
                                         <TableCell className="text-center py-3">
                                             {item.codigoMulta}
                                         </TableCell>
