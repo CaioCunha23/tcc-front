@@ -2,6 +2,7 @@ import {
     UserPen,
     ChevronsUpDown,
     LogOut,
+    Menu,
 } from "lucide-react"
 import {
     Avatar,
@@ -18,11 +19,20 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet"
+import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
+import { Button } from "@/components/ui/button"
 import { useTokenStore } from "@/hooks/useTokenStore"
 import { useNavigate } from "react-router"
 import { useState, useEffect } from "react"
@@ -41,6 +51,7 @@ export function NavUser({ user }: {
 }) {
     const { colaborador, token, logout } = useTokenStore();
     const [open, setOpen] = useState(false);
+    const [sheetOpen, setSheetOpen] = useState(false);
     const [fullWorkerData, setFullWorkerData] = useState<Colaborador | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const { isMobile } = useSidebar();
@@ -100,10 +111,12 @@ export function NavUser({ user }: {
     }
 
     const handleEditClick = () => {
+        setSheetOpen(false);
         setOpen(true);
     };
 
     const handleLogout = () => {
+        setSheetOpen(false);
         logout(queryClient);
         navigate("/");
     };
@@ -115,12 +128,88 @@ export function NavUser({ user }: {
         }
     };
 
+    if (isMobile) {
+        return (
+            <SidebarMenu>
+                <SidebarMenuItem>
+                    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                        <SheetTrigger asChild>
+                            <SidebarMenuButton size="lg">
+                                <Avatar className="h-8 w-8 rounded-lg">
+                                    <AvatarImage src={user.avatar} alt={user.name} />
+                                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                                </Avatar>
+                                <div className="grid flex-1 text-left text-sm leading-tight">
+                                    <span className="truncate font-semibold">{user.name}</span>
+                                    <span className="truncate text-xs">{user.email}</span>
+                                </div>
+                                <Menu className="ml-auto size-4" />
+                            </SidebarMenuButton>
+                        </SheetTrigger>
+                        <SheetContent side="bottom" className="rounded-t-lg">
+                            <SheetHeader className="text-left">
+                                <div className="flex items-center gap-2">
+                                    <Avatar className="h-10 w-10 rounded-lg">
+                                        <AvatarImage src={user.avatar} alt={user.name} />
+                                        <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <SheetTitle className="text-left">{user.name}</SheetTitle>
+                                        <SheetDescription className="text-left">{user.email}</SheetDescription>
+                                    </div>
+                                </div>
+                            </SheetHeader>
+                            <div className="mt-6 space-y-2">
+                                <Button
+                                    variant="outline"
+                                    className="w-full justify-start gap-2"
+                                    onClick={handleEditClick}
+                                >
+                                    <UserPen className="h-4 w-4" />
+                                    Editar Dados
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    className="w-full justify-start gap-2 text-red-600 hover:text-red-700"
+                                    onClick={handleLogout}
+                                >
+                                    <LogOut className="h-4 w-4" />
+                                    Log out
+                                </Button>
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+
+                    <Dialog open={open} onOpenChange={handleDialogClose}>
+                        <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                                <DialogTitle>Editar Colaborador</DialogTitle>
+                                <DialogDescription>
+                                    Altere os dados do colaborador e salve.
+                                </DialogDescription>
+                            </DialogHeader>
+                            {isLoading ? (
+                                <div className="flex justify-center py-8">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                                </div>
+                            ) : fullWorkerData ? (
+                                <WorkerEditForm defaultValues={fullWorkerData} onSubmit={handleSave} />
+                            ) : (
+                                <div className="text-center py-8 text-muted-foreground">
+                                    Erro ao carregar dados do colaborador
+                                </div>
+                            )}
+                        </DialogContent>
+                    </Dialog>
+                </SidebarMenuItem>
+            </SidebarMenu>
+        );
+    }
+
     return (
         <SidebarMenu>
             <SidebarMenuItem>
-                <DropdownMenu
-                    modal={false}
-                >
+                <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
@@ -138,18 +227,10 @@ export function NavUser({ user }: {
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
-                        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg touch-manipulation"
-                        side={isMobile ? "top" : "right"}
+                        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                        side="right"
                         align="end"
                         sideOffset={4}
-                        avoidCollisions={true}
-                        collisionPadding={16}
-                        style={{
-                            ...(isMobile && {
-                                position: 'fixed',
-                                zIndex: 9999,
-                            })
-                        }}
                     >
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
