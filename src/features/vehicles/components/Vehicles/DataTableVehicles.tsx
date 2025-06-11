@@ -143,86 +143,92 @@ export function DataTableVehicles() {
 
   return (
     <div className="w-full">
-      <div className="flex flex-col sm:flex-row items-center justify-between py-4">
-        <div className="flex gap-2">
-          <Input
-            placeholder="Pesquisar placa..."
-            value={(table.getColumn("placa")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("placa")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm mb-4 sm:mb-0"
-          />
-
-          <AddVehicleDialog onVehicleAdded={fetchData} />
-
-          <div className="flex items-center gap-2">
-            <Select
-              onValueChange={(v) => setDateFilterField(v as any)}
-              value={dateFilterField}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Selecione coluna" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Coluna de Data</SelectLabel>
-                  <SelectItem value="dataDisponibilizacao">Disponibilização</SelectItem>
-                  <SelectItem value="previsaoDevolucao">Previsão Devolução</SelectItem>
-                  <SelectItem value="proximaRevisao">Próxima Revisão</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-
-            <div className="w-full sm:w-auto">
-              <DateRangePicker
-                dateFrom={dateFrom}
-                dateTo={dateTo}
-                setDateFrom={setDateFrom}
-                setDateTo={setDateTo}
+      <div className="flex flex-col gap-4 py-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center flex-1">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Pesquisar placa..."
+                value={(table.getColumn("placa")?.getFilterValue() as string) ?? ""}
+                onChange={(event) =>
+                  table.getColumn("placa")?.setFilterValue(event.target.value)
+                }
+                className="flex-1 sm:w-64 sm:flex-none"
               />
+              <AddVehicleDialog onVehicleAdded={fetchData} />
             </div>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <Button onClick={applyDateFilter} className="cursor-pointer">Filtrar</Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setDateFrom("")
-                  setDateTo("")
-                  table.getColumn(dateFilterField)?.setFilterValue("")
-                }}
-                className="cursor-pointer"
+            <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+              <Select
+                onValueChange={(v) => setDateFilterField(v as any)}
+                value={dateFilterField}
               >
-                Limpar
-              </Button>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="Selecione coluna" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Coluna de Data</SelectLabel>
+                    <SelectItem value="dataDisponibilizacao">Disponibilização</SelectItem>
+                    <SelectItem value="previsaoDevolucao">Previsão Devolução</SelectItem>
+                    <SelectItem value="proximaRevisao">Próxima Revisão</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+
+              <div className="w-full sm:w-auto">
+                <DateRangePicker
+                  dateFrom={dateFrom}
+                  dateTo={dateTo}
+                  setDateFrom={setDateFrom}
+                  setDateTo={setDateTo}
+                />
+              </div>
+
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Button onClick={applyDateFilter} className="flex-1 sm:flex-none cursor-pointer">
+                  Filtrar
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setDateFrom("")
+                    setDateTo("")
+                    table.getColumn(dateFilterField)?.setFilterValue("")
+                  }}
+                  className="flex-1 sm:flex-none cursor-pointer"
+                >
+                  Limpar
+                </Button>
+              </div>
             </div>
           </div>
 
+          <div className="flex justify-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full sm:w-auto">
+                  Colunas <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">
-              Colunas <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
       <div className="max-w-lvw size-auto overflow-x-auto rounded border">
