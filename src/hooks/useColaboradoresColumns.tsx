@@ -472,33 +472,44 @@ export function useColaboradoresColumns({ onWorkerUpdated }: UseColaboradoresCol
             </DropdownMenu>
 
             <Dialog open={open} onOpenChange={setOpen}>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+                <DialogHeader className="px-6 py-4">
                   <DialogTitle>Editar Colaborador</DialogTitle>
                   <DialogDescription>
                     Altere os dados do colaborador e salve.
                   </DialogDescription>
                 </DialogHeader>
 
-                <WorkerEditForm
-                  defaultValues={worker}
-                  onSubmit={handleSave}
-                  onWorkerUpdated={onWorkerUpdated}
-                />
+                <div>
+                  <WorkerEditForm
+                    defaultValues={worker}
+                    onSubmit={handleSave}
+                    onWorkerUpdated={onWorkerUpdated}
+                  />
+                </div>
               </DialogContent>
             </Dialog>
 
             <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
-              <AlertDialogContent className="max-w-sm">
+              <AlertDialogContent className="max-w-md">
                 <AlertDialogHeader>
                   <AlertDialogTitle>Desativar Colaborador</AlertDialogTitle>
                   <AlertDialogDescription>
                     Tem certeza de que deseja desativar esse colaborador?
+                    Esta ação irá desativar o colaborador e liberar automaticamente
+                    todos os veículos associados a ele.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <div className="flex justify-end space-x-2 mt-4">
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeactivate}>Confirmar</AlertDialogAction>
+                <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 mt-6">
+                  <AlertDialogCancel className="w-full sm:w-auto">
+                    Cancelar
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeactivate}
+                    className="w-full sm:w-auto bg-red-600 hover:bg-red-700 focus:ring-red-600"
+                  >
+                    Confirmar Desativação
+                  </AlertDialogAction>
                 </div>
               </AlertDialogContent>
             </AlertDialog>

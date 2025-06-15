@@ -74,7 +74,7 @@ export function DateRangePicker({
                     variant="outline"
                     className={cn(
                         "w-full lg:w-auto justify-start pl-3 pr-2 text-left cursor-pointer",
-                        !internalRange?.from && !internalRange?.to ? "text-gray-500" : ""
+                        !internalRange?.from && !internalRange?.to ? "text-primary" : ""
                     )}
                 >
                     {displayText()}
@@ -83,7 +83,7 @@ export function DateRangePicker({
 
             <PopoverContent className="w-[300px] p-0">
                 <Calendar
-                    className="rounded-md border"
+                    className="flex rounded-md border justify-center"
                     mode="range"
                     selected={internalRange}
                     onSelect={onRangeChange}

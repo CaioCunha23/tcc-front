@@ -500,15 +500,21 @@ export function useVehiclesColumns({ onVehicleUpdated, onGenerateQR }: UseVehicl
                         </DropdownMenu>
 
                         <Dialog open={open} onOpenChange={setOpen}>
-                            <DialogContent className="max-w-2xl">
-                                <DialogHeader>
+                            <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+                                <DialogHeader className="px-6 py-4">
                                     <DialogTitle>Editar Veículo</DialogTitle>
                                     <DialogDescription>
                                         Altere os dados do Veículo e salve.
                                     </DialogDescription>
                                 </DialogHeader>
 
-                                <VehicleEditFormDialog defaultValues={vehicle} onSubmit={handleSave} />
+                                <div>
+                                    <VehicleEditFormDialog
+                                        defaultValues={vehicle}
+                                        onSubmit={handleSave}
+                                        onVehicleUpdated={onVehicleUpdated}
+                                    />
+                                </div>
                             </DialogContent>
                         </Dialog>
                     </>

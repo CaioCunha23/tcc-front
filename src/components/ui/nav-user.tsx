@@ -181,7 +181,7 @@ export function NavUser({ user }: {
                     </Sheet>
 
                     <Dialog open={open} onOpenChange={handleDialogClose}>
-                        <DialogContent className="max-w-2xl">
+                        <DialogContent className="max-w-[95vw] sm:max-w-2xl lg:max-w-4xl max-h-[90vh] overflow-y-auto">
                             <DialogHeader>
                                 <DialogTitle>Editar Colaborador</DialogTitle>
                                 <DialogDescription>
@@ -193,7 +193,9 @@ export function NavUser({ user }: {
                                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                                 </div>
                             ) : fullWorkerData ? (
-                                <WorkerEditForm defaultValues={fullWorkerData} onSubmit={handleSave} />
+                                <div className="w-full">
+                                    <WorkerEditForm defaultValues={fullWorkerData} onSubmit={handleSave} />
+                                </div>
                             ) : (
                                 <div className="text-center py-8 text-muted-foreground">
                                     Erro ao carregar dados do colaborador

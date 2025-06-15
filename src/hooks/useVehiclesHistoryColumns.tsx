@@ -346,15 +346,21 @@ export function useVehiclesHistoryColumns({ onVehicleHistoryUpdated }: UseVehicl
                         </DropdownMenu>
 
                         <Dialog open={open} onOpenChange={setOpen}>
-                            <DialogContent className="max-w-2xl">
-                                <DialogHeader>
+                            <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+                                <DialogHeader className="px-6 py-4">
                                     <DialogTitle>Editar Histórico</DialogTitle>
                                     <DialogDescription>
                                         Altere os dados do Histórico e salve.
                                     </DialogDescription>
                                 </DialogHeader>
 
-                                <VehicleHistoryEditFormDialog defaultValues={historico} onSubmit={handleSave} />
+                                <div>
+                                    <VehicleHistoryEditFormDialog
+                                        defaultValues={historico}
+                                        onSubmit={handleSave}
+                                        onVehicleHistoryUpdated={onVehicleHistoryUpdated}
+                                    />
+                                </div>
                             </DialogContent>
                         </Dialog>
                     </>

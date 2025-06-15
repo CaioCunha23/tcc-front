@@ -50,24 +50,28 @@ const steps = [
     {
         id: "identificacao",
         name: "Identificação",
+        shortName: "ID",
         icon: <CarFront size={18} />,
         fields: ["fornecedor", "contrato", "placa", "renavam", "chassi", "modelo", "cor"]
     },
     {
         id: "utilizacao",
         name: "Utilização",
+        shortName: "Uso",
         icon: <CarFront size={18} />,
         fields: ["status", "cliente", "centroCusto", "perfil", "franquiaKM", "carroReserva"]
     },
     {
         id: "contrato",
         name: "Contrato",
+        shortName: "Contrato",
         icon: <Calendar size={18} />,
         fields: ["dataDisponibilizacao", "mesesContratados", "previsaoDevolucao", "mesesFaltantes", "proximaRevisao"]
     },
     {
         id: "financeiro",
         name: "Financeiro",
+        shortName: "R$",
         icon: <DollarSign size={18} />,
         fields: ["mensalidade", "budget", "multa"]
     }
@@ -187,535 +191,501 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
     const isLastStep = currentStep === steps.length - 1;
 
     const renderFormFields = () => {
-        const currentFields = steps[currentStep].fields;
 
         return (
-            <>
-                {currentFields.includes("fornecedor") && (
-                    <div className="flex flex-col md:flex-row gap-6 mb-6">
-                        <FormField
-                            control={form.control}
-                            name="fornecedor"
-                            render={({ field }) => (
-                                <FormItem className="flex-1">
-                                    <FormLabel>Fornecedor</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Fornecedor"
-                                            {...field}
-                                            className="border-primary rounded-md shadow-sm"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {currentFields.includes("contrato") && (
+            <div className="space-y-4 sm:space-y-6">
+                {currentStep === 0 && (
+                    <>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="fornecedor"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Fornecedor</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Fornecedor"
+                                                {...field}
+                                                className="h-9 text-sm"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="contrato"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Contrato</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Contrato</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Contrato"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 text-sm"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        )}
-                        {currentFields.includes("placa") && (
                             <FormField
                                 control={form.control}
                                 name="placa"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Placa</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Placa</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Placa"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 text-sm"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        )}
-                    </div>
-                )}
+                        </div>
 
-                {currentFields.includes("renavam") && (
-                    <div className="flex flex-col md:flex-row gap-6 mb-6">
-                        <FormField
-                            control={form.control}
-                            name="renavam"
-                            render={({ field }) => (
-                                <FormItem className="flex-1">
-                                    <FormLabel>Renavam</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Renavam"
-                                            {...field}
-                                            className="border-primary rounded-md shadow-sm"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {currentFields.includes("chassi") && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="renavam"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Renavam</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Renavam"
+                                                {...field}
+                                                className="h-9 text-sm"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="chassi"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Chassi</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Chassi</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Chassi"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 text-sm"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        )}
-                        {currentFields.includes("modelo") && (
                             <FormField
                                 control={form.control}
                                 name="modelo"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Modelo</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Modelo</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Modelo"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 text-sm"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        )}
-                    </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="cor"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Cor</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Cor"
+                                                {...field}
+                                                className="h-9 text-sm"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </>
                 )}
 
-                {currentFields.includes("cor") && (
-                    <div className="flex flex-col md:flex-row gap-6 mb-6">
-                        <FormField
-                            control={form.control}
-                            name="cor"
-                            render={({ field }) => (
-                                <FormItem className="flex-1">
-                                    <FormLabel>Cor</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Cor"
-                                            {...field}
-                                            className="border-primary rounded-md shadow-sm"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                )}
-
-                {currentFields.includes("status") && (
-                    <div className="flex flex-col md:flex-row gap-6 mb-6">
-                        <FormField
-                            control={form.control}
-                            name="status"
-                            render={({ field }) => (
-                                <FormItem className="flex-1">
-                                    <FormLabel>Status</FormLabel>
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
-                                            <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
-                                                <SelectValue placeholder="Status" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="Disponível">
-                                                    Disponível
-                                                </SelectItem>
-                                                <SelectItem value="Em uso">
-                                                    Em uso
-                                                </SelectItem>
-                                                <SelectItem value="Em manutenção">
-                                                    Em manutenção
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {currentFields.includes("cliente") && (
+                {currentStep === 1 && (
+                    <>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Status</FormLabel>
+                                        <FormControl>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                            >
+                                                <SelectTrigger className="h-9 text-sm">
+                                                    <SelectValue placeholder="Status" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="Disponível">Disponível</SelectItem>
+                                                    <SelectItem value="Em uso">Em uso</SelectItem>
+                                                    <SelectItem value="Em manutenção">Em manutenção</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="cliente"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Cliente</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Cliente</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Cliente"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 text-sm"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        )}
-                    </div>
-                )}
+                        </div>
 
-                {currentFields.includes("centroCusto") && (
-                    <div className="flex flex-col md:flex-row gap-6 mb-6">
-                        <FormField
-                            control={form.control}
-                            name="centroCusto"
-                            render={({ field }) => (
-                                <FormItem className="flex-1">
-                                    <FormLabel>Centro de Custo</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Centro de Custo"
-                                            {...field}
-                                            className="border-primary rounded-md shadow-sm"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {currentFields.includes("perfil") && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="centroCusto"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Centro de Custo</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Centro de Custo"
+                                                {...field}
+                                                className="h-9 text-sm"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="perfil"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Perfil</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Perfil</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Perfil"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 text-sm"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        )}
-                    </div>
-                )}
+                        </div>
 
-                {currentFields.includes("franquiaKM") && (
-                    <div className="flex flex-col md:flex-row gap-6 mb-6 items-end">
-                        <FormField
-                            control={form.control}
-                            name="franquiaKM"
-                            render={({ field }) => (
-                                <FormItem className="flex-1">
-                                    <FormLabel>Franquia KM</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="number"
-                                            placeholder="Franquia KM"
-                                            {...field}
-                                            className="border-primary rounded-md shadow-sm"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {currentFields.includes("carroReserva") && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                            <FormField
+                                control={form.control}
+                                name="franquiaKM"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Franquia KM</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="Franquia KM"
+                                                {...field}
+                                                className="h-9 text-sm"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="carroReserva"
                                 render={({ field }) => (
-                                    <FormItem className="flex items-center gap-2 mb-2">
+                                    <FormItem className="flex items-center space-x-2 pb-2">
                                         <FormControl>
                                             <Checkbox
                                                 checked={field.value}
                                                 onCheckedChange={field.onChange}
                                             />
                                         </FormControl>
-                                        <span className="text-sm">Carro Reserva?</span>
+                                        <FormLabel className="text-sm font-medium cursor-pointer">
+                                            Carro Reserva?
+                                        </FormLabel>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        )}
-                    </div>
+                        </div>
+                    </>
                 )}
 
-                {currentFields.includes("dataDisponibilizacao") && (
-                    <div className="flex flex-col md:flex-row gap-6 mb-6">
-                        <FormField
-                            control={form.control}
-                            name="dataDisponibilizacao"
-                            render={({ field }) => (
-                                <FormItem className="flex-1">
-                                    <FormLabel>Data Disponibilização</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "w-full pl-3 text-left font-normal border-primary",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(new Date(field.value), "dd/MM/yyyy")
-                                                    ) : (
-                                                        <span>Selecione uma data</span>
-                                                    )}
-                                                    <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
-                                            <CalendarComponent
-                                                mode="single"
-                                                selected={field.value ? new Date(field.value) : undefined}
-                                                onSelect={(date) => {
-                                                    field.onChange(date ?? undefined);
-                                                }}
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {currentFields.includes("mesesContratados") && (
+                {currentStep === 2 && (
+                    <>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="dataDisponibilizacao"
+                                render={({ field }) => (
+                                    <FormItem className="flex-1">
+                                        <FormLabel>Data Disponibilização</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "w-full pl-3 text-left font-normal border-primary",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        {field.value ? (
+                                                            format(new Date(field.value), "dd/MM/yyyy")
+                                                        ) : (
+                                                            <span>Selecione uma data</span>
+                                                        )}
+                                                        <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
+                                                <CalendarComponent
+                                                    mode="single"
+                                                    selected={field.value ? new Date(field.value) : undefined}
+                                                    onSelect={(date) => {
+                                                        field.onChange(date ?? undefined);
+                                                    }}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="mesesContratados"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Meses Contratados</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Meses Contratados</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
                                                 placeholder="Meses Contratados"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 text-sm"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        )}
-                    </div>
-                )}
+                        </div>
 
-                {currentFields.includes("previsaoDevolucao") && (
-                    <div className="flex flex-col md:flex-row gap-6 mb-6">
-                        <FormField
-                            control={form.control}
-                            name="previsaoDevolucao"
-                            render={({ field }) => (
-                                <FormItem className="flex-1">
-                                    <FormLabel>Previsão Devolução</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "w-full pl-3 text-left font-normal border-primary",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(new Date(field.value), "dd/MM/yyyy")
-                                                    ) : (
-                                                        <span>Selecione uma data</span>
-                                                    )}
-                                                    <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
-                                            <CalendarComponent
-                                                mode="single"
-                                                selected={field.value ? new Date(field.value) : undefined}
-                                                onSelect={(date) => {
-                                                    field.onChange(date ?? undefined);
-                                                }}
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {currentFields.includes("mesesFaltantes") && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="previsaoDevolucao"
+                                render={({ field }) => (
+                                    <FormItem className="flex-1">
+                                        <FormLabel>Previsão Devolução</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "w-full pl-3 text-left font-normal border-primary",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        {field.value ? (
+                                                            format(new Date(field.value), "dd/MM/yyyy")
+                                                        ) : (
+                                                            <span>Selecione uma data</span>
+                                                        )}
+                                                        <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
+                                                <CalendarComponent
+                                                    mode="single"
+                                                    selected={field.value ? new Date(field.value) : undefined}
+                                                    onSelect={(date) => {
+                                                        field.onChange(date ?? undefined);
+                                                    }}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="mesesFaltantes"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Meses Faltantes</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Meses Faltantes</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
                                                 placeholder="Meses Faltantes"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 text-sm"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        )}
-                    </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="proximaRevisao"
+                                render={({ field }) => (
+                                    <FormItem className="flex-1">
+                                        <FormLabel>Próxima Revisão</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "w-full pl-3 text-left font-normal border-primary",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        {field.value ? (
+                                                            format(new Date(field.value), "dd/MM/yyyy")
+                                                        ) : (
+                                                            <span>Selecione uma data</span>
+                                                        )}
+                                                        <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
+                                                <CalendarComponent
+                                                    mode="single"
+                                                    selected={field.value ? new Date(field.value) : undefined}
+                                                    onSelect={(date) => {
+                                                        field.onChange(date ?? undefined);
+                                                    }}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </>
                 )}
 
-                {currentFields.includes("proximaRevisao") && (
-                    <div className="flex flex-col md:flex-row gap-6 mb-6">
-                        <FormField
-                            control={form.control}
-                            name="proximaRevisao"
-                            render={({ field }) => (
-                                <FormItem className="flex-1">
-                                    <FormLabel>Próxima Revisão</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "w-full pl-3 text-left font-normal border-primary",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(new Date(field.value), "dd/MM/yyyy")
-                                                    ) : (
-                                                        <span>Selecione uma data</span>
-                                                    )}
-                                                    <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
-                                            <CalendarComponent
-                                                mode="single"
-                                                selected={field.value ? new Date(field.value) : undefined}
-                                                onSelect={(date) => {
-                                                    field.onChange(date ?? undefined);
-                                                }}
-                                                initialFocus
+                {currentStep === 3 && (
+                    <>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="mensalidade"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Mensalidade</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="Mensalidade"
+                                                {...field}
+                                                className="h-9 text-sm"
                                             />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                )}
-
-                {currentFields.includes("mensalidade") && (
-                    <div className="flex flex-col md:flex-row gap-6 mb-6">
-                        <FormField
-                            control={form.control}
-                            name="mensalidade"
-                            render={({ field }) => (
-                                <FormItem className="flex-1">
-                                    <FormLabel>Mensalidade</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="number"
-                                            placeholder="Mensalidade"
-                                            {...field}
-                                            className="border-primary rounded-md shadow-sm"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {currentFields.includes("budget") && (
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="budget"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Budget</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Budget</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
                                                 placeholder="Budget"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 text-sm"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        )}
-                    </div>
+                            <FormField
+                                control={form.control}
+                                name="multa"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Multa</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="Multa"
+                                                {...field}
+                                                className="h-9 text-sm"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </>
                 )}
-
-                {currentFields.includes("multa") && (
-                    <div className="flex flex-col md:flex-row gap-6 mb-6">
-                        <FormField
-                            control={form.control}
-                            name="multa"
-                            render={({ field }) => (
-                                <FormItem className="flex-1">
-                                    <FormLabel>Multa</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="number"
-                                            placeholder="Multa"
-                                            {...field}
-                                            className="border-primary rounded-md shadow-sm"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                )}
-            </>
+            </div>
         );
     };
 
     return (
-        <div className="w-full max-w-[90%] mx-auto">
+        <div className="w-full">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -724,66 +694,78 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
                             e.preventDefault();
                         }
                     }}
-                    className="space-y-6">
-                    <div className="mb-8">
-                        <div className="flex justify-between items-center mb-4">
-                            {steps.map((step, index) => (
-                                <div key={step.id} className="flex flex-col items-center">
-                                    <div
-                                        className={`w-10 h-10 rounded-full flex items-center justify-center
-                                          ${index === currentStep
-                                                ? "bg-primary text-primary-foreground"
-                                                : index < currentStep
-                                                    ? "bg-primary/20 text-primary"
-                                                    : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
-                                            } mb-2 cursor-pointer`}
-                                        onClick={() => {
-                                            if (index < currentStep) {
-                                                setCurrentStep(index);
-                                                setProgress((index / (steps.length - 1)) * 100);
-                                            }
-                                        }}
-                                    >
-                                        {index < currentStep ? <Check size={16} /> : step.icon}
+                    className="space-y-4 sm:space-y-6">
+
+                    <div className="px-2 sm:px-4">
+                        <div className="flex justify-between items-center mb-4 overflow-x-auto">
+                            <div className="flex justify-between items-center w-full min-w-[280px]">
+                                {steps.map((step, index) => (
+                                    <div key={step.id} className="flex flex-col items-center flex-1">
+                                        <div
+                                            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm
+                                              ${index === currentStep
+                                                    ? "bg-primary text-primary-foreground"
+                                                    : index < currentStep
+                                                        ? "bg-primary/20 text-primary"
+                                                        : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+                                                } mb-1 sm:mb-2 cursor-pointer transition-colors`}
+                                            onClick={() => {
+                                                if (index < currentStep) {
+                                                    setCurrentStep(index);
+                                                    setProgress((index / (steps.length - 1)) * 100);
+                                                }
+                                            }}
+                                        >
+                                            {index < currentStep ? <Check size={14} /> : step.icon}
+                                        </div>
+                                        <span className="text-xs text-center block sm:hidden font-medium">
+                                            {step.shortName}
+                                        </span>
+                                        <span className="text-xs text-center hidden sm:block font-medium">
+                                            {step.name}
+                                        </span>
                                     </div>
-                                    <span className="text-xs text-center hidden md:block">{step.name}</span>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                        <Progress value={progress} className="h-2" />
+                        <Progress value={progress} className="h-1 sm:h-2" />
                     </div>
 
                     {validationError && (
-                        <Alert variant="destructive" className="mb-4">
+                        <Alert variant="destructive" className="mx-2 sm:mx-4">
                             <AlertCircle className="h-4 w-4" />
-                            <AlertDescription>
+                            <AlertDescription className="text-sm">
                                 {validationError}
                             </AlertDescription>
                         </Alert>
                     )}
 
-                    <Card className="shadow-md rounded-lg border">
-                        <CardContent className="p-6">
-                            <h2 className="text-xl font-semibold mb-6">{steps[currentStep].name}</h2>
+                    <Card className="mx-2 sm:mx-4 shadow-sm border">
+                        <CardContent className="p-4 sm:p-6">
+                            <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">
+                                {steps[currentStep].name}
+                            </h2>
 
                             {renderFormFields()}
 
-                            <div className="flex justify-between mt-8">
+                            <div className="flex flex-col sm:flex-row justify-between gap-3 mt-6 sm:mt-8">
                                 <Button
                                     type="button"
                                     variant="outline"
                                     onClick={prevStep}
                                     disabled={currentStep === 0}
-                                    className="flex items-center gap-1"
+                                    className="flex items-center justify-center gap-2 order-2 sm:order-1 h-9 sm:h-10"
                                 >
-                                    <ChevronLeft size={16} /> Anterior
+                                    <ChevronLeft size={16} />
+                                    <span className="hidden sm:inline">Anterior</span>
+                                    <span className="sm:hidden">Voltar</span>
                                 </Button>
 
                                 {isLastStep ? (
                                     <Button
                                         type="button"
                                         onClick={handleFinalSubmit}
-                                        className="flex items-center gap-1"
+                                        className="flex items-center justify-center gap-2 order-1 sm:order-2 h-9 sm:h-10"
                                     >
                                         <SendIcon size={16} />
                                         <span>Enviar</span>
@@ -792,9 +774,11 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
                                     <Button
                                         type="button"
                                         onClick={nextStep}
-                                        className="flex items-center gap-1"
+                                        className="flex items-center justify-center gap-2 order-1 sm:order-2 h-9 sm:h-10"
                                     >
-                                        Próximo <ChevronRight size={16} />
+                                        <span className="hidden sm:inline">Próximo</span>
+                                        <span className="sm:hidden">Avançar</span>
+                                        <ChevronRight size={16} />
                                     </Button>
                                 )}
                             </div>
@@ -804,17 +788,17 @@ export function VehicleFormDialog({ onVehicleAdded, onCloseDialog }: VehicleForm
             </Form>
 
             <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
-                <AlertDialogContent className="max-w-md">
+                <AlertDialogContent className="max-w-[90vw] sm:max-w-md mx-4">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>
+                        <AlertDialogTitle className="text-base sm:text-lg">
                             Deseja inserir outro veículo?
                         </AlertDialogTitle>
-                        <AlertDialogDescription>
+                        <AlertDialogDescription className="text-sm">
                             Se optar por não inserir, o pop-up será fechado e a tabela será atualizada.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
 
-                    <div className="flex justify-end space-x-3 mt-4">
+                    <div className="flex flex-col sm:flex-row justify-end gap-3 mt-4">
                         <AlertDialogAction
                             onClick={() => handleDialogResponse(true)}
                             className="bg-primary hover:bg-primary/90"

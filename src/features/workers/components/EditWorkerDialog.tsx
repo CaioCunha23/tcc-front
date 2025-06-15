@@ -47,28 +47,28 @@ export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdate
     console.log('Valores do form:', form.getValues());
 
     return (
-        <Card className="shadow-lg rounded-lg border overflow-hidden">
-            <CardContent className="p-6">
+        <Card className="shadow-lg rounded-lg borderoverflow-hidden w-full">
+            <CardContent className="p-3 md:p-4 lg:p-6">
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(handleFormSubmit)}
-                        className="space-y-6"
+                        className="space-y-4 md:space-y-6"
                     >
-                        <div className="flex flex-col md:flex-row gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                             <FormField
                                 control={form.control}
                                 name="nome"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Nome</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Nome</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Nome Completo"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 md:h-10 text-sm border-primary rounded-md shadow-sm"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-xs" />
                                     </FormItem>
                                 )}
                             />
@@ -76,35 +76,36 @@ export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdate
                                 control={form.control}
                                 name="cpf"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>CPF</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">CPF</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="CPF"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 md:h-10 text-sm border-primary rounded-md shadow-sm"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-xs" />
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <div className="flex flex-col md:flex-row gap-4">
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                             <FormField
                                 control={form.control}
                                 name="email"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>E-Mail</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">E-Mail</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="E-mail"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 md:h-10 text-sm border-primary rounded-md shadow-sm"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-xs" />
                                     </FormItem>
                                 )}
                             />
@@ -112,30 +113,31 @@ export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdate
                                 control={form.control}
                                 name="uidMSK"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>UID MSK</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">UID MSK</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="UID (6 caracteres)"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 md:h-10 text-sm border-primary rounded-md shadow-sm"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-xs" />
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <div className="flex flex-col md:flex-row gap-4">
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                             <FormField
                                 control={form.control}
                                 name="localidade"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Cidade que trabalha</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Cidade que trabalha</FormLabel>
                                         <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
-                                                <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
+                                                <SelectTrigger className="h-9 md:h-10 text-sm border-primary w-full rounded-md shadow-sm">
                                                     <SelectValue placeholder="Localidade" />
                                                 </SelectTrigger>
                                             </FormControl>
@@ -144,7 +146,7 @@ export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdate
                                                 <SelectItem value="SPO">SPO</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                        <FormMessage />
+                                        <FormMessage className="text-xs" />
                                     </FormItem>
                                 )}
                             />
@@ -152,11 +154,11 @@ export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdate
                                 control={form.control}
                                 name="brand"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Brand</FormLabel>
+                                    <FormItem>
+                                        <FormLabel className="text-sm font-medium">Brand</FormLabel>
                                         <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
-                                                <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
+                                                <SelectTrigger className="h-9 md:h-10 text-sm border-primary w-full rounded-md shadow-sm">
                                                     <SelectValue placeholder="Brand" />
                                                 </SelectTrigger>
                                             </FormControl>
@@ -169,44 +171,49 @@ export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdate
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
-                                        <FormMessage />
+                                        <FormMessage className="text-xs" />
                                     </FormItem>
                                 )}
                             />
                         </div>
+
                         <div className="w-full">
                             <FormField
                                 control={form.control}
                                 name="jobTitle"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Cargo / Área de Atuação</FormLabel>
+                                        <FormLabel className="text-sm font-medium">Cargo / Área de Atuação</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Cargo / Área de atuação"
                                                 {...field}
-                                                className="border-primary rounded-md shadow-sm"
+                                                className="h-9 md:h-10 text-sm border-primary rounded-md shadow-sm"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-xs" />
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <div className="flex flex-col md:flex-row gap-4 items-center">
+
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6 items-start sm:items-start">
                             <FormField
                                 control={form.control}
                                 name="usaEstacionamento"
                                 render={({ field }) => (
-                                    <FormItem className="flex items-center gap-2">
+                                    <FormItem className="flex items-center gap-2 sm:min-w-fit">
                                         <FormControl>
                                             <Checkbox
                                                 checked={field.value}
                                                 onCheckedChange={field.onChange}
+                                                className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                                             />
                                         </FormControl>
-                                        <span className="text-sm">Utiliza Estacionamento?</span>
-                                        <FormMessage />
+                                        <span className="text-sm font-medium">
+                                            Utiliza Estacionamento?
+                                        </span>
+                                        <FormMessage className="text-xs" />
                                     </FormItem>
                                 )}
                             />
@@ -214,11 +221,11 @@ export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdate
                                 control={form.control}
                                 name="cidadeEstacionamento"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Cidade do Estacionamento</FormLabel>
+                                    <FormItem className="flex-1 w-full sm:w-auto">
+                                        <FormLabel className="text-sm font-medium">Cidade do Estacionamento</FormLabel>
                                         <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
-                                                <SelectTrigger className="border-primary w-full rounded-md shadow-sm">
+                                                <SelectTrigger className="h-9 sm:h-10 md:h-11 text-sm border-primary w-full rounded-md shadow-sm focus:ring-2 focus:ring-primary/20 transition-all">
                                                     <SelectValue placeholder="Cidade Estacionamento" />
                                                 </SelectTrigger>
                                             </FormControl>
@@ -227,16 +234,25 @@ export default function WorkerEditForm({ defaultValues, onSubmit, onWorkerUpdate
                                                 <SelectItem value="São Paulo">São Paulo</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                        <FormMessage />
+                                        <FormMessage className="text-xs" />
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <div className="flex justify-end gap-2 mt-4">
+
+                        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-4 border-gray-100">
                             <DialogClose asChild>
-                                <Button variant="outline">Cancelar</Button>
+                                <Button
+                                    variant="outline"
+                                    className="w-full sm:w-auto px-4 py-2 text-sm font-medium transition-all hover:bg-gray-50"
+                                >
+                                    Cancelar
+                                </Button>
                             </DialogClose>
-                            <Button type="submit" className="flex items-center gap-2">
+                            <Button
+                                type="submit"
+                                className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium bg-primary hover:bg-primary/90 transition-all"
+                            >
                                 <ClipboardCheckIcon size={16} />
                                 <span>Salvar</span>
                             </Button>

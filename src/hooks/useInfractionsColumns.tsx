@@ -334,19 +334,21 @@ export function useInfractionsColumns({ onInfractionUpdated }: UseInfractionsCol
                         </DropdownMenu>
 
                         <Dialog open={open} onOpenChange={setOpen}>
-                            <DialogContent className="max-w-2xl">
-                                <DialogHeader>
+                            <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+                                <DialogHeader className="px-6 py-4">
                                     <DialogTitle>Editar Infração</DialogTitle>
                                     <DialogDescription>
                                         Atualize os dados da infração e salve.
                                     </DialogDescription>
                                 </DialogHeader>
 
-                                <InfractionEditForm
-                                    defaultValues={infraction}
-                                    onSubmit={handleSave}
-                                    onInfractionUpdated={onInfractionUpdated}
-                                />
+                                <div>
+                                    <InfractionEditForm
+                                        defaultValues={infraction}
+                                        onSubmit={handleSave}
+                                        onInfractionUpdated={onInfractionUpdated}
+                                    />
+                                </div>
                             </DialogContent>
                         </Dialog>
                     </>

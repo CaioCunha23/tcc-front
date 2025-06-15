@@ -164,18 +164,13 @@ export default function InfractionEditForm({
                                                             </Button>
                                                         </FormControl>
                                                     </PopoverTrigger>
-                                                    <PopoverContent
-                                                        className="w-auto p-0 pointer-events-auto"
-                                                        align="start"
-                                                    >
+                                                    <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
                                                         <CalendarComponent
                                                             mode="single"
                                                             selected={field.value ? new Date(field.value) : undefined}
-                                                            onSelect={(date) =>
-                                                                field.onChange(
-                                                                    date ? format(date, "yyyy-MM-dd") : ""
-                                                                )
-                                                            }
+                                                            onSelect={(date) => {
+                                                                field.onChange(date ?? undefined);
+                                                            }}
                                                             initialFocus
                                                         />
                                                     </PopoverContent>
@@ -274,18 +269,13 @@ export default function InfractionEditForm({
                                                             </Button>
                                                         </FormControl>
                                                     </PopoverTrigger>
-                                                    <PopoverContent
-                                                        className="w-auto p-0 pointer-events-auto"
-                                                        align="start"
-                                                    >
+                                                    <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
                                                         <CalendarComponent
                                                             mode="single"
                                                             selected={field.value ? new Date(field.value) : undefined}
-                                                            onSelect={(date) =>
-                                                                field.onChange(
-                                                                    date ? format(date, "yyyy-MM-dd") : ""
-                                                                )
-                                                            }
+                                                            onSelect={(date) => {
+                                                                field.onChange(date ?? undefined);
+                                                            }}
                                                             initialFocus
                                                         />
                                                     </PopoverContent>
@@ -386,18 +376,13 @@ export default function InfractionEditForm({
                                                             </Button>
                                                         </FormControl>
                                                     </PopoverTrigger>
-                                                    <PopoverContent
-                                                        className="w-auto p-0 pointer-events-auto"
-                                                        align="start"
-                                                    >
+                                                    <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
                                                         <CalendarComponent
                                                             mode="single"
                                                             selected={field.value ? new Date(field.value) : undefined}
-                                                            onSelect={(date) =>
-                                                                field.onChange(
-                                                                    date ? format(date, "yyyy-MM-dd") : ""
-                                                                )
-                                                            }
+                                                            onSelect={(date) => {
+                                                                field.onChange(date ?? undefined);
+                                                            }}
                                                             initialFocus
                                                         />
                                                     </PopoverContent>
